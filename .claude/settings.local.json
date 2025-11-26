@@ -53,7 +53,8 @@
       "Bash(git commit:*)",
       "Bash(del \"d:\\AiGentsRealty\\frontend\\app\\projects\\page.tsx\")",
       "Bash(if exist .next rmdir /s /q .next)",
-      "Bash(bash migrate-to-supabase.sh:*)"
+      "Bash(bash migrate-to-supabase.sh:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

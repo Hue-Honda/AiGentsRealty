@@ -22,11 +22,12 @@ export default function PropertySuggestions() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/projects/suggestions')
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    fetch(`${apiUrl}/api/projects/suggestions`)
       .then(res => res.json())
       .then(data => {
-        if (data.success && data.projects) {
-          setProjects(data.projects);
+        if (data.success && data.data) {
+          setProjects(data.data);
         } else {
           setProjects([]);
         }

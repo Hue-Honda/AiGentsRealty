@@ -62,7 +62,8 @@ export default function Home() {
 
   // Fetch projects
   useEffect(() => {
-    fetch('http://localhost:3001/api/projects/suggestions')
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    fetch(`${apiUrl}/api/projects/suggestions`)
       .then(res => res.json())
       .then(data => {
         console.log('API Response:', data);
@@ -85,7 +86,8 @@ export default function Home() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3001/api/chat', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${apiUrl}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userMessage })
@@ -93,8 +95,8 @@ export default function Home() {
 
       const data = await response.json();
 
-      if (data.success) {
-        setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
+      if (data.message) {
+        setMessages(prev => [...prev, { role: 'assistant', content: data.message }]);
       } else {
         setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I encountered an error.' }]);
       }
