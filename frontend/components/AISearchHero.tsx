@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Search, Sparkles, MessageSquare, X, Zap, Cpu } from 'lucide-react';
-import GenieChat from './GenieChat';
+import FloatingAIChat from './FloatingAIChat';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -393,7 +393,7 @@ export default function AISearchHero() {
 
             {/* Chat panel */}
             <div className="relative h-full border-2 border-[#10B981]/40 rounded-3xl overflow-hidden shadow-[0_0_60px_rgba(16,185,129,0.5)]">
-              <GenieChat />
+              <FloatingAIChat />
             </div>
           </div>
         </div>
