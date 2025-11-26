@@ -1,9 +1,13 @@
 import { Shield, TrendingUp, Star, MessageSquare, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import AISearchHero from '@/components/AISearchHero';
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#0A0A0A]">
+      {/* AI SEARCH HERO - Smart Filters + Genie Chat */}
+      <AISearchHero />
+
       {/* PREMIUM CINEMATIC HERO SECTION */}
       <section className="relative overflow-hidden">
         {/* Cinematic Dark Gradient Background with Emerald Shapes */}
