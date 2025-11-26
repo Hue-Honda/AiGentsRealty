@@ -25,9 +25,12 @@ const FRONTEND_URL = process.env.CORS_ORIGIN || process.env.FRONTEND_URL || 'htt
 app.use(helmet());
 
 // CORS configuration
+const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3000';
 app.use(cors({
-  origin: FRONTEND_URL,
-  credentials: true
+  origin: corsOrigin.trim(),
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 // Body parser
@@ -137,7 +140,7 @@ app.listen(PORT, () => {
   console.log('🚀 AiGentsRealty Off-Plan API');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log(`📡 Server: http://localhost:${PORT}`);
-  console.log(`🌐 Frontend: ${FRONTEND_URL}`);
+  console.log(`🌐 Frontend: ${corsOrigin}`);
   console.log(`📊 Environment: ${process.env.NODE_ENV}`);
   console.log(`🤖 AI Model: OpenAI GPT-4o-mini`);
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
