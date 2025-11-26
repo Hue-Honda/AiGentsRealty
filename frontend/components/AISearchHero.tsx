@@ -229,17 +229,17 @@ export default function AISearchHero() {
             <div className="space-y-4">
               <h1
                 ref={headlineRef}
-                className="text-6xl sm:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-tighter"
+                className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight"
               >
                 <span className="word inline-block">Find</span>{' '}
-                <span className="word inline-block">Your</span>
-                <span className="block mt-3 relative inline-block">
+                <span className="word inline-block">Your</span>{' '}
+                <span className="relative inline-block">
                   <span className="highlight-word inline-block bg-gradient-to-r from-[#10B981] via-[#D4AF37] to-[#10B981] bg-clip-text text-transparent bg-[length:200%_100%]">
                     <span className="word inline-block">Dream</span>{' '}
                     <span className="word inline-block">Oasis</span>
                   </span>
                   {/* Gold underline */}
-                  <div className="absolute -bottom-3 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
+                  <div className="absolute -bottom-2 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
                 </span>
               </h1>
               <p
