@@ -15,7 +15,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const FRONTEND_URL = process.env.CORS_ORIGIN || process.env.FRONTEND_URL || 'http://localhost:3000';
 
 // ============================================================================
 // MIDDLEWARE
@@ -52,6 +52,23 @@ app.use('/api/', limiter);
 // ============================================================================
 // ROUTES
 // ============================================================================
+
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    name: 'AiGentsRealty API',
+    version: '2.0.0',
+    status: 'running',
+    message: 'Welcome to AiGentsRealty Off-Plan Projects API',
+    endpoints: {
+      health: '/health',
+      api: '/api',
+      areas: '/api/areas',
+      projects: '/api/projects',
+      chat: '/api/chat'
+    }
+  });
+});
 
 // Health check
 app.get('/health', (req, res) => {
