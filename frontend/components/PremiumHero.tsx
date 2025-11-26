@@ -91,45 +91,38 @@ export default function PremiumHero() {
       </div>
 
       <div className="relative max-w-[1800px] mx-auto px-6 lg:px-16 pt-20 pb-32">
-        {/* IMPACTFUL HEADLINE WITH GOLD TYPOGRAPHY */}
-        <div className="text-center mb-16 relative z-10">
-          <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black text-white leading-[0.95] tracking-tight mb-6">
-            <span className="block">Find Your</span>
-            <span className="relative inline-block mt-2">
-              <span className="bg-gradient-to-r from-[#D4AF37] via-[#F4E5B8] to-[#D4AF37] bg-clip-text text-transparent">
-                Dream Oasis
-              </span>
-              {/* Gold micro-underline with subtle glow */}
-              <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent shadow-[0_0_20px_rgba(212,175,55,0.6)]"></div>
-            </span>
+        {/* COMPACT HEADLINE - ONE LINE */}
+        <div className="text-center mb-12 relative z-10">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight mb-4">
+            Find Your <span className="bg-gradient-to-r from-[#D4AF37] via-[#F4E5B8] to-[#D4AF37] bg-clip-text text-transparent">Dream Oasis</span>
           </h1>
-          <p className="text-xl lg:text-2xl text-gray-400 max-w-3xl mx-auto font-light leading-relaxed mb-12">
+          <p className="text-base lg:text-lg text-gray-400 max-w-2xl mx-auto font-light leading-relaxed mb-6">
             AI-powered property discovery in Dubai's most exclusive locations
           </p>
 
-          {/* IRREGULAR FEATURE BADGES */}
-          <div className="flex flex-wrap justify-center items-center gap-4 lg:gap-5">
-            {/* Badge 1 - Larger, gold outline with emerald fill on hover */}
-            <div className="group px-6 py-3 bg-[#0A0A0A]/60 backdrop-blur-xl border border-[#D4AF37]/40 rounded-full hover:bg-[#10B981]/10 hover:border-[#10B981]/60 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_25px_rgba(16,185,129,0.3)] hover:-translate-y-1">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-[#10B981]" />
-                <span className="text-sm font-bold text-[#D4AF37] group-hover:text-[#10B981]">Live ROI & Comps</span>
+          {/* COMPACT FEATURE BADGES - ONE LINE */}
+          <div className="flex flex-wrap justify-center items-center gap-2">
+            {/* Badge 1 */}
+            <div className="group px-4 py-2 bg-[#0A0A0A]/60 backdrop-blur-xl border border-[#D4AF37]/40 rounded-full hover:bg-[#10B981]/10 hover:border-[#10B981]/60 transition-all duration-300">
+              <div className="flex items-center gap-1.5">
+                <TrendingUp className="w-3.5 h-3.5 text-[#10B981]" />
+                <span className="text-xs font-bold text-[#D4AF37] group-hover:text-[#10B981]">Live ROI & Comps</span>
               </div>
             </div>
 
-            {/* Badge 2 - Medium, gold text on black glass */}
-            <div className="group px-5 py-2.5 bg-[#D4AF37]/5 backdrop-blur-xl border border-[#D4AF37]/30 rounded-full hover:bg-[#D4AF37]/15 hover:border-[#D4AF37]/60 transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] hover:-translate-y-1">
-              <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4 text-[#D4AF37]" />
-                <span className="text-sm font-semibold text-white">RERA/DLD Compliant</span>
+            {/* Badge 2 */}
+            <div className="group px-4 py-2 bg-[#D4AF37]/5 backdrop-blur-xl border border-[#D4AF37]/30 rounded-full hover:bg-[#D4AF37]/15 hover:border-[#D4AF37]/60 transition-all duration-300">
+              <div className="flex items-center gap-1.5">
+                <Shield className="w-3.5 h-3.5 text-[#D4AF37]" />
+                <span className="text-xs font-semibold text-white">RERA/DLD Compliant</span>
               </div>
             </div>
 
-            {/* Badge 3 - Smaller pill, emerald accent */}
-            <div className="group px-5 py-2.5 bg-[#10B981]/5 backdrop-blur-xl border border-[#10B981]/30 rounded-full hover:bg-[#10B981]/15 hover:border-[#10B981]/60 transition-all duration-300 shadow-md hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:-translate-y-1">
-              <div className="flex items-center gap-2">
-                <Star className="w-4 h-4 text-[#D4AF37] fill-[#D4AF37]" />
-                <span className="text-sm font-medium text-gray-300 group-hover:text-white">Personalized Shortlists</span>
+            {/* Badge 3 */}
+            <div className="group px-4 py-2 bg-[#10B981]/5 backdrop-blur-xl border border-[#10B981]/30 rounded-full hover:bg-[#10B981]/15 hover:border-[#10B981]/60 transition-all duration-300">
+              <div className="flex items-center gap-1.5">
+                <Star className="w-3.5 h-3.5 text-[#D4AF37] fill-[#D4AF37]" />
+                <span className="text-xs font-medium text-gray-300 group-hover:text-white">Personalized Shortlists</span>
               </div>
             </div>
           </div>
