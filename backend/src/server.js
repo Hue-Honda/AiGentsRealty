@@ -83,6 +83,30 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Database connection test
+app.get('/db-test', async (req, res) => {
+  try {
+    const { query } = await import('./config/database.js');
+    const result = await query('SELECT NOW() as current_time, version() as db_version');
+    res.json({
+      success: true,
+      database_connected: true,
+      current_time: result.rows[0].current_time,
+      db_version: result.rows[0].db_version,
+      has_database_url: !!process.env.DATABASE_URL,
+      database_url_prefix: process.env.DATABASE_URL?.substring(0, 30) + '...'
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      database_connected: false,
+      error: error.message,
+      has_database_url: !!process.env.DATABASE_URL,
+      database_url_prefix: process.env.DATABASE_URL?.substring(0, 30) + '...'
+    });
+  }
+});
+
 // API Info
 app.get('/api', (req, res) => {
   res.json({
