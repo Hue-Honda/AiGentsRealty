@@ -123,6 +123,60 @@ app.get('/api', (req, res) => {
   });
 });
 
+// Create leads table migration endpoint (run once)
+app.get('/migrate-leads', async (req, res) => {
+  try {
+    const { query } = await import('./config/database.js');
+
+    // Create leads table
+    await query(`
+      CREATE TABLE IF NOT EXISTS leads (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255),
+        phone VARCHAR(50),
+        email VARCHAR(255),
+        budget VARCHAR(100),
+        interested_project VARCHAR(255),
+        preferred_area VARCHAR(255),
+        bedrooms VARCHAR(50),
+        timeline VARCHAR(100),
+        investment_purpose VARCHAR(50),
+        notes TEXT,
+        source VARCHAR(50) DEFAULT 'genie_chat',
+        status VARCHAR(50) DEFAULT 'new',
+        conversation_summary TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      );
+    `);
+
+    // Create indexes
+    await query(`CREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status);`);
+    await query(`CREATE INDEX IF NOT EXISTS idx_leads_created_at ON leads(created_at DESC);`);
+    await query(`CREATE INDEX IF NOT EXISTS idx_leads_phone ON leads(phone);`);
+    await query(`CREATE INDEX IF NOT EXISTS idx_leads_email ON leads(email);`);
+
+    // Verify table
+    const result = await query(`
+      SELECT column_name, data_type
+      FROM information_schema.columns
+      WHERE table_name = 'leads'
+      ORDER BY ordinal_position;
+    `);
+
+    res.json({
+      success: true,
+      message: 'Leads table created successfully',
+      columns: result.rows
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 // Use routes
 app.use('/api/chat', chatRoutes);
 app.use('/api/areas', areasRoutes);

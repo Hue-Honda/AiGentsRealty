@@ -13,6 +13,35 @@ dotenv.config({ path: join(__dirname, '../../.env') });
 const router = express.Router();
 
 /**
+ * Get ALL projects from database for AI context
+ * The AI should always know about the full portfolio
+ */
+async function getAllProjects() {
+  try {
+    const queryText = `
+      SELECT
+        p.id, p.name, p.slug, p.location, p.description,
+        p.price_from, p.payment_plan, p.completion_date,
+        p.status, p.match_score, p.images,
+        p.unit_types, p.amenities,
+        d.name as developer_name,
+        a.name as area_name, a.slug as area_slug
+      FROM projects p
+      LEFT JOIN developers d ON p.developer_id = d.id
+      LEFT JOIN areas a ON p.area_id = a.id
+      WHERE p.status = 'Off Plan'
+      ORDER BY p.match_score DESC NULLS LAST, p.created_at DESC
+    `;
+
+    const result = await query(queryText);
+    return result.rows;
+  } catch (error) {
+    console.error('Error fetching all projects:', error);
+    return [];
+  }
+}
+
+/**
  * Query database for projects matching user requirements
  */
 async function findMatchingProjects(userMessage) {
@@ -144,9 +173,51 @@ Would you like more details about any of these properties?`;
   return "I understand you're looking for off-plan properties in Dubai. Could you tell me more about:\n\n1. Your preferred location?\n2. Budget range?\n3. Property type (apartment, villa, townhouse)?\n4. Bedrooms needed?\n\nThis will help me find the perfect match for you!";
 }
 
-// Ollama configuration from env
-const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || 'http://localhost:11434';
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'llama2';
+/**
+ * Save a lead to the database
+ */
+async function saveLead(leadData) {
+  try {
+    const {
+      name, phone, email, budget, interested_project,
+      preferred_area, bedrooms, timeline, investment_purpose, notes
+    } = leadData;
+
+    // Only save if we have at least a phone or email
+    if (!phone && !email) {
+      console.log('Lead not saved - no contact info provided');
+      return { success: false, reason: 'No contact information' };
+    }
+
+    const queryText = `
+      INSERT INTO leads (
+        name, phone, email, budget, interested_project,
+        preferred_area, bedrooms, timeline, investment_purpose, notes
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING id, created_at
+    `;
+
+    const params = [
+      name || null,
+      phone || null,
+      email || null,
+      budget || null,
+      interested_project || null,
+      preferred_area || null,
+      bedrooms || null,
+      timeline || null,
+      investment_purpose || null,
+      notes || null
+    ];
+
+    const result = await query(queryText, params);
+    console.log('Lead saved successfully:', result.rows[0]);
+    return { success: true, leadId: result.rows[0].id };
+  } catch (error) {
+    console.error('Error saving lead:', error);
+    return { success: false, error: error.message };
+  }
+}
 
 /**
  * POST /api/chat
@@ -163,15 +234,15 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // Query database for matching projects based on user message
-    const matchingProjects = await findMatchingProjects(message);
-    console.log(`Found ${matchingProjects.length} matching projects for query`);
+    // Get ALL projects from database - AI should always know the full portfolio
+    const allProjects = await getAllProjects();
+    console.log(`Loaded ${allProjects.length} projects for AI context`);
 
-    // Build project context for AI
+    // Build project context for AI with FULL portfolio
     let projectContext = '';
-    if (matchingProjects.length > 0) {
-      projectContext = '\n\n## AVAILABLE PROJECTS IN OUR PORTFOLIO:\n\n';
-      matchingProjects.forEach((project, index) => {
+    if (allProjects.length > 0) {
+      projectContext = '\n\n## OUR COMPLETE OFF-PLAN PORTFOLIO:\n\n';
+      allProjects.forEach((project, index) => {
         const bedrooms = project.unit_types?.map((u) => u.bedrooms).filter(Boolean).join(', ') || 'N/A';
         const amenitiesStr = project.amenities?.slice(0, 5).join(', ') || 'Premium amenities';
 
@@ -188,7 +259,9 @@ router.post('/', async (req, res) => {
 `;
       });
 
-      projectContext += `\n**IMPORTANT**: These are REAL projects from our current portfolio. You MUST recommend from these specific projects based on the client's requirements. Discuss their features, benefits, payment plans, and ROI potential. Use the exact project names, prices, and details provided above.\n`;
+      projectContext += `\n**CRITICAL**: These are ALL ${allProjects.length} real projects in our current portfolio. You MUST ONLY recommend from these specific projects. When a client asks about properties, recommend from this list based on their requirements. Use exact project names, prices, and details.\n`;
+    } else {
+      projectContext = '\n\n**NOTE**: No projects currently available in the database. Ask the client to check back later or contact the team directly.\n';
     }
 
     // Build the conversation context
@@ -260,6 +333,18 @@ Let me know your budget and preferences, and I'll recommend the best properties 
 - Always redirect to Dubai real estate if asked about other topics
 - Typical payment plans: 10-20% down, 60-70% during construction, 20-30% on handover
 
+## LEAD CAPTURE - VERY IMPORTANT:
+When a client provides ANY of the following, use the save_lead function to capture their information:
+- Phone number (e.g., "call me at 050-123-4567", "my number is +971...")
+- Email address (e.g., "email me at...", "my email is...")
+- Expresses strong buying intent (e.g., "I want to buy", "I'm ready to invest", "book a viewing")
+
+When you capture a lead:
+1. Call the save_lead function with all information you have gathered from the conversation
+2. Confirm to the client that you've saved their details
+3. Let them know a specialist will contact them within 24 hours
+4. Continue helping them with any questions
+
 Remember: You are a Dubai off-plan property specialist ONLY. Stay in your lane. Never provide information outside your expertise. Your ONLY job is to help clients find and invest in Dubai off-plan properties from our portfolio.`;
 
     // Build messages array for OpenAI
@@ -272,16 +357,69 @@ Remember: You are a Dubai off-plan property specialist ONLY. Stay in your lane. 
       { role: 'user', content: message }
     ];
 
-    // Call OpenAI API
+    // Call OpenAI API with function calling enabled
     try {
       const aiResponse = await generateChatResponse(messages, {
-        model: 'gpt-4o-mini', // Using GPT-4o-mini for best cost/performance ratio
+        model: 'gpt-4o-mini',
         temperature: 0.7,
-        max_tokens: 1000
+        max_tokens: 1000,
+        enableFunctions: true // Enable lead capture function
       });
 
+      // Handle function call (lead capture)
+      if (aiResponse.type === 'function_call' && aiResponse.function_name === 'save_lead') {
+        console.log('Function call detected: save_lead', aiResponse.arguments);
+
+        // Save the lead to database
+        const leadResult = await saveLead(aiResponse.arguments);
+
+        // Build a follow-up message to get AI's confirmation response
+        const followUpMessages = [
+          ...messages,
+          {
+            role: 'assistant',
+            content: null,
+            tool_calls: [{
+              id: 'call_lead',
+              type: 'function',
+              function: {
+                name: 'save_lead',
+                arguments: JSON.stringify(aiResponse.arguments)
+              }
+            }]
+          },
+          {
+            role: 'tool',
+            tool_call_id: 'call_lead',
+            content: JSON.stringify({
+              success: leadResult.success,
+              message: leadResult.success
+                ? 'Lead saved successfully. Confirm to the client that their details have been saved and a specialist will contact them within 24 hours.'
+                : 'Could not save lead. Ask the client to provide a phone number or email.'
+            })
+          }
+        ];
+
+        // Get the AI's confirmation response
+        const confirmationResponse = await generateChatResponse(followUpMessages, {
+          model: 'gpt-4o-mini',
+          temperature: 0.7,
+          max_tokens: 500,
+          enableFunctions: false // No functions for confirmation
+        });
+
+        return res.json({
+          message: confirmationResponse.content || confirmationResponse,
+          model: 'gpt-4o-mini',
+          timestamp: new Date().toISOString(),
+          leadCaptured: leadResult.success,
+          leadId: leadResult.leadId
+        });
+      }
+
+      // Regular text response
       res.json({
-        message: aiResponse,
+        message: aiResponse.content || aiResponse,
         model: 'gpt-4o-mini',
         timestamp: new Date().toISOString()
       });
@@ -290,7 +428,7 @@ Remember: You are a Dubai off-plan property specialist ONLY. Stay in your lane. 
 
       // Fallback response when OpenAI is not available
       return res.json({
-        message: generateFallbackResponse(message, matchingProjects),
+        message: generateFallbackResponse(message, allProjects),
         model: 'fallback',
         timestamp: new Date().toISOString(),
         note: 'OpenAI service unavailable, using fallback response'
