@@ -9,6 +9,7 @@ import { rateLimit } from 'express-rate-limit';
 import chatRoutes from './routes/chat.js';
 import areasRoutes from './routes/areas.js';
 import projectsRoutes from './routes/projects.js';
+import migrationsRoutes from './routes/migrations.js';
 
 // Load environment variables
 dotenv.config();
@@ -181,6 +182,7 @@ app.get('/migrate-leads', async (req, res) => {
 app.use('/api/chat', chatRoutes);
 app.use('/api/areas', areasRoutes);
 app.use('/api/projects', projectsRoutes);
+app.use('/migrations', migrationsRoutes);
 
 // ============================================================================
 // ERROR HANDLING
