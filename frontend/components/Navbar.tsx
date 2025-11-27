@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import Link from 'next/link';
-import { Building2, ChevronDown, Menu, X, Sparkles, BookOpen, BarChart3, MapPin, Phone, Search } from 'lucide-react';
+import { Building2, ChevronDown, Menu, X, BookOpen, BarChart3, MapPin, Phone } from 'lucide-react';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,72 +24,48 @@ export default function Navbar() {
 
   const navigation = [
     {
-      name: 'Explore',
-      icon: <Search className="w-4 h-4" />,
-      href: '/explore'
-    },
-    {
-      name: 'Projects',
+      name: 'Properties',
       icon: <Building2 className="w-4 h-4" />,
       href: '/projects',
       dropdown: [
-        { section: 'Browse By', items: [
+        { section: 'Residential', items: [
+          { name: 'All Projects', href: '/projects' },
           { name: 'By Price Range', href: '/projects/by-price' },
           { name: 'By Location', href: '/projects/by-location' },
-          { name: 'By Developer', href: '/projects/by-developer' },
-          { name: 'By Property Type', href: '/projects/by-type' },
-          { name: 'By Completion Date', href: '/projects/by-completion' },
-          { name: 'By Payment Plan', href: '/projects/by-payment-plan' },
-          { name: 'By Lifestyle', href: '/projects/by-lifestyle' },
-        ]},
-        { section: 'Featured', items: [
-          { name: "Editor's Picks", href: '/projects/editors-picks' },
+          { name: 'New Launches', href: '/projects/new-launches' },
           { name: 'Best ROI', href: '/projects/best-roi' },
-          { name: 'Trending Now', href: '/projects/trending' },
-          { name: 'Just Launched', href: '/projects/new-launches' },
-        ]}
-      ]
-    },
-    {
-      name: 'Commercial',
-      icon: <Building2 className="w-4 h-4" />,
-      href: '/commercial',
-      dropdown: [
-        { section: 'Property Types', items: [
+        ]},
+        { section: 'Commercial', items: [
           { name: 'Office Spaces', href: '/commercial/office-spaces' },
           { name: 'Retail Units', href: '/commercial/retail' },
-          { name: 'Showrooms', href: '/commercial/showrooms' },
           { name: 'Warehouses', href: '/commercial/warehouses' },
-          { name: 'Mixed-Use Developments', href: '/commercial/mixed-use' },
+          { name: 'High Yield', href: '/commercial/high-yield' },
         ]},
-        { section: 'Investment Opportunities', items: [
-          { name: 'High Yield Commercial', href: '/commercial/high-yield' },
-          { name: 'Business Bay Projects', href: '/commercial/business-bay' },
-          { name: 'DIFC Properties', href: '/commercial/difc' },
-          { name: 'Free Zone Investments', href: '/commercial/free-zones' },
-        ]},
-        { section: 'Resources', items: [
-          { name: 'Commercial ROI Calculator', href: '/commercial/roi-calculator' },
-          { name: 'Rental Yield Analysis', href: '/commercial/rental-yield' },
-          { name: 'Market Trends', href: '/commercial/market-trends' },
-        ]}
-      ]
-    },
-    {
-      name: 'Developers',
-      icon: <Building2 className="w-4 h-4" />,
-      href: '/developers',
-      dropdown: [
-        { section: 'Top Developers', items: [
+        { section: 'Developers', items: [
           { name: 'Emaar Properties', href: '/developers/emaar' },
           { name: 'DAMAC Properties', href: '/developers/damac' },
           { name: 'Nakheel', href: '/developers/nakheel' },
-          { name: 'View All Developers', href: '/developers' },
+          { name: 'All Developers', href: '/developers' },
+        ]}
+      ]
+    },
+    {
+      name: 'Areas',
+      icon: <MapPin className="w-4 h-4" />,
+      href: '/areas',
+      dropdown: [
+        { section: 'Popular Areas', items: [
+          { name: 'Dubai Marina', href: '/areas/dubai-marina' },
+          { name: 'Downtown Dubai', href: '/areas/downtown-dubai' },
+          { name: 'Business Bay', href: '/areas/business-bay' },
+          { name: 'Palm Jumeirah', href: '/areas/palm-jumeirah' },
+          { name: 'Dubai Creek Harbour', href: '/areas/dubai-creek-harbour' },
         ]},
-        { section: 'Rankings', items: [
-          { name: 'By Track Record', href: '/developers/rankings/track-record' },
-          { name: 'By On-Time Delivery', href: '/developers/rankings/on-time' },
-          { name: 'By Customer Satisfaction', href: '/developers/rankings/satisfaction' },
+        { section: 'Emerging Areas', items: [
+          { name: 'Dubai South', href: '/areas/dubai-south' },
+          { name: 'Jumeirah Village Circle', href: '/areas/jvc' },
+          { name: 'Mohammed Bin Rashid City', href: '/areas/mbr-city' },
+          { name: 'All Areas', href: '/areas' },
         ]}
       ]
     },
@@ -98,37 +74,32 @@ export default function Navbar() {
       icon: <BookOpen className="w-4 h-4" />,
       href: '/investment',
       dropdown: [
-        { section: 'Getting Started', items: [
+        { section: 'Guides', items: [
           { name: 'Off-Plan 101', href: '/investment/offplan-101' },
           { name: 'Why Dubai Off-Plan?', href: '/investment/why-dubai' },
           { name: 'First-Time Buyer Guide', href: '/investment/first-time' },
         ]},
-        { section: 'Tools & Calculators', items: [
+        { section: 'Tools', items: [
           { name: 'ROI Calculator', href: '/investment/roi-calculator' },
           { name: 'Payment Plan Simulator', href: '/investment/payment-simulator' },
           { name: 'Budget Calculator', href: '/investment/budget-calculator' },
         ]},
         { section: 'Strategies', items: [
           { name: 'Flip Strategy', href: '/investment/flip-strategy' },
-          { name: 'Rental Income Strategy', href: '/investment/rental-strategy' },
-          { name: 'Long-Term Appreciation', href: '/investment/appreciation' },
+          { name: 'Rental Income', href: '/investment/rental-strategy' },
+          { name: 'Long-Term Growth', href: '/investment/appreciation' },
         ]}
       ]
-    },
-    {
-      name: 'Communities',
-      icon: <MapPin className="w-4 h-4" />,
-      href: '/communities'
     },
     {
       name: 'Insights',
       icon: <BarChart3 className="w-4 h-4" />,
       href: '/insights',
       dropdown: [
-        { section: 'Latest', items: [
+        { section: 'Market Intelligence', items: [
           { name: 'Market News', href: '/insights/news' },
           { name: 'Monthly Reports', href: '/insights/reports' },
-          { name: 'Investment Insights', href: '/insights/investment' },
+          { name: 'Price Trends', href: '/insights/price-trends' },
           { name: 'Developer Updates', href: '/insights/developers' },
         ]}
       ]
@@ -157,15 +128,14 @@ export default function Navbar() {
               </span>
             </Link>
 
-            {/* Desktop Navigation - Asymmetric Spacing */}
-            <div className="hidden lg:flex items-center gap-3">
-              {navigation.map((item, index) => (
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center gap-1">
+              {navigation.map((item) => (
                 <div
                   key={item.name}
                   className="relative"
                   onMouseEnter={() => handleMouseEnter(item.name)}
                   onMouseLeave={handleMouseLeave}
-                  style={{ marginLeft: index === 0 ? '0' : index % 2 === 0 ? '1.5rem' : '0.75rem' }}
                 >
                   <Link
                     href={item.href}
@@ -213,22 +183,15 @@ export default function Navbar() {
             </div>
 
             {/* Right Actions */}
-            <div className="hidden lg:flex items-center gap-4">
-              {/* Contact Button - Gold Text with Emerald Hover */}
-              <button className="group flex items-center gap-2 text-[#D4AF37] hover:text-[#10B981] font-semibold px-4 py-2.5 rounded-lg transition-all relative">
+            <div className="hidden lg:flex items-center">
+              {/* Contact Button - Gold Border with Emerald Hover */}
+              <Link
+                href="/contact"
+                className="group flex items-center gap-2 bg-[#0A0A0A]/80 backdrop-blur-xl border border-[#D4AF37] text-[#D4AF37] px-5 py-2.5 rounded-xl font-semibold hover:-translate-y-0.5 transition-all duration-300 shadow-[0_0_15px_rgba(212,175,55,0.2)] hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] hover:border-[#10B981] hover:text-[#10B981]"
+              >
                 <Phone className="w-4 h-4" />
-                <span className="relative">
-                  Contact
-                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#10B981] group-hover:w-full transition-all duration-300"></span>
-                </span>
-              </button>
-
-              {/* AI Search Button - Black Glass + Gold Border + Emerald Glow + Levitation */}
-              <button className="group relative flex items-center gap-2 bg-[#0A0A0A]/80 backdrop-blur-xl border border-[#D4AF37] text-[#D4AF37] px-6 py-3 rounded-xl font-bold hover:-translate-y-0.5 transition-all duration-300 shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] hover:border-[#10B981]">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#10B981]/0 via-[#10B981]/10 to-[#10B981]/0 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"></div>
-                <Sparkles className="w-5 h-5 relative z-10 group-hover:text-[#10B981] transition-colors" />
-                <span className="relative z-10 group-hover:text-[#10B981] transition-colors">AI Search</span>
-              </button>
+                <span>Contact</span>
+              </Link>
             </div>
 
             {/* Mobile Menu Button */}
@@ -257,15 +220,15 @@ export default function Navbar() {
                   </Link>
                 </div>
               ))}
-              <div className="pt-4 space-y-2 border-t border-[#D4AF37]/20">
-                <button className="w-full flex items-center justify-center gap-2 text-gray-300 px-4 py-3 rounded-lg border-2 border-[#D4AF37]/30 hover:border-[#10B981] hover:text-[#10B981] font-medium transition-colors">
+              <div className="pt-4 border-t border-[#D4AF37]/20">
+                <Link
+                  href="/contact"
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#D4AF37] to-[#B8941E] text-black px-4 py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all"
+                  onClick={() => setIsMenuOpen(false)}
+                >
                   <Phone className="w-4 h-4" />
                   Contact Us
-                </button>
-                <button className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#D4AF37] to-[#B8941E] text-black px-4 py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all">
-                  <Sparkles className="w-4 h-4" />
-                  AI Search
-                </button>
+                </Link>
               </div>
             </div>
           </div>
