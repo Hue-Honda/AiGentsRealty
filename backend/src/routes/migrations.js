@@ -311,7 +311,7 @@ router.get('/seed-data', async (req, res) => {
 
       await query(`
         INSERT INTO projects (name, slug, developer_id, area_id, location, price_from, starting_price, payment_plan, completion_date, handover, status, description, amenities, unit_types, images, bedrooms, bathrooms, sqft, match_score)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13::text[], $14::jsonb, $15::text[], $16, $17, $18, $19)
         ON CONFLICT (slug) DO UPDATE SET
           price_from = EXCLUDED.price_from,
           description = EXCLUDED.description,
