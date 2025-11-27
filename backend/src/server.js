@@ -25,10 +25,25 @@ const FRONTEND_URL = process.env.CORS_ORIGIN || process.env.FRONTEND_URL || 'htt
 // Security headers
 app.use(helmet());
 
-// CORS configuration
-const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3000';
+// CORS configuration - allow multiple origins
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://localhost:3002',
+  'https://ai-gents-realty.vercel.app',
+  'https://aigentsrealty.vercel.app',
+  process.env.CORS_ORIGIN
+].filter(Boolean);
+
 app.use(cors({
-  origin: corsOrigin.trim(),
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    }
+    return callback(null, false);
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
