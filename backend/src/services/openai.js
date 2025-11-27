@@ -68,6 +68,24 @@ const leadCaptureFunctions = [
         required: []
       }
     }
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'open_canvas',
+      description: 'Open an interactive canvas tool to help the user. ALWAYS call this function when the user asks about: mortgage calculations, payment calculators, ROI analysis, investment returns, property gallery, floor plans, neighborhood guides, booking viewings, price history, or map views. This makes the tool appear on screen.',
+      parameters: {
+        type: 'object',
+        properties: {
+          canvas_type: {
+            type: 'string',
+            enum: ['mortgage', 'investment', 'gallery', 'floorplan', 'neighborhood', 'booking', 'price_history', 'map'],
+            description: 'The type of canvas tool to open: mortgage (for loan/EMI/affordability calculations), investment (for ROI/yield/returns analysis), gallery (for photos/virtual tours), floorplan (for layouts/dimensions), neighborhood (for nearby amenities/schools/hospitals), booking (for scheduling viewings), price_history (for price trends), map (for location view)'
+          }
+        },
+        required: ['canvas_type']
+      }
+    }
   }
 ];
 
@@ -105,12 +123,19 @@ export async function generateChatResponse(messages, options = {}) {
 
     const message = response.choices[0].message;
 
-    // Check if the model wants to call a function
+    // Check if the model wants to call functions
     if (message.tool_calls && message.tool_calls.length > 0) {
+      // Parse all function calls
+      const functionCalls = message.tool_calls.map(tc => ({
+        function_name: tc.function.name,
+        arguments: JSON.parse(tc.function.arguments)
+      }));
+
       return {
         type: 'function_call',
-        function_name: message.tool_calls[0].function.name,
-        arguments: JSON.parse(message.tool_calls[0].function.arguments),
+        function_name: functionCalls[0].function_name,
+        arguments: functionCalls[0].arguments,
+        all_function_calls: functionCalls,
         content: message.content
       };
     }

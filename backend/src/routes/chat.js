@@ -759,34 +759,34 @@ router.post('/', async (req, res) => {
 
 7. **Educate While Showing**: Explain payment plans, ROI potential briefly while presenting options
 
-## SMART CANVAS INTERACTIVE TOOLS - EMBRACE THESE FEATURES:
-You have access to interactive Smart Canvas tools that appear on screen when users ask about them. ALWAYS help with these - they are core features:
+## SMART CANVAS INTERACTIVE TOOLS - USE THE open_canvas FUNCTION:
+You have access to the open_canvas function that triggers interactive tools on screen. ALWAYS call this function when users need these tools:
 
-📊 **MORTGAGE CALCULATOR** - When users ask "calculate mortgage", "monthly payment", "can I afford", "EMI calculator":
-→ Say: "Great! I've opened the Mortgage Calculator on the right. You can adjust the loan amount, down payment %, and tenure to see your estimated monthly payments. In Dubai, typical mortgage rates are around 4-6% for residents."
+📊 **MORTGAGE CALCULATOR** - When users ask about mortgage, EMI, loan, monthly payment, affordability, financing:
+→ Call open_canvas with canvas_type: "mortgage"
 
-🖼️ **GALLERY & VIRTUAL TOURS** - When users ask "show photos", "pictures", "virtual tour", "what does it look like":
-→ Say: "I've loaded the property gallery for you! You can browse images and see what the project looks like. Want me to tell you more about the finishes and amenities?"
+📈 **INVESTMENT ANALYSIS** - When users ask about ROI, returns, investment, yield, profit, capital appreciation:
+→ Call open_canvas with canvas_type: "investment"
 
-📈 **INVESTMENT ANALYSIS** - When users ask "investment analysis", "ROI breakdown", "is it a good investment":
-→ Say: "I've opened the Investment Analysis tool showing projected returns, rental yield, and capital appreciation. Dubai off-plan typically sees 15-30% gains during construction."
+🖼️ **GALLERY & VIRTUAL TOURS** - When users ask for photos, pictures, images, virtual tour, what does it look like:
+→ Call open_canvas with canvas_type: "gallery"
 
-🏘️ **NEIGHBORHOOD GUIDE** - When users ask "what's nearby", "schools nearby", "hospitals nearby", "amenities", "what schools", "what hospitals":
-→ Say: "I've opened the Neighborhood Guide showing nearby facilities! Dubai's prime areas typically offer excellent schools (GEMS, Taaleem), healthcare (Mediclinic, NMC), malls, and metro access. Which area or property are you interested in? I can give you specific details!"
+📐 **FLOOR PLANS** - When users ask about floor plan, layout, room sizes, sqft, dimensions:
+→ Call open_canvas with canvas_type: "floorplan"
 
-📅 **BOOKING/VIEWING** - When users ask "book viewing", "schedule visit", "want to see the property":
-→ Say: "I've opened the booking form! Fill in your preferred date and time, and our team will confirm your viewing appointment."
+🏘️ **NEIGHBORHOOD GUIDE** - When users ask about nearby schools, hospitals, amenities, metro, what's around:
+→ Call open_canvas with canvas_type: "neighborhood"
 
-📐 **FLOOR PLANS** - When users ask "floor plan", "layout", "room sizes", "sqft":
-→ Say: "I've loaded the floor plans for you to explore. You can see the unit layouts and dimensions."
+📅 **BOOKING/VIEWING** - When users want to book viewing, schedule visit, see the property:
+→ Call open_canvas with canvas_type: "booking"
 
-📉 **PRICE HISTORY** - When users ask "price history", "how much has it increased", "value trend":
-→ Say: "Here's the price trend chart showing how values have changed. Dubai Marina, for example, has seen steady 8-12% annual appreciation."
+📉 **PRICE HISTORY** - When users ask about price history, value trend, how much has it increased:
+→ Call open_canvas with canvas_type: "price_history"
 
-🗺️ **MAP VIEW** - When users ask "show map", "where is it", "location on map":
-→ Say: "I've loaded the map showing the exact location. You can see nearby landmarks and transit options."
+🗺️ **MAP VIEW** - When users ask about location, show map, where is it:
+→ Call open_canvas with canvas_type: "map"
 
-These are NOT off-topic! They are essential property research tools. ALWAYS engage helpfully with these requests.
+IMPORTANT: Always call the open_canvas function when any of these topics come up. This actually opens the tool on screen. Just saying "I've opened..." without calling the function won't work!
 
 ⚠️ **IMPORTANT**: Questions about "schools nearby", "hospitals nearby", "what's around", "amenities", "metro", "transport" are PROPERTY-RELATED questions about neighborhood facilities. These are ON-TOPIC and you should HELP with them using the Neighborhood Guide canvas. Do NOT deflect these as off-topic!
 
@@ -895,6 +895,26 @@ Remember: You are a Dubai off-plan property specialist ONLY. Stay in your lane. 
         enableFunctions: true // Enable lead capture function
       });
 
+      // Check for open_canvas function call (can be combined with other calls)
+      let aiTriggeredCanvas = null;
+      if (aiResponse.type === 'function_call' && aiResponse.all_function_calls) {
+        const canvasCall = aiResponse.all_function_calls.find(fc => fc.function_name === 'open_canvas');
+        if (canvasCall && canvasCall.arguments.canvas_type) {
+          console.log('AI triggered canvas:', canvasCall.arguments.canvas_type);
+          const canvasTypeMap = {
+            mortgage: { type: 'mortgage', title: 'Mortgage Calculator', subtitle: 'Calculate your monthly payments' },
+            investment: { type: 'investment', title: 'Investment Analysis', subtitle: 'ROI and financial projections' },
+            gallery: { type: 'gallery', title: 'Property Gallery', subtitle: 'Photos and virtual tour' },
+            floorplan: { type: 'floorplan', title: 'Floor Plans', subtitle: 'Unit layouts and dimensions' },
+            neighborhood: { type: 'neighborhood', title: 'Neighborhood Guide', subtitle: 'Nearby amenities and facilities' },
+            booking: { type: 'booking', title: 'Schedule a Viewing', subtitle: 'Book your property visit' },
+            price_history: { type: 'price_history', title: 'Price History', subtitle: 'Historical price trends' },
+            map: { type: 'map', title: 'Property Location', subtitle: 'Interactive map view' }
+          };
+          aiTriggeredCanvas = canvasTypeMap[canvasCall.arguments.canvas_type];
+        }
+      }
+
       // Handle function call (lead capture)
       if (aiResponse.type === 'function_call' && aiResponse.function_name === 'save_lead') {
         console.log('Function call detected: save_lead', aiResponse.arguments);
@@ -937,12 +957,79 @@ Remember: You are a Dubai off-plan property specialist ONLY. Stay in your lane. 
           enableFunctions: false // No functions for confirmation
         });
 
-        return res.json({
+        // Include canvas if AI triggered it
+        const response = {
           message: confirmationResponse.content || confirmationResponse,
           model: 'gpt-4o-mini',
           timestamp: new Date().toISOString(),
           leadCaptured: leadResult.success,
           leadId: leadResult.leadId
+        };
+        if (aiTriggeredCanvas) {
+          response.canvas = aiTriggeredCanvas;
+        }
+        return res.json(response);
+      }
+
+      // Handle open_canvas function call without save_lead
+      if (aiResponse.type === 'function_call' && aiResponse.function_name === 'open_canvas') {
+        console.log('Function call detected: open_canvas', aiResponse.arguments);
+
+        // Get matching projects to display
+        const matchingProjects = await findMatchingProjects(message);
+        const recommendedProjects = matchingProjects.slice(0, 4).map(p => ({
+          id: p.id,
+          name: p.name,
+          slug: p.slug,
+          location: p.location || p.area_name,
+          price_from: p.price_from,
+          payment_plan: p.payment_plan,
+          completion_date: p.completion_date,
+          images: p.images,
+          area_slug: p.area_slug,
+          developer_name: p.developer_name
+        }));
+
+        // Build follow-up to get AI response text
+        const followUpMessages = [
+          ...messages,
+          {
+            role: 'assistant',
+            content: null,
+            tool_calls: [{
+              id: 'call_canvas',
+              type: 'function',
+              function: {
+                name: 'open_canvas',
+                arguments: JSON.stringify(aiResponse.arguments)
+              }
+            }]
+          },
+          {
+            role: 'tool',
+            tool_call_id: 'call_canvas',
+            content: JSON.stringify({
+              success: true,
+              message: `The ${aiResponse.arguments.canvas_type} tool has been opened. Respond naturally to the user about what you've opened.`
+            })
+          }
+        ];
+
+        const canvasResponse = await generateChatResponse(followUpMessages, {
+          model: 'gpt-4o-mini',
+          temperature: 0.7,
+          max_tokens: 500,
+          enableFunctions: false
+        });
+
+        aiTriggeredCanvas.projects = recommendedProjects;
+
+        return res.json({
+          message: canvasResponse.content || canvasResponse,
+          model: 'gpt-4o-mini',
+          timestamp: new Date().toISOString(),
+          recommendedProjects: recommendedProjects.length > 0 ? recommendedProjects : null,
+          canvas: aiTriggeredCanvas
         });
       }
 
