@@ -42,6 +42,382 @@ async function getAllProjects() {
 }
 
 /**
+ * Get real-time statistics from database for smarter canvas
+ */
+async function getDatabaseStats() {
+  try {
+    const stats = {};
+
+    // Get total counts
+    const countsQuery = `
+      SELECT
+        (SELECT COUNT(*) FROM projects WHERE status = 'Off Plan') as total_projects,
+        (SELECT COUNT(*) FROM areas) as total_areas,
+        (SELECT COUNT(*) FROM developers) as total_developers
+    `;
+    const countsResult = await query(countsQuery);
+    stats.counts = countsResult.rows[0];
+
+    // Get area statistics with project counts and price ranges
+    const areasQuery = `
+      SELECT
+        a.name, a.slug,
+        COUNT(p.id) as project_count,
+        MIN(CAST(NULLIF(REGEXP_REPLACE(p.price_from, '[^0-9]', '', 'g'), '') AS NUMERIC)) as min_price,
+        MAX(CAST(NULLIF(REGEXP_REPLACE(p.price_from, '[^0-9]', '', 'g'), '') AS NUMERIC)) as max_price
+      FROM areas a
+      LEFT JOIN projects p ON p.area_id = a.id AND p.status = 'Off Plan'
+      GROUP BY a.id, a.name, a.slug
+      HAVING COUNT(p.id) > 0
+      ORDER BY COUNT(p.id) DESC
+    `;
+    const areasResult = await query(areasQuery);
+    stats.areas = areasResult.rows;
+
+    // Get top developers
+    const developersQuery = `
+      SELECT
+        d.name,
+        COUNT(p.id) as project_count
+      FROM developers d
+      LEFT JOIN projects p ON p.developer_id = d.id AND p.status = 'Off Plan'
+      GROUP BY d.id, d.name
+      HAVING COUNT(p.id) > 0
+      ORDER BY COUNT(p.id) DESC
+      LIMIT 5
+    `;
+    const developersResult = await query(developersQuery);
+    stats.topDevelopers = developersResult.rows;
+
+    return stats;
+  } catch (error) {
+    console.error('Error fetching database stats:', error);
+    return null;
+  }
+}
+
+/**
+ * Get detailed area data with real statistics
+ */
+async function getAreaDetails(areaSlug) {
+  try {
+    const areaQuery = `
+      SELECT
+        a.id, a.name, a.slug, a.description, a.image,
+        COUNT(p.id) as project_count,
+        MIN(CAST(NULLIF(REGEXP_REPLACE(p.price_from, '[^0-9]', '', 'g'), '') AS NUMERIC)) as min_price,
+        MAX(CAST(NULLIF(REGEXP_REPLACE(p.price_from, '[^0-9]', '', 'g'), '') AS NUMERIC)) as max_price,
+        ARRAY_AGG(DISTINCT d.name) FILTER (WHERE d.name IS NOT NULL) as developers
+      FROM areas a
+      LEFT JOIN projects p ON p.area_id = a.id AND p.status = 'Off Plan'
+      LEFT JOIN developers d ON p.developer_id = d.id
+      WHERE a.slug = $1
+      GROUP BY a.id, a.name, a.slug, a.description, a.image
+    `;
+    const result = await query(areaQuery, [areaSlug]);
+    return result.rows[0] || null;
+  } catch (error) {
+    console.error('Error fetching area details:', error);
+    return null;
+  }
+}
+
+/**
+ * Detect what type of canvas action to show based on user message
+ * Now async to fetch real data from database
+ */
+async function detectCanvasAction(message, matchingProjects = [], dbStats = null) {
+  const messageLower = message.toLowerCase();
+
+  // Map intent - user wants to see location/map
+  const mapKeywords = [
+    'show map', 'show me map', 'show the map', 'show me the map', 'map for',
+    'where is it', 'where is this', 'location map', 'show location',
+    'map of', 'on the map', 'google map', 'see the map', 'see map',
+    'where exactly', 'exact location', 'how to get there',
+    'directions to', 'navigate to', 'find on map', 'view map'
+  ];
+
+  if (mapKeywords.some(keyword => messageLower.includes(keyword))) {
+    return {
+      type: 'map',
+      title: 'Property Location',
+      subtitle: 'Interactive map view'
+    };
+  }
+
+  // Mortgage calculator intent
+  const mortgageKeywords = [
+    'mortgage', 'calculate mortgage', 'monthly payment', 'loan calculator',
+    'home loan', 'financing', 'finance options', 'how much will i pay',
+    'emi', 'installments', 'can i afford', 'affordability', 'mortgage calculator',
+    'interest rate', 'down payment calculator', 'what can i afford'
+  ];
+  if (mortgageKeywords.some(keyword => messageLower.includes(keyword))) {
+    return {
+      type: 'mortgage',
+      title: 'Mortgage Calculator',
+      subtitle: 'Calculate your monthly payments'
+    };
+  }
+
+  // Gallery / Virtual tour intent
+  const galleryKeywords = [
+    'gallery', 'photos', 'pictures', 'images', 'show me photos',
+    'virtual tour', 'tour', '360', 'video tour', 'walkthrough',
+    'see inside', 'interior', 'what does it look like', 'show images',
+    'more pictures', 'property photos', 'view gallery'
+  ];
+  if (galleryKeywords.some(keyword => messageLower.includes(keyword))) {
+    return {
+      type: 'gallery',
+      title: 'Property Gallery',
+      subtitle: 'Photos and virtual tour'
+    };
+  }
+
+  // Investment analysis intent
+  const investmentKeywords = [
+    'investment analysis', 'investment return', 'profit', 'profitability',
+    'capital appreciation', 'rental income', 'cash flow', 'break even',
+    'investment potential', 'is it worth', 'good investment', 'investment calculator',
+    'projected returns', 'financial analysis', 'investment breakdown'
+  ];
+  if (investmentKeywords.some(keyword => messageLower.includes(keyword))) {
+    return {
+      type: 'investment',
+      title: 'Investment Analysis',
+      subtitle: 'ROI and financial projections'
+    };
+  }
+
+  // Neighborhood insights intent
+  const neighborhoodKeywords = [
+    'neighborhood', 'nearby', 'schools nearby', 'hospitals', 'shopping',
+    'restaurants', 'metro', 'transport', 'amenities nearby', 'facilities',
+    'what is around', 'surroundings', 'lifestyle', 'community facilities',
+    'public transport', 'schools', 'healthcare', 'supermarket'
+  ];
+  if (neighborhoodKeywords.some(keyword => messageLower.includes(keyword))) {
+    return {
+      type: 'neighborhood',
+      title: 'Neighborhood Guide',
+      subtitle: 'Nearby amenities and facilities'
+    };
+  }
+
+  // Booking / Schedule viewing intent
+  const bookingKeywords = [
+    'book viewing', 'book a viewing', 'schedule visit', 'visit the property', 'see the property',
+    'arrange viewing', 'site visit', 'schedule viewing', 'when can i visit',
+    'available times', 'schedule tour', 'book a tour', 'visit site',
+    'make appointment', 'viewing appointment', 'want to visit'
+  ];
+  if (bookingKeywords.some(keyword => messageLower.includes(keyword))) {
+    return {
+      type: 'booking',
+      title: 'Schedule a Viewing',
+      subtitle: 'Book your property visit'
+    };
+  }
+
+  // Floor plan intent
+  const floorplanKeywords = [
+    'floor plan', 'floorplan', 'layout', 'unit layout', 'room layout',
+    'apartment layout', 'villa layout', 'show layout', 'see layout',
+    'unit plan', 'square feet', 'sqft', 'dimensions', 'room sizes',
+    'how big', 'space', 'floor plans'
+  ];
+  if (floorplanKeywords.some(keyword => messageLower.includes(keyword))) {
+    return {
+      type: 'floorplan',
+      title: 'Floor Plans',
+      subtitle: 'Unit layouts and dimensions'
+    };
+  }
+
+  // Price history intent
+  const priceHistoryKeywords = [
+    'price history', 'price trend', 'price change', 'historical price',
+    'price over time', 'appreciation rate', 'value increase', 'price growth',
+    'how much has it increased', 'past prices', 'price evolution',
+    'value trend', 'market history'
+  ];
+  if (priceHistoryKeywords.some(keyword => messageLower.includes(keyword))) {
+    return {
+      type: 'price_history',
+      title: 'Price History',
+      subtitle: 'Historical price trends'
+    };
+  }
+
+  // Lead capture intent - strong buying signals (note: viewing-related phrases are in booking section)
+  const leadCaptureKeywords = [
+    'contact me', 'call me', 'reach me', 'get in touch',
+    'my number', 'my phone', 'my email', 'email me',
+    'ready to buy', 'want to buy', 'interested in buying',
+    'how do i buy', 'how to buy', 'how can i purchase',
+    'talk to agent', 'speak to someone', 'speak to agent',
+    'consultation', 'schedule a call',
+    'i want to invest', 'ready to invest', 'serious buyer',
+    'send me details', 'more information please'
+  ];
+
+  if (leadCaptureKeywords.some(keyword => messageLower.includes(keyword))) {
+    return {
+      type: 'lead_capture',
+      title: 'Get Expert Advice',
+      subtitle: 'We\'ll contact you within 24 hours'
+    };
+  }
+
+  // Comparison intent - "compare X vs Y", "which is better", "difference between"
+  if (messageLower.includes('compare') || messageLower.includes('vs') ||
+      messageLower.includes('versus') || messageLower.includes('difference between') ||
+      messageLower.includes('which is better')) {
+    return {
+      type: 'comparison',
+      title: 'Project Comparison',
+      subtitle: 'Side-by-side analysis'
+    };
+  }
+
+  // Timeline/Payment plan intent
+  if (messageLower.includes('payment plan') || messageLower.includes('timeline') ||
+      messageLower.includes('installment') || messageLower.includes('pay') ||
+      messageLower.includes('down payment') || messageLower.includes('milestone')) {
+    return {
+      type: 'timeline',
+      title: 'Payment Timeline',
+      subtitle: 'Typical off-plan payment structure'
+    };
+  }
+
+  // Stats/ROI intent
+  if (messageLower.includes('roi') || messageLower.includes('return') ||
+      messageLower.includes('statistics') || messageLower.includes('stats') ||
+      messageLower.includes('market') || messageLower.includes('trend') ||
+      messageLower.includes('yield') || messageLower.includes('appreciation')) {
+    return {
+      type: 'stats',
+      title: 'Market Statistics',
+      subtitle: 'ROI and investment data'
+    };
+  }
+
+  // Developer info intent
+  if (messageLower.includes('developer') || messageLower.includes('emaar') ||
+      messageLower.includes('damac') || messageLower.includes('nakheel') ||
+      messageLower.includes('sobha') || messageLower.includes('meraas') ||
+      messageLower.includes('track record') || messageLower.includes('reputation')) {
+    return {
+      type: 'developer',
+      title: 'Developer Profile',
+      subtitle: 'Track record and ongoing projects'
+    };
+  }
+
+  // Area info intent - Extended mapping with more keywords
+  const areaMapping = {
+    'marina': { title: 'marina', slug: 'dubai-marina' },
+    'dubai marina': { title: 'marina', slug: 'dubai-marina' },
+    'downtown': { title: 'downtown', slug: 'downtown-dubai' },
+    'downtown dubai': { title: 'downtown', slug: 'downtown-dubai' },
+    'hills': { title: 'hills', slug: 'dubai-hills-estate' },
+    'dubai hills': { title: 'hills', slug: 'dubai-hills-estate' },
+    'creek': { title: 'creek', slug: 'dubai-creek-harbour' },
+    'dubai creek': { title: 'creek', slug: 'dubai-creek-harbour' },
+    'creek harbour': { title: 'creek', slug: 'dubai-creek-harbour' },
+    'jvc': { title: 'jvc', slug: 'jumeirah-village-circle' },
+    'jumeirah village': { title: 'jvc', slug: 'jumeirah-village-circle' },
+    'jumeirah village circle': { title: 'jvc', slug: 'jumeirah-village-circle' },
+    'palm': { title: 'palm', slug: 'palm-jumeirah' },
+    'palm jumeirah': { title: 'palm', slug: 'palm-jumeirah' },
+    'business bay': { title: 'business bay', slug: 'business-bay' },
+    'jbr': { title: 'jbr', slug: 'jumeirah-beach-residence' },
+    'jumeirah beach': { title: 'jbr', slug: 'jumeirah-beach-residence' },
+    'emaar beachfront': { title: 'Emaar Beachfront', slug: 'emaar-beachfront' },
+    'beachfront': { title: 'Emaar Beachfront', slug: 'emaar-beachfront' },
+    'sobha hartland': { title: 'Sobha Hartland', slug: 'sobha-hartland' },
+    'hartland': { title: 'Sobha Hartland', slug: 'sobha-hartland' },
+    'damac hills': { title: 'DAMAC Hills', slug: 'damac-hills' },
+    'damac lagoons': { title: 'DAMAC Lagoons', slug: 'damac-lagoons' },
+    'lagoons': { title: 'DAMAC Lagoons', slug: 'damac-lagoons' },
+    'al furjan': { title: 'Al Furjan', slug: 'al-furjan' },
+    'furjan': { title: 'Al Furjan', slug: 'al-furjan' },
+    'arabian ranches': { title: 'Arabian Ranches', slug: 'arabian-ranches' },
+    'ranches': { title: 'Arabian Ranches', slug: 'arabian-ranches' },
+    'meydan': { title: 'Meydan', slug: 'meydan' },
+    'city walk': { title: 'City Walk', slug: 'city-walk' },
+    'bluewaters': { title: 'Bluewaters', slug: 'bluewaters' },
+    'tilal al ghaf': { title: 'Tilal Al Ghaf', slug: 'tilal-al-ghaf' },
+    'town square': { title: 'Town Square', slug: 'town-square' },
+  };
+
+  // Check for area mentions - area info intent
+  if (messageLower.includes('area') || messageLower.includes('location') ||
+      messageLower.includes('neighborhood') || messageLower.includes('community') ||
+      messageLower.includes('tell me about') || messageLower.includes('what is') ||
+      messageLower.includes('info about') || messageLower.includes('about the')) {
+
+    for (const [keyword, areaInfo] of Object.entries(areaMapping)) {
+      if (messageLower.includes(keyword)) {
+        // Fetch real data from database
+        const areaData = await getAreaDetails(areaInfo.slug);
+
+        return {
+          type: 'area_info',
+          title: areaInfo.title,
+          slug: areaInfo.slug,
+          subtitle: areaData ? `${areaData.project_count} projects available` : 'Area overview and insights',
+          data: {
+            title: areaInfo.title,
+            slug: areaInfo.slug,
+            dbData: areaData // Real database data
+          }
+        };
+      }
+    }
+  }
+
+  // Also check for direct area mentions without "tell me about" etc.
+  for (const [keyword, areaInfo] of Object.entries(areaMapping)) {
+    if (messageLower.includes(keyword)) {
+      // Fetch real data from database
+      const areaData = await getAreaDetails(areaInfo.slug);
+
+      return {
+        type: 'area_info',
+        title: areaInfo.title,
+        slug: areaInfo.slug,
+        subtitle: areaData ? `${areaData.project_count} projects available` : 'Area overview and insights',
+        data: {
+          title: areaInfo.title,
+          slug: areaInfo.slug,
+          dbData: areaData
+        }
+      };
+    }
+  }
+
+  // Default: Property search - if we have matching projects or search intent
+  if (matchingProjects.length > 0 || hasPropertySearchIntent(message)) {
+    return {
+      type: 'properties',
+      title: 'Matching Properties',
+      subtitle: `${matchingProjects.length} properties found`
+    };
+  }
+
+  // Welcome/default state
+  return {
+    type: 'welcome',
+    title: 'Ask Genie',
+    subtitle: 'Your Dubai Property Expert'
+  };
+}
+
+/**
  * Check if user message indicates property search intent
  */
 function hasPropertySearchIntent(message) {
@@ -131,6 +507,25 @@ async function findMatchingProjects(userMessage) {
     } else if (messageLower.includes('penthouse')) {
       queryText += ` AND (LOWER(p.name) LIKE '%penthouse%' OR LOWER(p.description) LIKE '%penthouse%')`;
       hasFilters = true;
+    }
+
+    // Filter by price (detect "under X million", "below X M", "under XM AED", etc.)
+    const priceMatch = messageLower.match(/(?:under|below|less than|max|maximum|budget)\s*(?:aed\s*)?(\d+(?:\.\d+)?)\s*(?:m|million|mil)?/i);
+    if (priceMatch) {
+      let maxPrice = parseFloat(priceMatch[1]);
+      // If number is small (like 2), assume millions
+      if (maxPrice < 100) {
+        maxPrice = maxPrice * 1000000;
+      }
+      // Filter by price - extract numeric value from price_from field
+      queryText += ` AND (
+        CAST(REGEXP_REPLACE(REGEXP_REPLACE(p.price_from, '[^0-9.]', '', 'g'), '^$', '0') AS NUMERIC) <= $${paramCount}
+        OR p.price_from IS NULL
+      )`;
+      params.push(maxPrice);
+      paramCount++;
+      hasFilters = true;
+      console.log(`Price filter applied: max ${maxPrice} AED`);
     }
 
     // Order by relevance
@@ -313,7 +708,7 @@ router.post('/', async (req, res) => {
    - Bedrooms: ${bedrooms}
    - Key Features: ${amenitiesStr}
    - Description: ${project.description || 'Luxury off-plan development'}
-   - View: https://aigentsrealty.com/areas/${project.area_slug}/${project.slug}
+   - View: /areas/${project.area_slug}/${project.slug}
 
 `;
       });
@@ -362,24 +757,59 @@ router.post('/', async (req, res) => {
 
 7. **Educate While Showing**: Explain payment plans, ROI potential briefly while presenting options
 
+## SMART CANVAS INTERACTIVE TOOLS - EMBRACE THESE FEATURES:
+You have access to interactive Smart Canvas tools that appear on screen when users ask about them. ALWAYS help with these - they are core features:
+
+📊 **MORTGAGE CALCULATOR** - When users ask "calculate mortgage", "monthly payment", "can I afford", "EMI calculator":
+→ Say: "Great! I've opened the Mortgage Calculator on the right. You can adjust the loan amount, down payment %, and tenure to see your estimated monthly payments. In Dubai, typical mortgage rates are around 4-6% for residents."
+
+🖼️ **GALLERY & VIRTUAL TOURS** - When users ask "show photos", "pictures", "virtual tour", "what does it look like":
+→ Say: "I've loaded the property gallery for you! You can browse images and see what the project looks like. Want me to tell you more about the finishes and amenities?"
+
+📈 **INVESTMENT ANALYSIS** - When users ask "investment analysis", "ROI breakdown", "is it a good investment":
+→ Say: "I've opened the Investment Analysis tool showing projected returns, rental yield, and capital appreciation. Dubai off-plan typically sees 15-30% gains during construction."
+
+🏘️ **NEIGHBORHOOD GUIDE** - When users ask "what's nearby", "schools nearby", "hospitals nearby", "amenities", "what schools", "what hospitals":
+→ Say: "I've opened the Neighborhood Guide showing nearby facilities! Dubai's prime areas typically offer excellent schools (GEMS, Taaleem), healthcare (Mediclinic, NMC), malls, and metro access. Which area or property are you interested in? I can give you specific details!"
+
+📅 **BOOKING/VIEWING** - When users ask "book viewing", "schedule visit", "want to see the property":
+→ Say: "I've opened the booking form! Fill in your preferred date and time, and our team will confirm your viewing appointment."
+
+📐 **FLOOR PLANS** - When users ask "floor plan", "layout", "room sizes", "sqft":
+→ Say: "I've loaded the floor plans for you to explore. You can see the unit layouts and dimensions."
+
+📉 **PRICE HISTORY** - When users ask "price history", "how much has it increased", "value trend":
+→ Say: "Here's the price trend chart showing how values have changed. Dubai Marina, for example, has seen steady 8-12% annual appreciation."
+
+🗺️ **MAP VIEW** - When users ask "show map", "where is it", "location on map":
+→ Say: "I've loaded the map showing the exact location. You can see nearby landmarks and transit options."
+
+These are NOT off-topic! They are essential property research tools. ALWAYS engage helpfully with these requests.
+
+⚠️ **IMPORTANT**: Questions about "schools nearby", "hospitals nearby", "what's around", "amenities", "metro", "transport" are PROPERTY-RELATED questions about neighborhood facilities. These are ON-TOPIC and you should HELP with them using the Neighborhood Guide canvas. Do NOT deflect these as off-topic!
+
 ## STRICT BOUNDARIES - YOU MUST FOLLOW THESE RULES:
 ❌ **NEVER answer questions about:**
-- General knowledge, trivia, or world events
+- General knowledge, trivia, or world events unrelated to Dubai real estate
 - Programming, coding, or technical help
-- Health, medical, or legal advice
+- Health, medical, or legal advice (except Dubai property law)
 - Politics, religion, or controversial topics
-- Math problems, homework, or academic questions
-- Recipes, travel, entertainment, or lifestyle
-- Any topic NOT related to Dubai real estate
+- Math problems, homework, or academic questions (mortgage calculations ARE allowed!)
+- Recipes, travel outside UAE, entertainment, or non-real-estate lifestyle
+- Any topic NOT related to Dubai real estate or the canvas tools above
 
 ✅ **ONLY discuss:**
 - Dubai off-plan properties (pre-construction and under-construction ONLY)
 - Properties from our portfolio listed above
 - Dubai real estate market trends and investment opportunities
 - Payment plans, ROI calculations, and financing options
+- Mortgage calculations and affordability (use the Canvas calculator!)
 - Developers, areas, and property features in Dubai
 - RERA regulations and Dubai property laws
 - Property viewing appointments and consultation booking
+- Floor plans, galleries, and property visuals
+- Neighborhood amenities and area guides
+- Price history and market trends
 
 ## LIVE PREVIEW FEATURE - IMPORTANT:
 When you recommend properties, they will AUTOMATICALLY appear as visual cards on the left side of the screen for the user to browse. Reference this feature naturally in your responses:
@@ -399,8 +829,11 @@ I'd love to help you find the perfect investment. As we chat, I'll show you matc
 
 **What are you looking for - a specific area, budget range, or shall I recommend based on your goals?**"
 
-## How to Handle Off-Topic Questions:
-If someone asks about ANYTHING other than Dubai off-plan real estate, respond EXACTLY like this:
+## How to Handle TRULY Off-Topic Questions:
+Only use this deflection for CLEARLY unrelated topics like programming, cooking, politics, health advice, etc.
+**DO NOT** deflect questions about: schools nearby, hospitals, amenities, transport, metro, neighborhoods, mortgage calculations, floor plans, price history, investment analysis, viewing appointments - these are ALL property-related!
+
+If someone asks about something TRULY unrelated (like "how to code in Python" or "what's the capital of France"), respond like this:
 
 "I appreciate your question, but I'm specialized exclusively in Dubai off-plan properties. I can help you find the perfect investment opportunity in Dubai's real estate market.
 
@@ -418,6 +851,14 @@ Which range interests you?"
 - Use AED (Arab Emirates Dirham) for all pricing
 - Always redirect to Dubai real estate if asked about other topics
 - Typical payment plans: 10-20% down, 60-70% during construction, 20-30% on handover
+
+## CRITICAL - URL FORMAT:
+When providing project links, ALWAYS use relative paths starting with "/areas/".
+NEVER include domain names like "aigentsrealty.com" or "www.aigentsrealty.com" in any links.
+✅ CORRECT: [View Project](/areas/dubai-creek-harbour/creek-heights)
+❌ WRONG: [View Project](https://aigentsrealty.com/areas/dubai-creek-harbour/creek-heights)
+❌ WRONG: [View Project](https://www.aigentsrealty.com/areas/dubai-creek-harbour/creek-heights)
+The links must be relative paths only - no domain names!
 
 ## LEAD CAPTURE - VERY IMPORTANT:
 When a client provides ANY of the following, use the save_lead function to capture their information:
@@ -520,14 +961,24 @@ Remember: You are a Dubai off-plan property specialist ONLY. Stay in your lane. 
         developer_name: p.developer_name
       }));
 
-      // Regular text response with recommended projects for live preview
-      console.log(`Returning ${recommendedProjects.length} recommended projects to frontend`);
+      // Detect what canvas action to show (now async for real-time data)
+      const canvasAction = await detectCanvasAction(message, recommendedProjects);
+      canvasAction.projects = recommendedProjects;
+
+      // If comparison, use first 2 projects for comparison
+      if (canvasAction.type === 'comparison' && recommendedProjects.length >= 2) {
+        canvasAction.compareItems = recommendedProjects.slice(0, 2);
+      }
+
+      // Regular text response with canvas action
+      console.log(`Canvas action: ${canvasAction.type}, returning ${recommendedProjects.length} projects`);
 
       res.json({
         message: aiResponse.content || aiResponse,
         model: 'gpt-4o-mini',
         timestamp: new Date().toISOString(),
-        recommendedProjects: recommendedProjects.length > 0 ? recommendedProjects : null
+        recommendedProjects: recommendedProjects.length > 0 ? recommendedProjects : null,
+        canvas: canvasAction
       });
     } catch (aiError) {
       console.error('OpenAI API error:', aiError);

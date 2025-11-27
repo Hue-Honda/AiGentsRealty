@@ -2,11 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import {
-  Search, Sparkles, TrendingUp, Building2, MapPin, Calendar,
-  CreditCard, Star, Award, Shield, ArrowRight
-} from 'lucide-react';
-import AIEnhancedFilters from '@/components/filters/AIEnhancedFilters';
+import ReactMarkdown from 'react-markdown';
+import { Sparkles, Building2, MapPin, ArrowRight } from 'lucide-react';
+import SmartCanvas, { CanvasAction } from '@/components/canvas/SmartCanvas';
 
 // Project interface
 interface Project {
@@ -38,8 +36,8 @@ export default function Home() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Live Preview State - Shows cards recommended by AI
-  const [recommendedProjects, setRecommendedProjects] = useState<Project[]>([]);
+  // Smart Canvas State
+  const [canvasAction, setCanvasAction] = useState<CanvasAction>({ type: 'welcome' });
 
   // Projects State (for carousel section)
   const [projects, setProjects] = useState<Project[]>([]);
@@ -99,6 +97,8 @@ export default function Home() {
       });
 
       const data = await response.json();
+      console.log('Chat API response:', data);
+      console.log('Recommended projects:', data.recommendedProjects);
 
       if (data.message) {
         setMessages(prev => [...prev, { role: 'assistant', content: data.message }]);
@@ -106,9 +106,10 @@ export default function Home() {
         setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I encountered an error.' }]);
       }
 
-      // Update live preview with AI-recommended projects
-      if (data.recommendedProjects && data.recommendedProjects.length > 0) {
-        setRecommendedProjects(data.recommendedProjects);
+      // Update Smart Canvas with AI response
+      if (data.canvas) {
+        console.log('Setting canvas action:', data.canvas);
+        setCanvasAction(data.canvas);
       }
     } catch (error) {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Connection error. Please try again.' }]);
@@ -191,133 +192,23 @@ export default function Home() {
           {/* ASYMMETRIC TWO-COLUMN AREA - BROKEN GRID */}
           <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
-            {/* LEFT: FILTERS (initially) or LIVE PREVIEW CARDS (when AI recommends) - 7 cols / 60% */}
+            {/* LEFT: SMART CANVAS - Dynamic AI-driven content - 7 cols / 60% */}
             <div className="lg:col-span-7 relative order-2 lg:order-1">
-              {recommendedProjects.length === 0 ? (
-                /* SHOW FILTERS INITIALLY - Until AI recommends properties */
-                <div className="lg:mt-8">
-                  <div className="absolute -inset-4 bg-[#10B981]/10 rounded-[2rem] blur-2xl"></div>
-                  <AIEnhancedFilters />
+              <div className="lg:mt-8 relative">
+                {/* Glow Effect */}
+                <div className="absolute -inset-4 bg-[#10B981]/10 rounded-[2rem] blur-2xl"></div>
+
+                {/* Smart Canvas Container */}
+                <div className="relative bg-[#0A0A0A]/80 backdrop-blur-xl border border-[#10B981]/20 rounded-3xl p-6 shadow-[0_0_40px_rgba(16,185,129,0.1)]">
+                  <SmartCanvas
+                    action={canvasAction}
+                    isLoading={isLoading}
+                    onProjectClick={(project) => {
+                      window.location.href = `/areas/${project.area_slug}/${project.slug}`;
+                    }}
+                  />
                 </div>
-              ) : (
-                /* LIVE PREVIEW - Show cards recommended by AI */
-                <>
-                  {/* Floating Header Badge */}
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="flex items-center gap-2 px-4 py-2 bg-[#10B981]/10 backdrop-blur-sm border border-[#10B981]/30 rounded-full">
-                      <Sparkles className="w-4 h-4 text-[#10B981]" />
-                      <span className="text-sm font-medium text-white">AI Picks for You</span>
-                    </div>
-                    <span className="text-xs text-gray-500">{recommendedProjects.length} matches found</span>
-                  </div>
-
-                  {/* Floating Cards Grid - Staggered Layout */}
-                  <div className="relative">
-                    {isLoading ? (
-                      <div className="flex items-center justify-center h-[400px]">
-                        <div className="text-center">
-                          <div className="w-10 h-10 border-2 border-[#10B981] border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-                          <p className="text-gray-500 text-sm">Finding properties...</p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-2 gap-x-5 gap-y-6">
-                        {recommendedProjects.map((project, index) => (
-                          <Link
-                            href={`/areas/${project.area_slug}/${project.slug}`}
-                            key={project.id}
-                            className={`group relative block ${index % 2 === 1 ? 'mt-8' : ''}`}
-                            style={{
-                              transform: `translateY(${index % 2 === 0 ? '0' : '20px'})`,
-                            }}
-                          >
-                            {/* Floating Glow Effect */}
-                            <div className="absolute -inset-2 bg-gradient-to-br from-[#10B981]/20 to-[#D4AF37]/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-                            {/* Card */}
-                            <div className="relative bg-[#111111] border border-[#1F1F1F] hover:border-[#10B981]/40 rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_60px_rgba(0,0,0,0.5),0_0_40px_rgba(16,185,129,0.15)]">
-                              {/* Image Section */}
-                              <div className="relative h-40 overflow-hidden">
-                                {project.images?.[0] ? (
-                                  <img
-                                    src={project.images[0]}
-                                    alt={project.name}
-                                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-                                  />
-                                ) : (
-                                  <div className="w-full h-full bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] flex items-center justify-center">
-                                    <Building2 className="w-12 h-12 text-gray-700" />
-                                  </div>
-                                )}
-
-                                {/* Gradient Overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-transparent to-transparent"></div>
-
-                                {/* Status Badge - Floating */}
-                                <div className="absolute top-3 left-3">
-                                  <span className="px-3 py-1 bg-[#10B981] text-white text-xs font-bold rounded-full shadow-[0_4px_15px_rgba(16,185,129,0.4)]">
-                                    OFF PLAN
-                                  </span>
-                                </div>
-
-                                {/* Price Tag - Floating Right */}
-                                <div className="absolute top-3 right-3">
-                                  <span className="px-3 py-1.5 bg-black/60 backdrop-blur-md text-[#D4AF37] text-sm font-bold rounded-lg border border-[#D4AF37]/30">
-                                    {project.price_from}
-                                  </span>
-                                </div>
-                              </div>
-
-                              {/* Content */}
-                              <div className="p-4">
-                                <h4 className="font-bold text-white text-base mb-1 group-hover:text-[#10B981] transition-colors line-clamp-1">
-                                  {project.name}
-                                </h4>
-
-                                <div className="flex items-center gap-1.5 text-gray-400 text-sm mb-3">
-                                  <MapPin className="w-3.5 h-3.5 text-[#10B981]" />
-                                  <span className="truncate">{project.location}</span>
-                                </div>
-
-                                {/* Info Pills */}
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <span className="px-2.5 py-1 bg-[#1A1A1A] text-gray-300 text-xs rounded-lg border border-[#2A2A2A]">
-                                    {project.payment_plan}
-                                  </span>
-                                  <span className="px-2.5 py-1 bg-[#1A1A1A] text-gray-300 text-xs rounded-lg border border-[#2A2A2A]">
-                                    {project.completion_date || '2026'}
-                                  </span>
-                                </div>
-                              </div>
-
-                              {/* Hover Arrow */}
-                              <div className="absolute bottom-4 right-4 w-8 h-8 bg-[#10B981] rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-                                <ArrowRight className="w-4 h-4 text-white" />
-                              </div>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Floating Stats Badges - Bottom */}
-                    <div className="flex items-center justify-center gap-4 mt-8">
-                      <div className="px-5 py-3 bg-[#0A0A0A]/80 backdrop-blur-xl border border-[#10B981]/20 rounded-2xl hover:border-[#10B981]/50 transition-colors">
-                        <div className="text-xl font-bold text-[#10B981]">8-12%</div>
-                        <div className="text-xs text-gray-500">Avg ROI</div>
-                      </div>
-                      <div className="px-5 py-3 bg-[#0A0A0A]/80 backdrop-blur-xl border border-[#D4AF37]/20 rounded-2xl hover:border-[#D4AF37]/50 transition-colors">
-                        <div className="text-xl font-bold text-[#D4AF37]">60/40</div>
-                        <div className="text-xs text-gray-500">Payment</div>
-                      </div>
-                      <div className="px-5 py-3 bg-[#0A0A0A]/80 backdrop-blur-xl border border-white/10 rounded-2xl hover:border-white/30 transition-colors">
-                        <div className="text-xl font-bold text-white">2025-27</div>
-                        <div className="text-xs text-gray-500">Handover</div>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
+              </div>
             </div>
 
             {/* RIGHT: GENIE CHAT - Smaller Panel (5 cols / 40%) */}
@@ -367,7 +258,35 @@ export default function Home() {
                             <span className="text-xs font-semibold text-[#10B981]">GENIE</span>
                           </div>
                         )}
-                        <p className="leading-relaxed">{msg.content}</p>
+                        {msg.role === 'assistant' ? (
+                          <div className="leading-relaxed prose prose-invert prose-sm max-w-none prose-p:my-2 prose-ul:my-2 prose-li:my-1 prose-strong:text-[#D4AF37]">
+                            <ReactMarkdown
+                              components={{
+                                a: ({ href, children }) => (
+                                  <a
+                                    href={href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-4 py-2 my-2 mr-2 bg-gradient-to-r from-[#10B981]/20 to-[#10B981]/10 border border-[#10B981]/50 text-[#10B981] rounded-xl text-xs font-bold hover:from-[#10B981]/30 hover:to-[#10B981]/20 hover:border-[#10B981] hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all no-underline"
+                                  >
+                                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                    {children}
+                                    <svg className="w-3 h-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                    </svg>
+                                  </a>
+                                )
+                              }}
+                            >
+                              {msg.content}
+                            </ReactMarkdown>
+                          </div>
+                        ) : (
+                          <p className="leading-relaxed">{msg.content}</p>
+                        )}
                       </div>
                     </div>
                   ))}

@@ -10,6 +10,7 @@ import chatRoutes from './routes/chat.js';
 import areasRoutes from './routes/areas.js';
 import projectsRoutes from './routes/projects.js';
 import migrationsRoutes from './routes/migrations.js';
+import leadsRoutes from './routes/leads.js';
 
 // Load environment variables
 dotenv.config();
@@ -134,7 +135,8 @@ app.get('/api', (req, res) => {
       projects: '/api/projects',
       suggestions: '/api/projects/suggestions',
       featured: '/api/projects/featured',
-      chat: '/api/chat'
+      chat: '/api/chat',
+      leads: '/api/leads'
     }
   });
 });
@@ -197,6 +199,7 @@ app.get('/migrate-leads', async (req, res) => {
 app.use('/api/chat', chatRoutes);
 app.use('/api/areas', areasRoutes);
 app.use('/api/projects', projectsRoutes);
+app.use('/api/leads', leadsRoutes);
 app.use('/migrations', migrationsRoutes);
 
 // ============================================================================
