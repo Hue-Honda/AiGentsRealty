@@ -505,6 +505,8 @@ Remember: You are a Dubai off-plan property specialist ONLY. Stay in your lane. 
 
       // Find projects matching the user's query to display as cards
       const matchingProjects = await findMatchingProjects(message);
+      console.log(`Found ${matchingProjects.length} matching projects for: "${message}"`);
+
       const recommendedProjects = matchingProjects.slice(0, 4).map(p => ({
         id: p.id,
         name: p.name,
@@ -519,6 +521,8 @@ Remember: You are a Dubai off-plan property specialist ONLY. Stay in your lane. 
       }));
 
       // Regular text response with recommended projects for live preview
+      console.log(`Returning ${recommendedProjects.length} recommended projects to frontend`);
+
       res.json({
         message: aiResponse.content || aiResponse,
         model: 'gpt-4o-mini',
