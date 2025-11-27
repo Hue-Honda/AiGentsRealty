@@ -235,7 +235,7 @@ app.listen(PORT, () => {
   console.log('🚀 AiGentsRealty Off-Plan API');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log(`📡 Server: http://localhost:${PORT}`);
-  console.log(`🌐 Frontend: ${corsOrigin}`);
+  console.log(`🌐 Frontend: ${FRONTEND_URL}`);
   console.log(`📊 Environment: ${process.env.NODE_ENV}`);
   console.log(`🤖 AI Model: OpenAI GPT-4o-mini`);
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');

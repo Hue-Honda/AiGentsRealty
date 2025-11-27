@@ -42,19 +42,38 @@ async function getAllProjects() {
 }
 
 /**
+ * Check if user message indicates property search intent
+ */
+function hasPropertySearchIntent(message) {
+  const messageLower = message.toLowerCase();
+  const intentKeywords = [
+    'show', 'suggest', 'find', 'search', 'looking', 'want', 'need',
+    'bedroom', 'br', 'bed', 'villa', 'apartment', 'penthouse', 'townhouse',
+    'property', 'properties', 'project', 'projects', 'investment', 'invest',
+    'buy', 'purchase', 'roi', 'return', 'budget', 'under', 'below',
+    'million', 'aed', 'price', 'cheap', 'affordable', 'luxury',
+    'best', 'top', 'recommend', 'options', 'available', 'living', 'live',
+    'ready', 'handover', 'move', 'personal', 'rental', 'yield'
+  ];
+  return intentKeywords.some(kw => messageLower.includes(kw));
+}
+
+/**
  * Query database for projects matching user requirements
  */
 async function findMatchingProjects(userMessage) {
   try {
-    // Extract keywords and requirements from user message
     const messageLower = userMessage.toLowerCase();
+
+    // Check if user has property search intent
+    const hasIntent = hasPropertySearchIntent(userMessage);
 
     // Build dynamic query based on user requirements
     let queryText = `
       SELECT
         p.id, p.name, p.slug, p.location, p.description,
         p.price_from, p.payment_plan, p.completion_date,
-        p.status, p.match_score, p.images,
+        p.status, p.match_score, p.images, p.bedrooms,
         p.unit_types, p.amenities,
         d.name as developer_name,
         a.name as area_name, a.slug as area_slug
@@ -66,47 +85,87 @@ async function findMatchingProjects(userMessage) {
 
     const params = [];
     let paramCount = 1;
+    let hasFilters = false;
+
+    // Filter by bedrooms (detect 1BR, 2BR, 3BR, etc.)
+    const bedroomMatch = messageLower.match(/(\d+)\s*(?:br|bed|bedroom)/i);
+    if (bedroomMatch) {
+      const bedrooms = parseInt(bedroomMatch[1]);
+      queryText += ` AND (p.bedrooms = $${paramCount} OR p.bedrooms >= $${paramCount})`;
+      params.push(bedrooms);
+      paramCount++;
+      hasFilters = true;
+    }
 
     // Filter by area keywords
-    const areaKeywords = ['marina', 'downtown', 'hills', 'creek', 'business bay', 'jumeirah', 'palm', 'dubai south'];
+    const areaKeywords = ['marina', 'downtown', 'hills', 'creek', 'business bay', 'jumeirah', 'palm', 'dubai south', 'jvc', 'jbr', 'beachfront', 'hartland'];
     for (const area of areaKeywords) {
       if (messageLower.includes(area)) {
         queryText += ` AND (LOWER(a.name) LIKE $${paramCount} OR LOWER(p.location) LIKE $${paramCount})`;
         params.push(`%${area}%`);
         paramCount++;
+        hasFilters = true;
         break;
       }
     }
 
     // Filter by developer
-    const developerKeywords = ['emaar', 'damac', 'nakheel', 'meraas', 'sobha', 'azizi'];
+    const developerKeywords = ['emaar', 'damac', 'nakheel', 'meraas', 'sobha', 'azizi', 'binghatti', 'ellington', 'samana'];
     for (const dev of developerKeywords) {
       if (messageLower.includes(dev)) {
         queryText += ` AND LOWER(d.name) LIKE $${paramCount}`;
         params.push(`%${dev}%`);
         paramCount++;
+        hasFilters = true;
         break;
       }
     }
 
-    // Filter by budget (extract numbers)
-    const budgetMatch = messageLower.match(/(\d+(?:\.\d+)?)\s*(?:m|million|k|thousand)/i);
-    if (budgetMatch) {
-      let budget = parseFloat(budgetMatch[1]);
-      if (messageLower.includes('k') || messageLower.includes('thousand')) {
-        budget = budget * 1000;
-      } else if (messageLower.includes('m') || messageLower.includes('million')) {
-        budget = budget * 1000000;
-      }
-      // Price is stored as text like "AED 900K", so we'll order by match_score instead
-      // and filter in application logic
+    // Filter by property type
+    if (messageLower.includes('villa')) {
+      queryText += ` AND (LOWER(p.name) LIKE '%villa%' OR LOWER(p.description) LIKE '%villa%')`;
+      hasFilters = true;
+    } else if (messageLower.includes('apartment')) {
+      queryText += ` AND (LOWER(p.name) LIKE '%apartment%' OR LOWER(p.description) LIKE '%apartment%' OR LOWER(p.name) LIKE '%residence%')`;
+      hasFilters = true;
+    } else if (messageLower.includes('penthouse')) {
+      queryText += ` AND (LOWER(p.name) LIKE '%penthouse%' OR LOWER(p.description) LIKE '%penthouse%')`;
+      hasFilters = true;
     }
 
     // Order by relevance
-    queryText += ` ORDER BY p.match_score DESC NULLS LAST, p.created_at DESC LIMIT 5`;
+    queryText += ` ORDER BY p.match_score DESC NULLS LAST, p.created_at DESC LIMIT 6`;
 
     const result = await query(queryText, params);
-    return result.rows;
+
+    // If user has search intent but no specific filters matched, return top projects
+    if (hasIntent && result.rows.length === 0) {
+      const fallbackQuery = `
+        SELECT
+          p.id, p.name, p.slug, p.location, p.description,
+          p.price_from, p.payment_plan, p.completion_date,
+          p.status, p.match_score, p.images, p.bedrooms,
+          p.unit_types, p.amenities,
+          d.name as developer_name,
+          a.name as area_name, a.slug as area_slug
+        FROM projects p
+        LEFT JOIN developers d ON p.developer_id = d.id
+        LEFT JOIN areas a ON p.area_id = a.id
+        WHERE p.status = 'Off Plan'
+        ORDER BY p.match_score DESC NULLS LAST, p.created_at DESC
+        LIMIT 6
+      `;
+      const fallbackResult = await query(fallbackQuery);
+      return fallbackResult.rows;
+    }
+
+    // If user has search intent, always return results
+    if (hasIntent && result.rows.length > 0) {
+      return result.rows;
+    }
+
+    // Return results if we had filters, otherwise empty (don't show cards for greetings)
+    return hasFilters ? result.rows : [];
   } catch (error) {
     console.error('Error finding matching projects:', error);
     return [];
@@ -129,7 +188,7 @@ function generateFallbackResponse(userMessage, projects) {
     if (projects.length > 0) {
       return `**Great question about ROI!** Dubai off-plan properties typically offer 15-30% capital appreciation during construction.
 
-I found ${projects.length} excellent projects for you:
+I've loaded ${projects.length} high-ROI projects to your preview panel on the left. Here are my top picks:
 
 ${projects.slice(0, 3).map((p, i) => `${i + 1}. **${p.name}** - ${p.location}
    💰 Starting from ${p.price_from}
@@ -137,26 +196,26 @@ ${projects.slice(0, 3).map((p, i) => `${i + 1}. **${p.name}** - ${p.location}
    🏗️ Handover: ${p.completion_date || 'Q2 2027'}
    ✨ By ${p.developer_name}`).join('\n\n')}
 
-Would you like detailed ROI projections for any of these?`;
+**Click any card on the left to see full details.** Would you like me to narrow down based on your budget or preferred area?`;
     }
   }
 
   // Location queries
   if (messageLower.includes('location') || messageLower.includes('where') || messageLower.includes('area')) {
     if (projects.length > 0) {
-      return `I found some excellent properties in prime Dubai locations:
+      return `I've loaded properties from prime Dubai locations to your preview panel 👈
 
 ${projects.slice(0, 3).map((p, i) => `${i + 1}. **${p.name}** in ${p.location}
    Starting from ${p.price_from}
    Payment Plan: ${p.payment_plan}`).join('\n\n')}
 
-Each location offers unique benefits. Which area interests you most?`;
+**Browse the cards on the left** to explore each property. Which area interests you most?`;
     }
   }
 
   // Default response with projects
   if (projects.length > 0) {
-    return `I found ${projects.length} properties that match your criteria:
+    return `I found ${projects.length} properties matching your criteria - **check out the cards on the left!**
 
 ${projects.slice(0, 3).map((p, i) => `**${i + 1}. ${p.name}** by ${p.developer_name}
 📍 ${p.location}
@@ -166,7 +225,7 @@ ${projects.slice(0, 3).map((p, i) => `**${i + 1}. ${p.name}** by ${p.developer_n
 
 ${projects.length > 3 ? `\n...and ${projects.length - 3} more properties.\n` : ''}
 
-Would you like more details about any of these properties?`;
+**Click any card to view full details.** Want me to filter these further?`;
   }
 
   // No projects found
@@ -285,26 +344,23 @@ router.post('/', async (req, res) => {
 - Guide clients through complex decisions with confidence
 - Ask qualifying questions to understand their budget, timeline, and investment goals
 
-## Your Approach - BE CONVERSATIONAL AND ASK QUESTIONS:
-1. **Start with Questions**: Don't overwhelm clients with options immediately. First ask:
-   - "Do you have a specific area in mind, or would you like me to suggest some based on your goals?"
-   - "What's your budget range for this investment?"
-   - "Are you looking for 1, 2, or 3+ bedrooms?"
-   - "Is this for investment (rental income/capital gains) or for living?"
-   - "When would you like to move in or receive handover?"
+## Your Approach - BE ACTION-ORIENTED AND SHOW PROPERTIES:
+1. **SHOW PROPERTIES QUICKLY**: When a user mentions ANY property-related need (bedrooms, budget, area, type), IMMEDIATELY recommend 2-3 specific projects. Don't ask endless questions - SHOW options!
 
-2. **If They Say No/Not Sure to Preferences**: Guide them naturally:
-   - If no area preference: "No problem! Let me suggest a few top-performing areas based on your budget and goals. Are you looking for beachfront views, city skyline, or family-friendly communities?"
-   - If budget unclear: "I can work with any range. Most of our projects start from AED 500K for studios up to AED 50M+ for luxury villas. What range feels comfortable for you?"
-   - If unsure about bedrooms: "It depends on your goals! Studios and 1-beds are great for rental ROI, while 2-3 beds work better for families or higher resale value. What are you primarily looking for?"
+2. **Ask ONE question at a time**: If you need more info, ask ONE clarifying question while still showing some relevant options.
 
-3. **Qualify Before Recommending**: Only show properties AFTER understanding their needs. Never dump all projects at once.
+3. **When User Says "Suggest" or "Show"**: ALWAYS recommend properties immediately. Don't ask "what are you looking for?" - show your best picks!
 
-4. **Recommend SPECIFIC Projects**: Use exact names, prices, and features from the portfolio above
+4. **Use the Live Preview**: Remember that cards appear on the left automatically. Tell users: "I've loaded some options on the left - take a look!"
 
-5. **Compare 2-3 Options**: After qualifying, compare a few projects that match their criteria, highlighting pros/cons
+5. **Be Specific**: Use exact project names, prices, and locations from your portfolio. Never give vague responses.
 
-6. **Educate & Close**: Explain payment plans, ROI potential, and guide them to view details or book a consultation
+6. **Example Flow**:
+   - User: "3BR under 2M"
+   - Good: "Great choice! I've loaded 3-bedroom options under AED 2M to your preview. Here are my top picks: [list 2-3 projects]. Click any card to explore!"
+   - Bad: "What area are you interested in? What's your timeline? Is this for investment?"
+
+7. **Educate While Showing**: Explain payment plans, ROI potential briefly while presenting options
 
 ## STRICT BOUNDARIES - YOU MUST FOLLOW THESE RULES:
 ❌ **NEVER answer questions about:**
@@ -325,14 +381,23 @@ router.post('/', async (req, res) => {
 - RERA regulations and Dubai property laws
 - Property viewing appointments and consultation booking
 
+## LIVE PREVIEW FEATURE - IMPORTANT:
+When you recommend properties, they will AUTOMATICALLY appear as visual cards on the left side of the screen for the user to browse. Reference this feature naturally in your responses:
+- "I've added some options to your preview panel on the left..."
+- "Check out the property cards I've loaded for you..."
+- "Take a look at these projects appearing on the left..."
+- "I'm showing you X properties that match your criteria..."
+
+This makes the experience interactive - you talk, they see visual cards instantly!
+
 ## How to Start Conversations:
 When someone says "hello", "hi", or similar greetings, DON'T just introduce yourself. Engage them immediately:
 
 "Hello! I'm Genie, your off-plan property specialist in Dubai.
 
-I'd love to help you find the perfect investment. Let me ask you a quick question to point you in the right direction:
+I'd love to help you find the perfect investment. As we chat, I'll show you matching properties on the left side of your screen.
 
-**Are you looking for something specific, or would you like me to suggest projects based on your budget and goals?**"
+**What are you looking for - a specific area, budget range, or shall I recommend based on your goals?**"
 
 ## How to Handle Off-Topic Questions:
 If someone asks about ANYTHING other than Dubai off-plan real estate, respond EXACTLY like this:
@@ -438,11 +503,27 @@ Remember: You are a Dubai off-plan property specialist ONLY. Stay in your lane. 
         });
       }
 
-      // Regular text response
+      // Find projects matching the user's query to display as cards
+      const matchingProjects = await findMatchingProjects(message);
+      const recommendedProjects = matchingProjects.slice(0, 4).map(p => ({
+        id: p.id,
+        name: p.name,
+        slug: p.slug,
+        location: p.location || p.area_name,
+        price_from: p.price_from,
+        payment_plan: p.payment_plan,
+        completion_date: p.completion_date,
+        images: p.images,
+        area_slug: p.area_slug,
+        developer_name: p.developer_name
+      }));
+
+      // Regular text response with recommended projects for live preview
       res.json({
         message: aiResponse.content || aiResponse,
         model: 'gpt-4o-mini',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        recommendedProjects: recommendedProjects.length > 0 ? recommendedProjects : null
       });
     } catch (aiError) {
       console.error('OpenAI API error:', aiError);

@@ -25,30 +25,61 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Custom Luxury Scrollbar - Gold Track, Emerald Thumb */
+/* Modern Minimal Scrollbar - Hidden by default, shows on hover */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #10B981 #D4AF37;
+  scrollbar-color: rgba(16, 185, 129, 0.3) transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(212, 175, 55, 0.1);
-  border-radius: 10px;
+  background: transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #10B981, #059669);
-  border-radius: 10px;
-  transition: background 0.3s ease;
+  background: rgba(16, 185, 129, 0.3);
+  border-radius: 100px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #059669, #047857);
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+  background: rgba(16, 185, 129, 0.6);
+}
+
+/* Hide scrollbar until hover */
+.scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* Chat scrollbar - Ultra minimal */
+.chat-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(16, 185, 129, 0.2) transparent;
+}
+
+.chat-scrollbar::-webkit-scrollbar {
+  width: 3px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 8px 0;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.2);
+  border-radius: 100px;
+}
+
+.chat-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.4);
 }
 
 /* Custom Luxury Carousel Pagination - Emerald with Gold Ring */
