@@ -114,10 +114,12 @@ export default function SmartCanvas({ action, onProjectClick, onLeadSubmit, isLo
 // Welcome View - User-Friendly Initial State
 function WelcomeView() {
   const tryAsking = [
-    { text: 'Show me 2BR apartments in Marina', icon: Building2 },
-    { text: 'What are the best areas for ROI?', icon: TrendingUp },
-    { text: 'Tell me about JVC', icon: Map },
-    { text: 'Compare Downtown vs Business Bay', icon: GitCompare },
+    { text: 'Open mortgage calculator', icon: Calculator },
+    { text: 'What is the ROI for Dubai Marina?', icon: PieChart },
+    { text: 'Show me floor plans', icon: LayoutGrid },
+    { text: 'Schools and amenities nearby', icon: GraduationCap },
+    { text: 'Book a viewing', icon: CalendarDays },
+    { text: '2BR apartments under 2M AED', icon: Building2 },
   ];
 
   return (
