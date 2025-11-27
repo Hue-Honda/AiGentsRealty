@@ -181,7 +181,9 @@ async function detectCanvasAction(message, matchingProjects = [], dbStats = null
     'investment analysis', 'investment return', 'profit', 'profitability',
     'capital appreciation', 'rental income', 'cash flow', 'break even',
     'investment potential', 'is it worth', 'good investment', 'investment calculator',
-    'projected returns', 'financial analysis', 'investment breakdown'
+    'projected returns', 'financial analysis', 'investment breakdown',
+    'roi', 'return on investment', 'yield', 'rental yield', 'what is the roi',
+    'roi calculator', 'calculate roi', 'show roi'
   ];
   if (investmentKeywords.some(keyword => messageLower.includes(keyword))) {
     return {
