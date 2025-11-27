@@ -153,6 +153,53 @@ router.get('/setup-pgvector', async (req, res) => {
   }
 });
 
+// Add unique constraints for ON CONFLICT
+router.get('/add-constraints', async (req, res) => {
+  try {
+    const results = [];
+
+    // Add unique constraint to developers.name
+    try {
+      await query(`ALTER TABLE developers ADD CONSTRAINT developers_name_unique UNIQUE (name);`);
+      results.push('Added unique constraint on developers.name');
+    } catch (e) {
+      if (e.message.includes('already exists')) {
+        results.push('Constraint on developers.name already exists');
+      } else {
+        results.push(`developers.name: ${e.message}`);
+      }
+    }
+
+    // Add unique constraint to areas.slug
+    try {
+      await query(`ALTER TABLE areas ADD CONSTRAINT areas_slug_unique UNIQUE (slug);`);
+      results.push('Added unique constraint on areas.slug');
+    } catch (e) {
+      if (e.message.includes('already exists')) {
+        results.push('Constraint on areas.slug already exists');
+      } else {
+        results.push(`areas.slug: ${e.message}`);
+      }
+    }
+
+    // Add unique constraint to projects.slug
+    try {
+      await query(`ALTER TABLE projects ADD CONSTRAINT projects_slug_unique UNIQUE (slug);`);
+      results.push('Added unique constraint on projects.slug');
+    } catch (e) {
+      if (e.message.includes('already exists')) {
+        results.push('Constraint on projects.slug already exists');
+      } else {
+        results.push(`projects.slug: ${e.message}`);
+      }
+    }
+
+    res.json({ success: true, results });
+  } catch (error) {
+    res.json({ success: false, error: error.message });
+  }
+});
+
 // Seed more Dubai off-plan data
 router.get('/seed-data', async (req, res) => {
   try {

@@ -54,7 +54,8 @@
       "Bash(del \"d:\\AiGentsRealty\\frontend\\app\\projects\\page.tsx\")",
       "Bash(if exist .next rmdir /s /q .next)",
       "Bash(bash migrate-to-supabase.sh:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(cmd /c \"taskkill /F /PID 40884\")"
     ],
     "deny": [],
     "ask": []
