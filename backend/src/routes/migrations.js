@@ -208,22 +208,22 @@ router.get('/seed-data', async (req, res) => {
     // Add more developers
     results.push('Adding developers...');
     const developers = [
-      { name: 'Sobha Realty', logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3627?w=200&h=200&fit=crop', description: 'Premium quality developer known for Sobha Hartland and luxury villas.' },
-      { name: 'Meraas', logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3628?w=200&h=200&fit=crop', description: 'Lifestyle developer behind City Walk, Bluewaters, and La Mer.' },
-      { name: 'Ellington Properties', logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3629?w=200&h=200&fit=crop', description: 'Boutique developer focused on design-led residences.' },
-      { name: 'Binghatti', logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3630?w=200&h=200&fit=crop', description: 'Known for iconic architecture and Jacob & Co partnership.' },
-      { name: 'Azizi Developments', logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3631?w=200&h=200&fit=crop', description: 'Major developer in Dubai with projects across prime locations.' },
-      { name: 'Samana Developers', logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3632?w=200&h=200&fit=crop', description: 'Affordable luxury with private pools and flexible payment plans.' },
-      { name: 'Majid Al Futtaim', logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3633?w=200&h=200&fit=crop', description: 'Developer of Tilal Al Ghaf and Mall of the Emirates.' },
-      { name: 'Select Group', logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3634?w=200&h=200&fit=crop', description: 'Award-winning developer known for Marina Gate and Six Senses.' }
+      { name: 'Sobha Realty', slug: 'sobha-realty', logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3627?w=200&h=200&fit=crop', description: 'Premium quality developer known for Sobha Hartland and luxury villas.' },
+      { name: 'Meraas', slug: 'meraas', logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3628?w=200&h=200&fit=crop', description: 'Lifestyle developer behind City Walk, Bluewaters, and La Mer.' },
+      { name: 'Ellington Properties', slug: 'ellington-properties', logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3629?w=200&h=200&fit=crop', description: 'Boutique developer focused on design-led residences.' },
+      { name: 'Binghatti', slug: 'binghatti', logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3630?w=200&h=200&fit=crop', description: 'Known for iconic architecture and Jacob & Co partnership.' },
+      { name: 'Azizi Developments', slug: 'azizi-developments', logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3631?w=200&h=200&fit=crop', description: 'Major developer in Dubai with projects across prime locations.' },
+      { name: 'Samana Developers', slug: 'samana-developers', logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3632?w=200&h=200&fit=crop', description: 'Affordable luxury with private pools and flexible payment plans.' },
+      { name: 'Majid Al Futtaim', slug: 'majid-al-futtaim', logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3633?w=200&h=200&fit=crop', description: 'Developer of Tilal Al Ghaf and Mall of the Emirates.' },
+      { name: 'Select Group', slug: 'select-group', logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3634?w=200&h=200&fit=crop', description: 'Award-winning developer known for Marina Gate and Six Senses.' }
     ];
 
     for (const dev of developers) {
       await query(`
-        INSERT INTO developers (name, logo, description)
-        VALUES ($1, $2, $3)
+        INSERT INTO developers (name, slug, logo, description)
+        VALUES ($1, $2, $3, $4)
         ON CONFLICT (name) DO NOTHING
-      `, [dev.name, dev.logo, dev.description]);
+      `, [dev.name, dev.slug, dev.logo, dev.description]);
     }
     results.push(`Added ${developers.length} developers`);
 
