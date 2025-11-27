@@ -1701,7 +1701,7 @@ function MapView({ data, projects }: { data?: any; projects?: Project[] }) {
   // Get the first project if available
   const project = projects?.[0];
   const locationName = project?.name || data?.name || data?.title || 'Dubai';
-  const locationArea = project?.location || data?.area || areaSlug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  const locationArea = project?.location || data?.area || areaSlug.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
 
   return (
     <div className="space-y-4">
