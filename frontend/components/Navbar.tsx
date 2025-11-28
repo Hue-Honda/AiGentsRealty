@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import Link from 'next/link';
-import { Building2, ChevronDown, Menu, X, BookOpen, BarChart3, MapPin, Phone } from 'lucide-react';
+import { Building2, ChevronDown, Menu, X, BookOpen, BarChart3, MapPin, Phone, Sparkles } from 'lucide-react';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -183,7 +183,15 @@ export default function Navbar() {
             </div>
 
             {/* Right Actions */}
-            <div className="hidden lg:flex items-center">
+            <div className="hidden lg:flex items-center gap-3">
+              {/* Ask Genie Button - Emerald with Gold Sparkle */}
+              <Link
+                href="/genie"
+                className="group flex items-center gap-2 bg-gradient-to-r from-[#10B981] to-[#059669] text-white px-5 py-2.5 rounded-xl font-semibold hover:-translate-y-0.5 transition-all duration-300 shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)]"
+              >
+                <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+                <span>Ask Genie</span>
+              </Link>
               {/* Contact Button - Gold Border with Emerald Hover */}
               <Link
                 href="/contact"
@@ -220,7 +228,15 @@ export default function Navbar() {
                   </Link>
                 </div>
               ))}
-              <div className="pt-4 border-t border-[#D4AF37]/20">
+              <div className="pt-4 border-t border-[#D4AF37]/20 space-y-3">
+                <Link
+                  href="/genie"
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#10B981] to-[#059669] text-white px-4 py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-[#10B981]/30 transition-all"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+                  Ask Genie
+                </Link>
                 <Link
                   href="/contact"
                   className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#D4AF37] to-[#B8941E] text-black px-4 py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all"

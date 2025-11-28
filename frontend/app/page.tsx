@@ -1,345 +1,456 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import ReactMarkdown from 'react-markdown';
-import { Sparkles, Building2, MapPin, ArrowRight } from 'lucide-react';
-import SmartCanvas, { CanvasAction } from '@/components/canvas/SmartCanvas';
+import { useRouter } from 'next/navigation';
+import {
+  Search, Sparkles, TrendingUp, Building2, MapPin, Calendar,
+  CreditCard, Star, Award, Shield, ArrowRight
+} from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useSearchStore } from '@/store/searchStore';
 
-// Project interface
-interface Project {
-  id: number;
-  name: string;
-  slug: string;
-  location: string;
-  price_from: string;
-  completion_date: string;
-  payment_plan: string;
-  bedrooms: string;
-  bathrooms: string;
-  sqft: string;
-  area_slug: string;
-  images?: string[];
-}
-
-// Message interface
-interface Message {
-  role: 'assistant' | 'user';
-  content: string;
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
 }
 
 export default function Home() {
-  // Genie Chat State
-  const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: 'Hi! I\'m Genie. Ask me about Dubai off-plan investments!' }
-  ]);
-  const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const { setPendingQuery } = useSearchStore();
+  const [searchInput, setSearchInput] = useState('');
 
-  // Smart Canvas State
-  const [canvasAction, setCanvasAction] = useState<CanvasAction>({ type: 'welcome' });
+  const heroRef = useRef<HTMLElement>(null);
+  const searchBarRef = useRef<HTMLDivElement>(null);
+  const dataCardsRef = useRef<HTMLDivElement>(null);
+  const projectsRef = useRef<HTMLElement>(null);
+  const developersRef = useRef<HTMLElement>(null);
+  const launchesRef = useRef<HTMLElement>(null);
 
-  // Projects State (for carousel section)
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loadingProjects, setLoadingProjects] = useState(true);
-
-  // Carousel State
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const cardsPerView = 3;
-  const totalSlides = Math.max(0, Math.ceil(projects.length / cardsPerView));
-
-  const handlePrevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? totalSlides - 1 : prev - 1));
-  };
-
-  const handleNextSlide = () => {
-    setCurrentSlide((prev) => (prev === totalSlides - 1 ? 0 : prev + 1));
-  };
-
-  const quickReplies = [
-    "Best ROI in 2024",
-    "3BR under 2M AED",
-    "Downtown projects",
-    "Payment plans"
+  // Sample data
+  const suggestions = [
+    "Best ROI projects under 1M AED",
+    "3BR villas with 80/20 payment",
+    "Emaar projects completing in 2025"
   ];
 
-  // Fetch projects
-  useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-    fetch(`${apiUrl}/api/projects/suggestions`)
-      .then(res => res.json())
-      .then(data => {
-        console.log('API Response:', data);
-        if (data.success && data.data) {
-          console.log('Projects received:', data.data.length);
-          setProjects(data.data);
-        }
-      })
-      .catch(err => console.error('Error fetching projects:', err))
-      .finally(() => setLoadingProjects(false));
-  }, []);
+  const projects = [
+    {
+      id: 1,
+      name: 'Azure Residences',
+      developer: 'Emaar Properties',
+      location: 'Dubai Hills Estate',
+      price: '900K',
+      roi: '12.5%',
+      payment: '80/20',
+      completion: 'Q4 2025',
+      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=800&fit=crop',
+      size: 'large'
+    },
+    {
+      id: 2,
+      name: 'Marina Heights',
+      developer: 'DAMAC Properties',
+      location: 'Dubai Marina',
+      price: '1.2M',
+      roi: '14.2%',
+      payment: '70/30',
+      completion: 'Q2 2026',
+      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop',
+      size: 'medium'
+    },
+    {
+      id: 3,
+      name: 'Palm Gardens',
+      developer: 'Nakheel',
+      location: 'Palm Jumeirah',
+      price: '2.5M',
+      roi: '11.8%',
+      payment: '60/40',
+      completion: 'Q1 2026',
+      image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop',
+      size: 'small'
+    },
+    {
+      id: 4,
+      name: 'Creek Views',
+      developer: 'Emaar Properties',
+      location: 'Dubai Creek Harbour',
+      price: '1.8M',
+      roi: '13.1%',
+      payment: '80/20',
+      completion: 'Q3 2025',
+      image: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800&h=1000&fit=crop',
+      size: 'tall'
+    }
+  ];
 
-  const handleChatSubmit = async (e: React.FormEvent) => {
+  const developers = [
+    {
+      name: 'Emaar Properties',
+      slug: 'emaar',
+      projects: 45,
+      rating: 4.8,
+      roi: '12.4%',
+      onTime: 96,
+      image: 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=1920&h=1080&fit=crop&q=90',
+      featured: true
+    },
+    {
+      name: 'DAMAC Properties',
+      slug: 'damac',
+      projects: 38,
+      rating: 4.6,
+      roi: '13.2%',
+      onTime: 94,
+      image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=600&fit=crop&q=90'
+    },
+    {
+      name: 'Nakheel',
+      slug: 'nakheel',
+      projects: 28,
+      rating: 4.7,
+      roi: '11.9%',
+      onTime: 95,
+      image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&h=600&fit=crop&q=90'
+    },
+    {
+      name: 'Meraas',
+      slug: 'meraas',
+      projects: 22,
+      rating: 4.5,
+      roi: '12.8%',
+      onTime: 93,
+      image: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?w=800&h=600&fit=crop&q=90'
+    },
+    {
+      name: 'Sobha Realty',
+      slug: 'sobha',
+      projects: 19,
+      rating: 4.7,
+      roi: '13.5%',
+      onTime: 97,
+      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop&q=90'
+    }
+  ];
+
+  const launches = [
+    {
+      name: 'Sunset Boulevard',
+      developer: 'Emaar',
+      location: 'Dubai South',
+      price: '750K',
+      badge: 'Just Launched',
+      image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=400&fit=crop'
+    },
+    {
+      name: 'Sky Villas',
+      developer: 'DAMAC',
+      location: 'Business Bay',
+      price: '1.1M',
+      badge: 'Limited Units',
+      image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&h=400&fit=crop'
+    },
+    {
+      name: 'Oasis Gardens',
+      developer: 'Azizi',
+      location: 'Al Furjan',
+      price: '680K',
+      badge: 'Early Bird',
+      image: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=600&h=400&fit=crop'
+    }
+  ];
+
+  const benefits = [
+    {
+      icon: <TrendingUp className="w-8 h-8" />,
+      title: 'Capital Appreciation',
+      description: 'Average 15%+ value growth during construction phase'
+    },
+    {
+      icon: <CreditCard className="w-8 h-8" />,
+      title: 'Flexible Payments',
+      description: 'Payment plans from 10% down to 80/20 structures'
+    },
+    {
+      icon: <Shield className="w-8 h-8" />,
+      title: 'RERA Protection',
+      description: 'Government-backed escrow accounts for your investment'
+    }
+  ];
+
+  // Handle search submission - store query and redirect to /genie
+  const handleSearch = (query: string) => {
+    if (!query.trim()) return;
+    setPendingQuery(query.trim());
+    router.push('/genie');
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    handleSearch(searchInput);
+  };
 
-    const userMessage = input.trim();
-    setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
-    setIsLoading(true);
+  const handleSuggestionClick = (suggestion: string) => {
+    handleSearch(suggestion);
+  };
 
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-      const response = await fetch(`${apiUrl}/api/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMessage })
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // HERO ANIMATIONS
+      gsap.from('.hero-title', {
+        opacity: 0,
+        y: 60,
+        duration: 1,
+        ease: 'power4.out',
+        delay: 0.3
       });
 
-      const data = await response.json();
-      console.log('Chat API response:', data);
-      console.log('Recommended projects:', data.recommendedProjects);
+      gsap.from('.hero-subtitle', {
+        opacity: 0,
+        y: 40,
+        duration: 0.8,
+        ease: 'power3.out',
+        delay: 0.6
+      });
 
-      if (data.message) {
-        setMessages(prev => [...prev, { role: 'assistant', content: data.message }]);
-      } else {
-        setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I encountered an error.' }]);
+      // DATA CARDS STAGGER
+      if (dataCardsRef.current) {
+        gsap.from(dataCardsRef.current.children, {
+          opacity: 0,
+          y: 40,
+          scale: 0.9,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: 'back.out(1.2)',
+          delay: 0.8
+        });
       }
 
-      // Update Smart Canvas with AI response
-      if (data.canvas) {
-        console.log('Setting canvas action:', data.canvas);
-        setCanvasAction(data.canvas);
+      // SEARCH BAR
+      if (searchBarRef.current) {
+        gsap.from(searchBarRef.current, {
+          opacity: 0,
+          y: 30,
+          duration: 0.8,
+          ease: 'power3.out',
+          delay: 1
+        });
       }
-    } catch (error) {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Connection error. Please try again.' }]);
-    } finally {
-      setIsLoading(false);
+
+      // MASONRY CARDS
+      if (projectsRef.current) {
+        const cards = projectsRef.current.querySelectorAll('.project-card');
+        gsap.from(cards, {
+          opacity: 0,
+          y: 40,
+          duration: 0.8,
+          stagger: 0.12,
+          ease: 'power4.out',
+          scrollTrigger: {
+            trigger: projectsRef.current,
+            start: 'top 75%',
+            toggleActions: 'play none none none'
+          }
+        });
+      }
+
+      // SECTION TITLES
+      gsap.utils.toArray('.section-title').forEach((title: any) => {
+        gsap.from(title, {
+          opacity: 0,
+          x: -40,
+          duration: 0.7,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: title,
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          }
+        });
+      });
+
+      // DEVELOPERS SECTION - Set initial opacity to 1 to ensure visibility
+      if (developersRef.current) {
+        const devCards = developersRef.current.querySelectorAll('.dev-card');
+        // Ensure cards are visible by default
+        gsap.set(devCards, { opacity: 1 });
+
+        gsap.from(devCards, {
+          opacity: 0,
+          y: 30,
+          scale: 0.95,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: 'back.out(1.1)',
+          scrollTrigger: {
+            trigger: developersRef.current,
+            start: 'top 75%',
+            toggleActions: 'play none none none',
+            onEnter: () => {
+              // Force refresh on enter to ensure proper visibility
+              gsap.to(devCards, { opacity: 1, duration: 0 });
+            }
+          }
+        });
+      }
+
+    }, heroRef);
+
+    // Refresh ScrollTrigger after a short delay to ensure all elements are positioned
+    const refreshTimer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 100);
+
+    return () => {
+      clearTimeout(refreshTimer);
+      ctx.revert();
+    };
+  }, []);
+
+  // PARALLAX HOVER
+  const handleCardHover = (e: React.MouseEvent<HTMLDivElement>) => {
+    const card = e.currentTarget;
+    const img = card.querySelector('.property-img') as HTMLElement;
+
+    if (img) {
+      gsap.to(img, {
+        scale: 1.05,
+        duration: 0.4,
+        ease: 'power2.out'
+      });
+    }
+  };
+
+  const handleCardLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+    const card = e.currentTarget;
+    const img = card.querySelector('.property-img') as HTMLElement;
+
+    if (img) {
+      gsap.to(img, {
+        scale: 1,
+        duration: 0.4,
+        ease: 'power2.out'
+      });
     }
   };
 
   return (
-    <main className="min-h-screen bg-[#0A0A0A]">
-      {/* ========== HERO SECTION ========== */}
-      <section className="relative min-h-screen overflow-hidden">
-        {/* CINEMATIC DARK GRADIENT BACKGROUND */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0A0A0A] via-[#1A1A1A] to-[#0A0A0A]">
-          {/* Soft emerald beams creating depth */}
-          <div className="absolute top-[10%] left-[15%] w-[500px] h-[800px] bg-[#10B981]/10 rotate-[25deg] blur-[120px]"></div>
-          <div className="absolute top-[5%] right-[10%] w-[600px] h-[700px] bg-[#10B981]/8 -rotate-[15deg] blur-[140px]"></div>
-
-          {/* Gold particles/bokeh */}
-          <div className="absolute bottom-[30%] left-[8%] w-[250px] h-[250px] bg-[#D4AF37]/8 rounded-full blur-[90px]"></div>
-          <div className="absolute top-[25%] right-[20%] w-[180px] h-[180px] bg-[#D4AF37]/10 rounded-full blur-[70px]"></div>
-
-          {/* Emerald geometric shapes */}
-          <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[400px] h-[400px] border border-[#10B981]/15 rotate-45 rounded-[4rem]"></div>
-          <div className="absolute top-[25%] left-1/2 -translate-x-1/2 w-[300px] h-[300px] border border-[#10B981]/10 rotate-12 rounded-[3rem]"></div>
-
-          {/* Subtle bokeh particles */}
-          <div className="absolute top-[20%] left-[45%] w-3 h-3 bg-[#D4AF37]/40 rounded-full blur-sm animate-pulse"></div>
-          <div className="absolute top-[50%] left-[75%] w-2 h-2 bg-[#10B981]/30 rounded-full blur-sm"></div>
-          <div className="absolute top-[70%] left-[20%] w-3 h-3 bg-[#D4AF37]/50 rounded-full blur-sm animate-pulse"></div>
-
-          {/* Gold architectural line */}
-          <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent"></div>
+    <main className="min-h-screen bg-black">
+      {/* HERO SECTION */}
+      <section ref={heroRef} className="relative min-h-screen flex items-center overflow-hidden pt-24 pb-20">
+        {/* Background Dubai Skyline */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-black via-black/95 to-black/90 z-10"></div>
+          <img
+            src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1920&h=1080&fit=crop"
+            alt="Dubai"
+            className="w-full h-full object-cover opacity-20"
+            suppressHydrationWarning
+          />
+          {/* Emerald + Gold Glows */}
+          <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-[#00C870]/10 rounded-full blur-[120px] z-20"></div>
+          <div className="absolute bottom-1/4 left-1/4 w-[500px] h-[500px] bg-[#E8C676]/8 rounded-full blur-[100px] z-20"></div>
         </div>
 
-        <div className="relative max-w-[1800px] mx-auto px-6 lg:px-16 pt-20 pb-32">
-          {/* COMPACT HEADLINE - ONE LINE */}
-          <div className="text-center mb-12 relative z-10">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight mb-4">
-              Find Your <span className="bg-gradient-to-r from-[#D4AF37] via-[#F4E5B8] to-[#D4AF37] bg-clip-text text-transparent">Dream Oasis</span>
-            </h1>
-            <p className="text-base lg:text-lg text-gray-400 max-w-2xl mx-auto font-light leading-relaxed mb-6">
-              AI-powered property discovery in Dubai's most exclusive locations
-            </p>
-
-            {/* COMPACT FEATURE BADGES - ONE LINE */}
-            <div className="flex flex-wrap justify-center items-center gap-2">
-              {/* Badge 1 */}
-              <div className="group px-4 py-2 bg-[#0A0A0A]/60 backdrop-blur-xl border border-[#D4AF37]/40 rounded-full hover:bg-[#10B981]/10 hover:border-[#10B981]/60 transition-all duration-300">
-                <div className="flex items-center gap-1.5">
-                  <svg className="w-3.5 h-3.5 text-[#10B981]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                  </svg>
-                  <span className="text-xs font-bold text-[#D4AF37] group-hover:text-[#10B981]">Live ROI & Comps</span>
-                </div>
+        <div className="relative z-30 max-w-[1800px] mx-auto px-6 lg:px-16 w-full">
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
+            {/* LEFT: Headline + Search */}
+            <div className="lg:col-span-7 space-y-10">
+              {/* Headline */}
+              <div className="space-y-6">
+                <h1 className="hero-title text-6xl sm:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-tight">
+                  Explore Dubai's <br />
+                  <span className="bg-gradient-to-r from-[#00C870] via-[#E8C676] to-[#00C870] bg-clip-text text-transparent">
+                    Off-Plan Market
+                  </span>
+                </h1>
+                <p className="hero-subtitle text-xl lg:text-2xl text-gray-300 max-w-2xl font-light leading-relaxed">
+                  AI-powered property discovery with <span className="text-[#00C870] font-semibold">real-time ROI analysis</span>
+                  {' '}and <span className="text-[#E8C676] font-semibold">developer analytics</span>.
+                </p>
               </div>
 
-              {/* Badge 2 */}
-              <div className="group px-4 py-2 bg-[#D4AF37]/5 backdrop-blur-xl border border-[#D4AF37]/30 rounded-full hover:bg-[#D4AF37]/15 hover:border-[#D4AF37]/60 transition-all duration-300">
-                <div className="flex items-center gap-1.5">
-                  <svg className="w-3.5 h-3.5 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                  <span className="text-xs font-semibold text-white">RERA/DLD Compliant</span>
-                </div>
-              </div>
-
-              {/* Badge 3 */}
-              <div className="group px-4 py-2 bg-[#10B981]/5 backdrop-blur-xl border border-[#10B981]/30 rounded-full hover:bg-[#10B981]/15 hover:border-[#10B981]/60 transition-all duration-300">
-                <div className="flex items-center gap-1.5">
-                  <svg className="w-3.5 h-3.5 text-[#D4AF37] fill-current" viewBox="0 0 24 24">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                  </svg>
-                  <span className="text-xs font-medium text-gray-300 group-hover:text-white">Personalized Shortlists</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* ASYMMETRIC TWO-COLUMN AREA - BROKEN GRID */}
-          <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-
-            {/* LEFT: SMART CANVAS - Dynamic AI-driven content - 7 cols / 60% */}
-            <div className="lg:col-span-7 relative order-2 lg:order-1">
-              <div className="lg:mt-8 relative">
-                {/* Glow Effect */}
-                <div className="absolute -inset-4 bg-[#10B981]/10 rounded-[2rem] blur-2xl"></div>
-
-                {/* Smart Canvas Container */}
-                <div className="relative bg-[#0A0A0A]/80 backdrop-blur-xl border border-[#10B981]/20 rounded-3xl p-6 shadow-[0_0_40px_rgba(16,185,129,0.1)]">
-                  <SmartCanvas
-                    action={canvasAction}
-                    isLoading={isLoading}
-                    onProjectClick={(project) => {
-                      window.location.href = `/areas/${project.area_slug}/${project.slug}`;
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* RIGHT: GENIE CHAT - Smaller Panel (5 cols / 40%) */}
-            <div className="lg:col-span-5 lg:-mt-4 relative order-1 lg:order-2">
-              {/* Emerald glow depth layer */}
-              <div className="absolute -inset-6 bg-[#10B981]/15 rounded-[2rem] blur-3xl"></div>
-
-              <div className="relative bg-[#0A0A0A]/90 backdrop-blur-2xl border-2 border-[#10B981]/40 rounded-3xl overflow-hidden shadow-[0_25px_70px_rgba(16,185,129,0.3)] hover:shadow-[0_0_50px_rgba(16,185,129,0.4)] transition-all duration-500">
-                {/* Emerald top accent */}
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#10B981] to-transparent"></div>
-
-                {/* Header with Gold Orb Avatar */}
-                <div className="bg-gradient-to-br from-[#10B981]/20 to-transparent p-6 border-b border-[#10B981]/20">
-                  <div className="flex items-center gap-4">
-                    <div className="relative">
-                      <div className="w-16 h-16 bg-gradient-to-br from-[#D4AF37] to-[#B8941E] rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(212,175,55,0.6)]">
-                        <svg className="w-8 h-8 text-black animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                        </svg>
+              {/* AI SUPER SEARCH BAR */}
+              <div ref={searchBarRef} className="relative">
+                <form onSubmit={handleSearchSubmit}>
+                  <div className="relative bg-black/60 backdrop-blur-2xl border-2 border-[#E8C676]/40 rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.9)] hover:border-[#00C870]/60 transition-all duration-300 group">
+                    <div className="flex items-stretch">
+                      {/* Gold Icon Capsule */}
+                      <div className="flex items-center justify-center px-6 bg-gradient-to-br from-[#E8C676] to-[#D4AF37]">
+                        <Sparkles className="w-6 h-6 text-black" />
                       </div>
-                      <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#10B981] rounded-full border-2 border-[#0A0A0A]"></div>
+
+                      {/* Input */}
+                      <input
+                        type="text"
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        placeholder="Ask Genie anything..."
+                        className="flex-1 text-lg px-6 py-6 bg-transparent outline-none text-white placeholder-gray-500 font-light"
+                      />
+
+                      {/* Search Button */}
+                      <button
+                        type="submit"
+                        className="px-10 bg-gradient-to-r from-[#00C870] to-[#059669] text-white font-bold hover:shadow-[0_0_30px_rgba(0,200,112,0.4)] transition-all duration-300 flex items-center gap-3"
+                      >
+                        <Search className="w-5 h-5" />
+                        <span className="hidden sm:inline">Search</span>
+                      </button>
                     </div>
-                    <div>
-                      <h2 className="text-2xl font-bold text-white">Genie</h2>
-                      <p className="text-sm text-[#10B981]">AI Property Advisor</p>
+
+                    {/* Top Gold Line */}
+                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#E8C676] to-transparent"></div>
+                  </div>
+                </form>
+
+                {/* Suggestion Chips */}
+                <div className="mt-5 flex flex-wrap gap-3">
+                  {suggestions.map((suggestion, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      className="text-xs bg-black/60 backdrop-blur-xl text-gray-400 hover:text-[#00C870] px-4 py-2 rounded-full border border-[#00C870]/30 hover:border-[#00C870] hover:shadow-[0_0_15px_rgba(0,200,112,0.3)] transition-all duration-300"
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* RIGHT: AI Data Cluster Cards */}
+            <div className="lg:col-span-5">
+              <div ref={dataCardsRef} className="space-y-6">
+                {/* Large ROI Card */}
+                <div className="relative bg-black/60 backdrop-blur-3xl border-2 border-[#00C870]/40 rounded-3xl p-10 shadow-[0_20px_60px_rgba(0,0,0,0.9)] hover:shadow-[0_0_60px_rgba(0,200,112,0.3)] transition-all duration-500 overflow-hidden group">
+                  {/* Emerald Glow Inside */}
+                  <div className="absolute -top-20 -right-20 w-60 h-60 bg-[#00C870]/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+
+                  <div className="relative">
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="w-16 h-16 bg-gradient-to-br from-[#00C870] to-[#059669] rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(0,200,112,0.6)]">
+                        <TrendingUp className="w-8 h-8 text-white" />
+                      </div>
+                      <span className="text-xs text-[#E8C676] font-bold tracking-wider border border-[#E8C676]/40 px-3 py-1 rounded-full">LIVE DATA</span>
                     </div>
+                    <div className="text-7xl font-black text-white mb-3">12.8<span className="text-[#00C870]">%</span></div>
+                    <div className="text-sm text-gray-400 font-semibold uppercase tracking-wide">Average ROI</div>
                   </div>
                 </div>
 
-                {/* Chat Messages */}
-                <div className="h-[350px] overflow-y-auto p-5 space-y-4 chat-scrollbar">
-                  {messages.map((msg, idx) => (
-                    <div
-                      key={idx}
-                      className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div
-                        className={`max-w-[85%] rounded-2xl px-5 py-3.5 text-base ${
-                          msg.role === 'user'
-                            ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8941E] text-black shadow-[0_4px_15px_rgba(212,175,55,0.3)]'
-                            : 'bg-[#1A1A1A]/80 border border-[#10B981]/30 text-gray-300 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
-                        }`}
-                      >
-                        {msg.role === 'assistant' && (
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-2 h-2 bg-[#10B981] rounded-full animate-pulse"></div>
-                            <span className="text-xs font-semibold text-[#10B981]">GENIE</span>
-                          </div>
-                        )}
-                        {msg.role === 'assistant' ? (
-                          <div className="leading-relaxed prose prose-invert prose-sm max-w-none prose-p:my-2 prose-ul:my-2 prose-li:my-1 prose-strong:text-[#D4AF37]">
-                            <ReactMarkdown
-                              components={{
-                                a: ({ href, children }) => (
-                                  <a
-                                    href={href}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1.5 px-4 py-2 my-2 mr-2 bg-gradient-to-r from-[#10B981]/20 to-[#10B981]/10 border border-[#10B981]/50 text-[#10B981] rounded-xl text-xs font-bold hover:from-[#10B981]/30 hover:to-[#10B981]/20 hover:border-[#10B981] hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all no-underline"
-                                  >
-                                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                    {children}
-                                    <svg className="w-3 h-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                    </svg>
-                                  </a>
-                                )
-                              }}
-                            >
-                              {msg.content}
-                            </ReactMarkdown>
-                          </div>
-                        ) : (
-                          <p className="leading-relaxed">{msg.content}</p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                {/* Two Smaller Cards */}
+                <div className="grid grid-cols-2 gap-5">
+                  <div className="bg-black/60 backdrop-blur-xl border border-[#E8C676]/30 rounded-2xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:border-[#E8C676] hover:shadow-[0_0_25px_rgba(232,198,118,0.4)] transition-all duration-300">
+                    <div className="text-4xl font-black text-white mb-2">100<span className="text-[#E8C676]">+</span></div>
+                    <div className="text-xs text-gray-500 uppercase tracking-wider">Projects</div>
+                  </div>
 
-                  {isLoading && (
-                    <div className="flex justify-start">
-                      <div className="bg-[#1A1A1A]/80 border border-[#10B981]/30 rounded-2xl px-5 py-3 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-                        <div className="flex items-center gap-2">
-                          <svg className="w-4 h-4 text-[#10B981] animate-spin" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          <span className="text-sm text-gray-400">Thinking...</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Quick Reply Chips */}
-                <div className="px-6 pb-4 flex flex-wrap gap-2">
-                  {quickReplies.map((reply, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setInput(reply)}
-                      className="text-xs bg-[#10B981]/10 border border-[#10B981]/30 text-[#10B981] px-3 py-1.5 rounded-full hover:bg-[#10B981]/20 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all"
-                    >
-                      {reply}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Input Area */}
-                <div className="p-6 border-t border-[#10B981]/20 bg-[#0A0A0A]/60">
-                  <form onSubmit={handleChatSubmit} className="flex gap-3">
-                    <input
-                      type="text"
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      placeholder="Ask about ROI, payment plans..."
-                      className="flex-1 bg-[#1A1A1A]/60 border border-[#10B981]/30 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#10B981] focus:shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all"
-                      disabled={isLoading}
-                    />
-                    <button
-                      type="submit"
-                      disabled={isLoading || !input.trim()}
-                      className="bg-gradient-to-r from-[#10B981] to-[#059669] text-white px-6 rounded-xl hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                    >
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                      </svg>
-                    </button>
-                  </form>
+                  <div className="bg-black/60 backdrop-blur-xl border border-[#00C870]/30 rounded-2xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:border-[#00C870] hover:shadow-[0_0_25px_rgba(0,200,112,0.4)] transition-all duration-300">
+                    <div className="text-4xl font-black text-white mb-2">25<span className="text-[#00C870]">+</span></div>
+                    <div className="text-xs text-gray-500 uppercase tracking-wider">Developers</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -347,240 +458,418 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ========== AI SUGGESTIONS SECTION - DARK BACKGROUND ========== */}
-      <section className="relative bg-[#0A0A0A] py-20 border-t border-[#10B981]/10 overflow-hidden">
-        {/* Subtle background effects */}
-        <div className="absolute top-[20%] right-[10%] w-[400px] h-[400px] bg-[#10B981]/5 rounded-full blur-[120px]"></div>
-        <div className="absolute bottom-[30%] left-[15%] w-[300px] h-[300px] bg-[#D4AF37]/5 rounded-full blur-[100px]"></div>
+      {/* FEATURED PROJECTS - MASONRY LAYOUT */}
+      <section ref={projectsRef} className="relative py-20 lg:py-28 bg-gradient-to-b from-black via-[#0A0A0A] to-black overflow-hidden">
+        {/* Background Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#00C870]/5 rounded-full blur-[150px]"></div>
 
         <div className="relative max-w-[1800px] mx-auto px-6 lg:px-16">
-          {/* Header with Badge and Navigation */}
-          <div className="flex items-start justify-between mb-12">
-            <div>
-              {/* AI-Powered Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#10B981]/10 border border-[#10B981]/30 rounded-full mb-6">
-                <Sparkles className="w-4 h-4 text-[#10B981]" />
-                <span className="text-sm font-bold text-[#10B981] uppercase tracking-wide">AI-Powered Matches</span>
-              </div>
-
-              <h2 className="text-5xl lg:text-6xl font-black mb-4">
-                <span className="bg-gradient-to-r from-[#D4AF37] via-[#F4D03F] to-[#D4AF37] bg-clip-text text-transparent">
-                  AI Suggestions for You
-                </span>
-              </h2>
-              <p className="text-xl text-gray-400">
-                Properties matched to your investment goals
-              </p>
+          {/* Section Header */}
+          <div className="mb-16">
+            <div className="inline-flex items-center gap-2 bg-[#00C870]/10 border border-[#00C870]/30 px-4 py-2 rounded-full mb-6">
+              <Sparkles className="w-4 h-4 text-[#00C870]" />
+              <span className="text-xs font-bold text-[#00C870] uppercase tracking-wide">AI-Curated</span>
             </div>
-
-            {/* Navigation Arrows */}
-            <div className="flex gap-3">
-              <button
-                onClick={handlePrevSlide}
-                className="w-12 h-12 bg-[#1A1A1A]/60 border-2 border-[#D4AF37]/30 rounded-xl flex items-center justify-center hover:bg-[#D4AF37]/10 hover:border-[#D4AF37] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all"
-                aria-label="Previous"
-              >
-                <ArrowRight className="w-5 h-5 text-[#D4AF37] rotate-180" />
-              </button>
-              <button
-                onClick={handleNextSlide}
-                className="w-12 h-12 bg-[#1A1A1A]/60 border-2 border-[#D4AF37]/30 rounded-xl flex items-center justify-center hover:bg-[#D4AF37]/10 hover:border-[#D4AF37] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all"
-                aria-label="Next"
-              >
-                <ArrowRight className="w-5 h-5 text-[#D4AF37]" />
-              </button>
-            </div>
+            <h2 className="section-title text-5xl lg:text-6xl font-black text-white mb-4 leading-tight">
+              Featured <span className="bg-gradient-to-r from-[#E8C676] to-[#00C870] bg-clip-text text-transparent">Projects</span>
+            </h2>
+            <p className="text-xl text-gray-400 max-w-2xl">Premium off-plan developments with exceptional ROI potential</p>
           </div>
 
-          {loadingProjects ? (
-            <div className="text-center py-12">
-              <Sparkles className="w-12 h-12 text-[#10B981] animate-pulse mx-auto mb-4" />
-              <p className="text-gray-400">Loading AI-powered suggestions...</p>
-            </div>
-          ) : projects.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-400">No properties available at the moment.</p>
-            </div>
-          ) : (
-            <>
-              {/* Carousel Container */}
-              <div className="relative overflow-hidden">
-                <div
-                  className="flex transition-transform duration-700 ease-out"
-                  style={{
-                    transform: `translateX(-${currentSlide * 100}%)`
-                  }}
-                >
-                  {/* Create slides by grouping projects */}
-                  {Array.from({ length: totalSlides }).map((_, slideIndex) => (
-                    <div key={slideIndex} className="min-w-full">
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-1">
-                        {projects
-                          .slice(slideIndex * cardsPerView, (slideIndex + 1) * cardsPerView)
-                          .map((project) => (
-                <div
-                  key={project.id}
-                  className="group relative bg-[#0A0A0A]/90 backdrop-blur-xl border border-[#1A1A1A] rounded-3xl overflow-hidden hover:border-[#10B981]/40 hover:shadow-[0_0_40px_rgba(16,185,129,0.3)] transition-all duration-500"
-                >
-                  {/* Property Image */}
-                  <div className="relative h-[280px] overflow-hidden">
-                    {project.images && project.images.length > 0 ? (
-                      <img
-                        src={project.images[0]}
-                        alt={project.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] flex items-center justify-center">
-                        <Building2 className="w-16 h-16 text-[#10B981]/20" />
-                      </div>
-                    )}
+          {/* MASONRY GRID */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Large Wide Card */}
+            <div
+              className="project-card lg:col-span-8 lg:row-span-2 group cursor-pointer"
+              onMouseEnter={handleCardHover}
+              onMouseLeave={handleCardLeave}
+            >
+              <Link href={`/projects/${projects[0].id}`} className="block h-full relative bg-black rounded-3xl overflow-hidden border border-[#E8C676]/20 hover:border-[#E8C676]/60 transition-all duration-500 shadow-[0_20px_60px_rgba(0,0,0,0.8)] hover:shadow-[0_0_60px_rgba(232,198,118,0.3)] hover:-translate-y-1">
+                {/* Image */}
+                <div className="relative h-full min-h-[600px] overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10"></div>
+                  <img
+                    src={projects[0].image}
+                    alt={projects[0].name}
+                    className="property-img w-full h-full object-cover"
+                    suppressHydrationWarning
+                  />
 
-                    {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/20 to-transparent"></div>
-
-                    {/* Payment Plan Badge - Top Left */}
-                    <div className="absolute top-4 left-4 px-3 py-1.5 bg-[#10B981] rounded-lg">
-                      <span className="text-xs font-bold text-black">{project.payment_plan} Plan</span>
-                    </div>
-
-                    {/* Favorite Icon - Top Right */}
-                    <button className="absolute top-4 right-4 w-10 h-10 bg-black/60 backdrop-blur-xl rounded-full flex items-center justify-center hover:bg-black/80 transition-all">
-                      <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                      </svg>
-                    </button>
+                  {/* ROI Badge */}
+                  <div className="absolute top-6 left-6 bg-gradient-to-r from-[#E8C676] to-[#D4AF37] text-black px-4 py-2 rounded-full text-sm font-bold shadow-lg z-20">
+                    {projects[0].roi} ROI
                   </div>
 
-                  {/* Property Details */}
-                  <div className="p-6 space-y-4">
-                    {/* Property Name */}
-                    <h3 className="text-2xl font-bold text-white group-hover:text-[#D4AF37] transition-colors">
-                      {project.name}
+                  {/* Content Overlay */}
+                  <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
+                    <h3 className="text-4xl font-black text-white mb-3 group-hover:text-[#E8C676] transition-colors">{projects[0].name}</h3>
+                    <p className="text-lg text-gray-300 mb-4">{projects[0].developer}</p>
+
+                    <div className="flex flex-wrap items-center gap-4 mb-6">
+                      <div className="flex items-center gap-2 text-sm text-gray-300">
+                        <MapPin className="w-4 h-4 text-[#E8C676]" />
+                        {projects[0].location}
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-300">
+                        <Calendar className="w-4 h-4 text-[#E8C676]" />
+                        {projects[0].completion}
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-300">
+                        <CreditCard className="w-4 h-4 text-[#E8C676]" />
+                        {projects[0].payment}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="text-3xl font-black text-[#00C870]">AED {projects[0].price}</div>
+                      <div className="flex items-center gap-2 text-[#E8C676] font-bold">
+                        View Details
+                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+
+            {/* Medium Card (Top Right) */}
+            <div
+              className="project-card lg:col-span-4 group cursor-pointer"
+              onMouseEnter={handleCardHover}
+              onMouseLeave={handleCardLeave}
+            >
+              <Link href={`/projects/${projects[1].id}`} className="block h-full relative bg-black rounded-3xl overflow-hidden border border-[#00C870]/20 hover:border-[#00C870]/60 transition-all duration-500 shadow-[0_20px_60px_rgba(0,0,0,0.8)] hover:shadow-[0_0_60px_rgba(0,200,112,0.3)] hover:-translate-y-1">
+                <div className="relative h-full min-h-[300px] overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10"></div>
+                  <img
+                    src={projects[1].image}
+                    alt={projects[1].name}
+                    className="property-img w-full h-full object-cover"
+                    suppressHydrationWarning
+                  />
+
+                  <div className="absolute top-4 left-4 bg-gradient-to-r from-[#E8C676] to-[#D4AF37] text-black px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+                    {projects[1].roi} ROI
+                  </div>
+
+                  <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
+                    <h3 className="text-2xl font-black text-white mb-2 group-hover:text-[#00C870] transition-colors">{projects[1].name}</h3>
+                    <p className="text-sm text-gray-300 mb-3">{projects[1].developer}</p>
+                    <div className="text-xl font-black text-[#00C870]">AED {projects[1].price}</div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+
+            {/* Small Card */}
+            <div
+              className="project-card lg:col-span-2 group cursor-pointer"
+              onMouseEnter={handleCardHover}
+              onMouseLeave={handleCardLeave}
+            >
+              <Link href={`/projects/${projects[2].id}`} className="block h-full relative bg-black rounded-3xl overflow-hidden border border-[#E8C676]/20 hover:border-[#E8C676]/60 transition-all duration-500 shadow-[0_20px_60px_rgba(0,0,0,0.8)] hover:shadow-[0_0_60px_rgba(232,198,118,0.3)] hover:-translate-y-1">
+                <div className="relative h-full min-h-[290px] overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10"></div>
+                  <img
+                    src={projects[2].image}
+                    alt={projects[2].name}
+                    className="property-img w-full h-full object-cover"
+                    suppressHydrationWarning
+                  />
+
+                  <div className="absolute top-4 left-4 bg-gradient-to-r from-[#E8C676] to-[#D4AF37] text-black px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+                    {projects[2].roi} ROI
+                  </div>
+
+                  <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
+                    <h3 className="text-lg font-black text-white mb-1 group-hover:text-[#E8C676] transition-colors line-clamp-1">{projects[2].name}</h3>
+                    <div className="text-lg font-black text-[#00C870]">AED {projects[2].price}</div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+
+            {/* Tall Card */}
+            <div
+              className="project-card lg:col-span-2 lg:row-span-1 group cursor-pointer"
+              onMouseEnter={handleCardHover}
+              onMouseLeave={handleCardLeave}
+            >
+              <Link href={`/projects/${projects[3].id}`} className="block h-full relative bg-black rounded-3xl overflow-hidden border border-[#00C870]/20 hover:border-[#00C870]/60 transition-all duration-500 shadow-[0_20px_60px_rgba(0,0,0,0.8)] hover:shadow-[0_0_60px_rgba(0,200,112,0.3)] hover:-translate-y-1">
+                <div className="relative h-full min-h-[290px] overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10"></div>
+                  <img
+                    src={projects[3].image}
+                    alt={projects[3].name}
+                    className="property-img w-full h-full object-cover"
+                    suppressHydrationWarning
+                  />
+
+                  <div className="absolute top-4 left-4 bg-gradient-to-r from-[#E8C676] to-[#D4AF37] text-black px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+                    {projects[3].roi} ROI
+                  </div>
+
+                  <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
+                    <h3 className="text-lg font-black text-white mb-1 group-hover:text-[#00C870] transition-colors line-clamp-1">{projects[3].name}</h3>
+                    <div className="text-lg font-black text-[#00C870]">AED {projects[3].price}</div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* TOP DEVELOPERS - ULTRA PREMIUM */}
+      <section ref={developersRef} className="relative py-24 lg:py-32 bg-black overflow-hidden">
+        {/* Cinematic Background Lighting */}
+        <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-[#E8C676]/3 rounded-full blur-[150px]"></div>
+        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-[#00C870]/3 rounded-full blur-[120px]"></div>
+
+        <div className="relative max-w-[1800px] mx-auto px-6 lg:px-16">
+          {/* Section Header */}
+          <div className="mb-20">
+            <div className="inline-flex items-center gap-2 bg-[#E8C676]/10 border border-[#E8C676]/30 px-5 py-2.5 rounded-full mb-8">
+              <Award className="w-4 h-4 text-[#E8C676]" />
+              <span className="text-xs font-bold text-[#E8C676] uppercase tracking-widest">Verified Elite Partners</span>
+            </div>
+            <h2 className="section-title text-5xl lg:text-7xl font-black text-white mb-6 leading-[1.1]">
+              Top <span className="bg-gradient-to-r from-[#E8C676] via-[#D4AF37] to-[#E8C676] bg-clip-text text-transparent">Developers</span>
+            </h2>
+            <p className="text-xl lg:text-2xl text-gray-400 max-w-3xl font-light">
+              Partnering with Dubai's most prestigious developers. Proven excellence, unmatched delivery.
+            </p>
+          </div>
+
+          {/* HERO DEVELOPER CARD - Full Width */}
+          <Link
+            href={`/developers/${developers[0].slug}`}
+            className="dev-card block mb-8 group relative overflow-hidden rounded-[2rem] border-2 border-[#E8C676]/40 hover:border-[#E8C676] transition-all duration-500"
+            style={{ boxShadow: '0 0 60px rgba(232, 198, 118, 0.15)' }}
+          >
+            {/* Background Image - Real Dubai Landmark */}
+            <div className="relative h-[500px] lg:h-[600px]">
+              <img
+                src={developers[0].image}
+                alt={developers[0].name}
+                className="w-full h-full object-cover"
+                suppressHydrationWarning
+              />
+
+              {/* Subtle Dark Gradient (25% opacity) */}
+              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30"></div>
+
+              {/* Emerald Accent Glow - Top Right */}
+              <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#00C870]/10 rounded-full blur-[100px]"></div>
+
+              {/* Gold Shimmer - Bottom Left */}
+              <div className="absolute bottom-0 left-0 w-[500px] h-[300px] bg-[#E8C676]/10 rounded-full blur-[120px]"></div>
+
+              {/* Content Overlay */}
+              <div className="absolute inset-0 flex flex-col justify-between p-10 lg:p-16">
+                {/* Top Section - Badge */}
+                <div className="flex items-start justify-between">
+                  <div className="inline-flex items-center gap-2.5 bg-gradient-to-r from-[#E8C676] to-[#D4AF37] px-6 py-3 rounded-2xl shadow-[0_0_30px_rgba(232,198,118,0.4)]">
+                    <Star className="w-5 h-5 fill-black text-black" />
+                    <span className="text-sm font-black text-black uppercase tracking-wider">VERIFIED PARTNER</span>
+                  </div>
+
+                  {/* Gold Icon Top Right */}
+                  <div className="w-16 h-16 bg-[#E8C676]/20 backdrop-blur-md border border-[#E8C676]/40 rounded-2xl flex items-center justify-center">
+                    <Building2 className="w-8 h-8 text-[#E8C676]" />
+                  </div>
+                </div>
+
+                {/* Bottom Section - Info */}
+                <div>
+                  {/* Developer Name */}
+                  <h3 className="text-5xl lg:text-7xl font-black text-white mb-8 tracking-tight leading-none">
+                    {developers[0].name}
+                  </h3>
+
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5">
+                      <div className="text-3xl lg:text-4xl font-black text-white mb-2">{developers[0].projects}</div>
+                      <div className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Total Projects</div>
+                    </div>
+                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5">
+                      <div className="text-3xl lg:text-4xl font-black text-[#E8C676] mb-2">{developers[0].roi}</div>
+                      <div className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Average ROI</div>
+                    </div>
+                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5">
+                      <div className="flex items-center gap-2 text-3xl lg:text-4xl font-black text-white mb-2">
+                        <Star className="w-7 h-7 fill-[#E8C676] text-[#E8C676]" />
+                        <span>{developers[0].rating}</span>
+                      </div>
+                      <div className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Rating</div>
+                    </div>
+                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5">
+                      <div className="text-3xl lg:text-4xl font-black text-[#00C870] mb-2">{developers[0].onTime}%</div>
+                      <div className="text-sm font-semibold text-gray-400 uppercase tracking-wide">On-Time Delivery</div>
+                    </div>
+                  </div>
+
+                  {/* CTA Link */}
+                  <div className="inline-flex items-center gap-3 text-[#E8C676] font-bold text-lg group-hover:gap-5 transition-all">
+                    <span>Explore Developer</span>
+                    <ArrowRight className="w-6 h-6" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Link>
+
+          {/* FOUR MEDIUM DEVELOPER CARDS - Horizontal Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {developers.slice(1).map((dev, idx) => (
+              <Link
+                key={dev.slug}
+                href={`/developers/${dev.slug}`}
+                className="dev-card group relative overflow-hidden rounded-3xl border border-white/10 hover:border-[#00C870]/60 transition-all duration-500 bg-black"
+                style={{ boxShadow: '0 4px 40px rgba(0, 0, 0, 0.5)' }}
+              >
+                {/* Background Image - High Quality */}
+                <div className="relative h-80">
+                  <img
+                    src={dev.image}
+                    alt={dev.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    suppressHydrationWarning
+                  />
+
+                  {/* Very Light Overlay (20-25% opacity) - Keep Image Visible */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+
+                  {/* Emerald Glow on Hover */}
+                  <div className="absolute inset-0 bg-[#00C870]/0 group-hover:bg-[#00C870]/10 transition-all duration-500"></div>
+
+                  {/* Gold Icon - Top Left */}
+                  <div className="absolute top-4 left-4 w-12 h-12 bg-[#E8C676]/20 backdrop-blur-md border border-[#E8C676]/40 rounded-xl flex items-center justify-center">
+                    <Building2 className="w-6 h-6 text-[#E8C676]" />
+                  </div>
+
+                  {/* Content - Bottom Overlay */}
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    {/* Developer Name */}
+                    <h3 className="text-2xl font-black text-white mb-4 leading-tight">
+                      {dev.name}
                     </h3>
 
-                    {/* Location */}
-                    <div className="flex items-center gap-2 text-gray-400">
-                      <MapPin className="w-4 h-4 text-[#10B981]" />
-                      <span className="text-sm">{project.location}</span>
-                    </div>
-
-                    {/* Handover Date */}
-                    <div className="text-sm">
-                      <span className="text-gray-500">Handover in </span>
-                      <span className="text-[#D4AF37] font-semibold">{project.completion_date}</span>
-                    </div>
-
-                    {/* Price */}
-                    <div className="pt-4 border-t border-[#1A1A1A]">
-                      <p className="text-3xl font-black text-[#10B981]">
-                        from {project.price_from}
-                      </p>
-                    </div>
-
-                    {/* Property Specs */}
-                    <div className="flex items-center gap-6 text-sm text-gray-400">
-                      {/* Bedrooms */}
-                      <div className="flex items-center gap-1.5">
-                        <svg className="w-4 h-4 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                        </svg>
-                        <span className="font-semibold text-white">{project.bedrooms}</span>
+                    {/* Stats */}
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <div className="text-2xl font-black text-[#00C870] mb-0.5">{dev.projects}</div>
+                        <div className="text-xs font-semibold text-gray-400 uppercase">Projects</div>
                       </div>
-
-                      {/* Bathrooms */}
-                      <div className="flex items-center gap-1.5">
-                        <svg className="w-4 h-4 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
-                        </svg>
-                        <span className="font-semibold text-white">{project.bathrooms}</span>
-                      </div>
-
-                      {/* Square Feet */}
-                      <div className="flex items-center gap-1.5">
-                        <svg className="w-4 h-4 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                        </svg>
-                        <span className="font-semibold text-white">{project.sqft} sqft</span>
+                      <div>
+                        <div className="text-2xl font-black text-[#E8C676] mb-0.5">{dev.roi}</div>
+                        <div className="text-xs font-semibold text-gray-400 uppercase">Avg ROI</div>
                       </div>
                     </div>
 
-                    {/* View Details Link */}
-                    <Link
-                      href={`/areas/${project.area_slug}/${project.slug}`}
-                      className="inline-flex items-center gap-2 text-[#D4AF37] hover:text-[#10B981] font-semibold transition-colors pt-2"
-                    >
-                      <span>View Details</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </Link>
+                    {/* Divider */}
+                    <div className="h-px bg-gradient-to-r from-[#E8C676]/50 via-[#E8C676]/20 to-transparent mb-3"></div>
+
+                    {/* View Link */}
+                    <div className="flex items-center gap-2 text-sm font-bold text-white/70 group-hover:text-[#E8C676] transition-colors">
+                      <span>View Portfolio</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </div>
                   </div>
                 </div>
-                          ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Pagination Dots */}
-              <div className="flex justify-center gap-3 mt-12">
-                {Array.from({ length: totalSlides }).map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentSlide(index)}
-                    className={`transition-all duration-300 rounded-full ${
-                      index === currentSlide
-                        ? 'w-12 h-3 bg-[#10B981] shadow-[0_0_15px_rgba(16,185,129,0.6)]'
-                        : 'w-3 h-3 bg-[#D4AF37]/30 hover:bg-[#D4AF37]/60'
-                    }`}
-                    aria-label={`Go to slide ${index + 1}`}
-                  />
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-      </section>
-
-      {/* ========== CTA BANNER - GOLD GRADIENT ========== */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-[#D4AF37] via-[#F4E5B8] to-[#D4AF37] py-20">
-        {/* Emerald particles blending with gold */}
-        <div className="absolute top-[20%] left-[10%] w-[200px] h-[200px] bg-[#10B981]/10 rounded-full blur-[100px]"></div>
-        <div className="absolute bottom-[15%] right-[15%] w-[250px] h-[250px] bg-[#10B981]/8 rounded-full blur-[120px]"></div>
-
-        {/* Floating particles */}
-        <div className="absolute top-[30%] left-[25%] w-2 h-2 bg-black/20 rounded-full blur-sm animate-pulse"></div>
-        <div className="absolute top-[60%] right-[30%] w-3 h-3 bg-black/15 rounded-full blur-sm"></div>
-        <div className="absolute bottom-[40%] left-[60%] w-2 h-2 bg-black/20 rounded-full blur-sm animate-pulse"></div>
-
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-16">
-          <div className="text-center">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-black mb-5 tracking-tight">
-              Want a Fully-Managed Shortlist?
-            </h2>
-            <p className="text-xl md:text-2xl text-black/80 mb-10 font-medium max-w-3xl mx-auto">
-              Let our expert agents curate the perfect properties for you
-            </p>
-            <div className="flex flex-wrap justify-center gap-5">
-              {/* Talk to an Agent - Black Glass + Gold Border */}
-              <button className="group px-10 py-5 bg-black/90 backdrop-blur-xl border-2 border-black text-white rounded-2xl font-bold hover:shadow-[0_0_40px_rgba(0,0,0,0.4)] transition-all duration-300 flex items-center gap-3 hover:-translate-y-1">
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
-                <span className="text-lg">Talk to an Agent</span>
-              </button>
-
-              {/* Start Now - Emerald Glow */}
-              <button className="group px-10 py-5 bg-[#10B981] backdrop-blur-xl border-2 border-[#059669] text-black rounded-2xl font-bold hover:shadow-[0_0_40px_rgba(16,185,129,0.6)] transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#10B981] to-[#059669] opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <span className="relative z-10 text-lg font-black">Start Now</span>
-              </button>
-            </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
-     
+      {/* LATEST LAUNCHES - Horizontal Scroll */}
+      <section ref={launchesRef} className="relative py-20 lg:py-28 bg-gradient-to-b from-black via-[#0A0A0A] to-black overflow-hidden">
+        <div className="relative max-w-[1800px] mx-auto px-6 lg:px-16">
+          <div className="mb-12">
+            <div className="inline-flex items-center gap-2 bg-[#00C870]/10 border border-[#00C870]/30 px-4 py-2 rounded-full mb-6">
+              <Sparkles className="w-4 h-4 text-[#00C870]" />
+              <span className="text-xs font-bold text-[#00C870] uppercase tracking-wide">New This Month</span>
+            </div>
+            <h2 className="section-title text-5xl lg:text-6xl font-black text-white mb-4 leading-tight">
+              Latest <span className="bg-gradient-to-r from-[#00C870] to-[#E8C676] bg-clip-text text-transparent">Launches</span>
+            </h2>
+          </div>
+
+          <div className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide">
+            {launches.map((launch, idx) => (
+              <Link
+                key={idx}
+                href="/projects"
+                className="flex-none w-[400px] group"
+              >
+                <div className="relative bg-black rounded-3xl overflow-hidden border border-[#00C870]/20 hover:border-[#00C870]/60 transition-all duration-500 shadow-[0_20px_60px_rgba(0,0,0,0.8)] hover:shadow-[0_0_60px_rgba(0,200,112,0.3)] hover:-translate-y-1">
+                  <div className="relative h-64 overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10"></div>
+                    <img
+                      src={launch.image}
+                      alt={launch.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      suppressHydrationWarning
+                    />
+
+                    <div className="absolute top-4 left-4 bg-[#00C870] text-black px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+                      {launch.badge}
+                    </div>
+
+                    <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
+                      <h3 className="text-2xl font-black text-white mb-2 group-hover:text-[#00C870] transition-colors">{launch.name}</h3>
+                      <p className="text-sm text-gray-300 mb-3">{launch.developer} · {launch.location}</p>
+                      <div className="text-2xl font-black text-[#E8C676]">AED {launch.price}</div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* WHY INVEST */}
+      <section className="relative py-20 lg:py-28 bg-black overflow-hidden">
+        {/* Dubai Silhouette Background */}
+        <div className="absolute inset-0 opacity-5">
+          <img
+            src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1920&h=400&fit=crop"
+            alt="Dubai Skyline"
+            className="w-full h-full object-cover"
+            suppressHydrationWarning
+          />
+        </div>
+
+        {/* Emerald Glows */}
+        <div className="absolute top-20 left-[10%] w-[500px] h-[500px] bg-[#00C870]/5 rounded-full blur-[120px]"></div>
+
+        <div className="relative max-w-[1600px] mx-auto px-6 lg:px-16">
+          <div className="text-center mb-16">
+            <h2 className="section-title text-5xl lg:text-6xl font-black text-white mb-4 leading-tight">
+              Why <span className="bg-gradient-to-r from-[#E8C676] to-[#00C870] bg-clip-text text-transparent">Invest</span>
+            </h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">Unlock exclusive benefits with off-plan investments</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {benefits.map((benefit, idx) => (
+              <div
+                key={idx}
+                className="bg-black/60 backdrop-blur-xl border border-[#00C870]/20 rounded-3xl p-8 hover:border-[#00C870]/60 transition-all duration-300 group"
+              >
+                <div className="w-16 h-16 bg-[#00C870]/10 rounded-2xl flex items-center justify-center text-[#00C870] mb-6 group-hover:scale-110 transition-transform">
+                  {benefit.icon}
+                </div>
+                <h3 className="text-2xl font-bold text-[#E8C676] mb-3">{benefit.title}</h3>
+                <p className="text-gray-300 leading-relaxed">{benefit.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

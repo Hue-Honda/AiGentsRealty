@@ -53,11 +53,12 @@ interface SmartCanvasProps {
   action: CanvasAction;
   onProjectClick?: (project: Project) => void;
   onLeadSubmit?: (data: LeadFormData) => Promise<boolean>;
+  onTryAskingClick?: (query: string) => void;
   isLoading?: boolean;
 }
 
 // ============ MAIN COMPONENT ============
-export default function SmartCanvas({ action, onProjectClick, onLeadSubmit, isLoading }: SmartCanvasProps) {
+export default function SmartCanvas({ action, onProjectClick, onLeadSubmit, onTryAskingClick, isLoading }: SmartCanvasProps) {
   const [animateIn, setAnimateIn] = useState(false);
 
   useEffect(() => {
@@ -88,7 +89,7 @@ export default function SmartCanvas({ action, onProjectClick, onLeadSubmit, isLo
 
       {/* Content - Dynamic based on type */}
       <div className="relative">
-        {action.type === 'welcome' && <WelcomeView />}
+        {action.type === 'welcome' && <WelcomeView onTryAskingClick={onTryAskingClick} />}
         {action.type === 'properties' && <PropertiesView projects={action.projects || []} onProjectClick={onProjectClick} />}
         {action.type === 'comparison' && <ComparisonView items={action.compareItems || []} />}
         {action.type === 'timeline' && <TimelineView timeline={action.timeline || []} />}
@@ -112,7 +113,7 @@ export default function SmartCanvas({ action, onProjectClick, onLeadSubmit, isLo
 // ============ CANVAS VIEWS ============
 
 // Welcome View - User-Friendly Initial State
-function WelcomeView() {
+function WelcomeView({ onTryAskingClick }: { onTryAskingClick?: (query: string) => void }) {
   const tryAsking = [
     { text: 'Open mortgage calculator', icon: Calculator },
     { text: 'What is the ROI for Dubai Marina?', icon: PieChart },
@@ -125,16 +126,7 @@ function WelcomeView() {
   return (
     <div className="space-y-4">
       {/* Hero Card */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0d1a17] to-[#0a0f0d] border border-emerald-900/30">
-        {/* Subtle pattern */}
-        <div className="absolute inset-0 opacity-30" style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(16,185,129,0.15) 1px, transparent 0)`,
-          backgroundSize: '24px 24px'
-        }} />
-
-        {/* Glow effects */}
-        <div className="absolute -top-12 -right-12 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl" />
-        <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl" />
+      <div className="relative overflow-hidden rounded-2xl border border-emerald-900/30">
 
         <div className="relative p-6">
           {/* Genie Icon */}
@@ -152,7 +144,7 @@ function WelcomeView() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-3 p-3 bg-black/30 rounded-xl border border-white/5">
+          <div className="grid grid-cols-3 gap-3 p-3 rounded-xl border border-white/5">
             <div className="text-center">
               <p className="text-xl font-bold text-emerald-400">150+</p>
               <p className="text-[10px] text-gray-500 uppercase">Projects</p>
@@ -176,7 +168,8 @@ function WelcomeView() {
           {tryAsking.map((item, idx) => (
             <div
               key={idx}
-              className="group flex items-center gap-3 p-3 bg-[#111] border border-white/5 rounded-xl
+              onClick={() => onTryAskingClick?.(item.text)}
+              className="group flex items-center gap-3 p-3 border border-white/5 rounded-xl
                 hover:border-emerald-500/30 hover:bg-emerald-500/5 transition-all cursor-pointer"
             >
               <div className="w-8 h-8 bg-emerald-500/10 rounded-lg flex items-center justify-center
@@ -202,7 +195,7 @@ function PropertiesView({ projects, onProjectClick }: { projects: Project[]; onP
 
   if (projects.length === 0) {
     return (
-      <div className="bg-[#111]/80 border border-[#1F1F1F] rounded-2xl p-8 text-center">
+      <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-2xl p-8 text-center">
         <Building2 className="w-12 h-12 text-gray-600 mx-auto mb-3" />
         <p className="text-gray-400">No properties match your criteria</p>
         <p className="text-sm text-gray-500 mt-1">Try adjusting your search</p>
@@ -245,7 +238,7 @@ function PropertyCard({ project, index, onClick }: { project: Project; index: nu
   return (
     <div
       onClick={onClick}
-      className={`group relative bg-[#111] border border-[#1F1F1F] rounded-2xl overflow-hidden cursor-pointer
+      className={`group relative bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-2xl overflow-hidden cursor-pointer
         hover:border-[#10B981]/40 transition-all duration-500 hover:-translate-y-1
         hover:shadow-[0_20px_40px_rgba(0,0,0,0.4),0_0_30px_rgba(16,185,129,0.1)]
         ${index % 2 === 1 ? 'mt-4' : ''}`}
@@ -312,7 +305,7 @@ function PropertyCard({ project, index, onClick }: { project: Project; index: nu
 function ComparisonView({ items }: { items: Project[] }) {
   if (items.length < 2) {
     return (
-      <div className="bg-[#111]/80 border border-[#1F1F1F] rounded-2xl p-8 text-center">
+      <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-2xl p-8 text-center">
         <GitCompare className="w-12 h-12 text-gray-600 mx-auto mb-3" />
         <p className="text-gray-400">Select two properties to compare</p>
       </div>
@@ -332,7 +325,7 @@ function ComparisonView({ items }: { items: Project[] }) {
       {/* Header Cards */}
       <div className="grid grid-cols-2 gap-4">
         {items.slice(0, 2).map((item, idx) => (
-          <div key={item.id} className="bg-[#111] border border-[#1F1F1F] rounded-xl p-3 text-center">
+          <div key={item.id} className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl p-3 text-center">
             <div className="w-10 h-10 bg-gradient-to-br from-[#10B981]/20 to-transparent rounded-lg flex items-center justify-center mx-auto mb-2">
               <span className="text-[#10B981] font-bold">{idx === 0 ? 'A' : 'B'}</span>
             </div>
@@ -343,7 +336,7 @@ function ComparisonView({ items }: { items: Project[] }) {
       </div>
 
       {/* Comparison Table */}
-      <div className="bg-[#111]/80 border border-[#1F1F1F] rounded-xl overflow-hidden">
+      <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl overflow-hidden">
         {comparisonFields.map((field, idx) => (
           <div
             key={field.key}
@@ -385,7 +378,7 @@ function TimelineView({ timeline }: { timeline: { date: string; event: string; s
   const items = timeline.length > 0 ? timeline : defaultTimeline;
 
   return (
-    <div className="bg-[#111]/80 border border-[#1F1F1F] rounded-2xl p-4">
+    <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-2xl p-4">
       <div className="relative">
         {/* Vertical Line */}
         <div className="absolute left-4 top-2 bottom-2 w-0.5 bg-gradient-to-b from-[#10B981] via-[#10B981]/50 to-[#1F1F1F]" />
@@ -448,7 +441,7 @@ function StatsView({ stats }: { stats: { label: string; value: string; change?: 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-3">
         {items.map((stat, idx) => (
-          <div key={idx} className="bg-[#111] border border-[#1F1F1F] rounded-xl p-4">
+          <div key={idx} className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl p-4">
             <p className="text-xs text-gray-500 mb-1">{stat.label}</p>
             <p className="text-xl font-bold text-white">{stat.value}</p>
             {stat.change && (
@@ -462,7 +455,7 @@ function StatsView({ stats }: { stats: { label: string; value: string; change?: 
       </div>
 
       {/* Mini Chart Placeholder */}
-      <div className="bg-[#111]/80 border border-[#1F1F1F] rounded-xl p-4">
+      <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl p-4">
         <p className="text-xs text-gray-500 mb-3">Price Trend (2024)</p>
         <div className="flex items-end justify-between h-20 gap-1">
           {[40, 55, 45, 60, 75, 70, 85, 80, 90, 95, 88, 100].map((height, idx) => (
@@ -496,7 +489,7 @@ function DeveloperView({ data }: { data?: any }) {
 
   return (
     <div className="space-y-4">
-      <div className="bg-[#111] border border-[#1F1F1F] rounded-2xl p-4 text-center">
+      <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-2xl p-4 text-center">
         <div className="w-16 h-16 bg-gradient-to-br from-[#D4AF37]/20 to-transparent rounded-2xl flex items-center justify-center mx-auto mb-3">
           <Building2 className="w-8 h-8 text-[#D4AF37]" />
         </div>
@@ -514,11 +507,11 @@ function DeveloperView({ data }: { data?: any }) {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-[#111] border border-[#1F1F1F] rounded-xl p-3 text-center">
+        <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl p-3 text-center">
           <p className="text-2xl font-bold text-[#10B981]">{developer.projects_delivered}</p>
           <p className="text-xs text-gray-500">Delivered</p>
         </div>
-        <div className="bg-[#111] border border-[#1F1F1F] rounded-xl p-3 text-center">
+        <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl p-3 text-center">
           <p className="text-2xl font-bold text-[#D4AF37]">{developer.ongoing_projects}</p>
           <p className="text-xs text-gray-500">Ongoing</p>
         </div>
@@ -663,7 +656,7 @@ function AreaInfoView({ data }: { data?: any }) {
   return (
     <div className="space-y-4">
       {/* Map Section */}
-      <div className="bg-[#111]/80 border border-[#1F1F1F] rounded-2xl overflow-hidden">
+      <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-2xl overflow-hidden">
         <div className="relative h-40">
           <iframe
             src={`https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d15000!2d${area.coordinates.lng}!3d${area.coordinates.lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sae!4v1700000000000!5m2!1sen!2sae`}
@@ -720,7 +713,7 @@ function AreaInfoView({ data }: { data?: any }) {
       {/* Amenities & Nearby */}
       <div className="grid grid-cols-2 gap-3">
         {/* Amenities */}
-        <div className="bg-[#111] border border-[#1F1F1F] rounded-xl p-3">
+        <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl p-3">
           <p className="text-xs font-semibold text-white mb-2 flex items-center gap-1">
             <Building2 className="w-3 h-3 text-[#10B981]" />
             Key Amenities
@@ -736,7 +729,7 @@ function AreaInfoView({ data }: { data?: any }) {
         </div>
 
         {/* Nearby */}
-        <div className="bg-[#111] border border-[#1F1F1F] rounded-xl p-3">
+        <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl p-3">
           <p className="text-xs font-semibold text-white mb-2 flex items-center gap-1">
             <MapPin className="w-3 h-3 text-[#D4AF37]" />
             Nearby
@@ -753,7 +746,7 @@ function AreaInfoView({ data }: { data?: any }) {
       </div>
 
       {/* Property Types Available */}
-      <div className="bg-[#111] border border-[#1F1F1F] rounded-xl p-3">
+      <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl p-3">
         <p className="text-xs font-semibold text-white mb-2">Property Types in {area.name.split(' ')[0]}</p>
         <div className="flex flex-wrap gap-2">
           {area.propertyTypes.map((type: string, idx: number) => (
@@ -826,7 +819,7 @@ function MortgageCalculatorView({ data, projects }: { data?: any; projects?: Pro
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0d1a17] to-[#0a0f0d] border border-emerald-900/30 p-4">
+      <div className="relative overflow-hidden rounded-2xl bg-transparent border border-emerald-900/30 p-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-gradient-to-br from-[#10B981] to-[#059669] rounded-xl flex items-center justify-center">
             <Calculator className="w-6 h-6 text-white" />
@@ -839,7 +832,7 @@ function MortgageCalculatorView({ data, projects }: { data?: any; projects?: Pro
       </div>
 
       {/* Calculator Inputs */}
-      <div className="bg-[#111] border border-[#1F1F1F] rounded-2xl p-4 space-y-4">
+      <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-2xl p-4 space-y-4">
         {/* Property Price */}
         <div>
           <div className="flex justify-between mb-2">
@@ -938,7 +931,7 @@ function MortgageCalculatorView({ data, projects }: { data?: any; projects?: Pro
       </div>
 
       {/* Bank Info */}
-      <div className="bg-[#111] border border-[#1F1F1F] rounded-xl p-3">
+      <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl p-3">
         <p className="text-xs text-gray-400 mb-2">Popular UAE Banks for Mortgages:</p>
         <div className="flex flex-wrap gap-2">
           {['Emirates NBD', 'ADCB', 'Mashreq', 'FAB', 'DIB'].map((bank) => (
@@ -971,7 +964,7 @@ function GalleryView({ data, projects }: { data?: any; projects?: Project[] }) {
   return (
     <div className="space-y-4">
       {/* Main Image */}
-      <div className="relative rounded-2xl overflow-hidden bg-[#111] border border-[#1F1F1F]">
+      <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F]">
         <div className="relative h-64">
           <img
             src={images[currentIndex]}
@@ -1041,17 +1034,17 @@ function GalleryView({ data, projects }: { data?: any; projects?: Project[] }) {
 
       {/* Gallery Stats */}
       <div className="grid grid-cols-3 gap-2">
-        <div className="bg-[#111] border border-[#1F1F1F] rounded-lg p-2 text-center">
+        <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-lg p-2 text-center">
           <Image className="w-4 h-4 text-[#10B981] mx-auto mb-1" />
           <p className="text-xs text-white font-bold">{images.length}</p>
           <p className="text-[9px] text-gray-500">Photos</p>
         </div>
-        <div className="bg-[#111] border border-[#1F1F1F] rounded-lg p-2 text-center">
+        <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-lg p-2 text-center">
           <Play className="w-4 h-4 text-[#D4AF37] mx-auto mb-1" />
           <p className="text-xs text-white font-bold">360°</p>
           <p className="text-[9px] text-gray-500">Tour</p>
         </div>
-        <div className="bg-[#111] border border-[#1F1F1F] rounded-lg p-2 text-center">
+        <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-lg p-2 text-center">
           <LayoutGrid className="w-4 h-4 text-[#10B981] mx-auto mb-1" />
           <p className="text-xs text-white font-bold">3</p>
           <p className="text-[9px] text-gray-500">Floor Plans</p>
@@ -1082,7 +1075,7 @@ function InvestmentAnalysisView({ data, projects }: { data?: any; projects?: Pro
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0d1a17] to-[#0a0f0d] border border-emerald-900/30 p-4">
+      <div className="relative overflow-hidden rounded-2xl bg-transparent border border-emerald-900/30 p-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-gradient-to-br from-[#D4AF37] to-[#B8941E] rounded-xl flex items-center justify-center">
             <PieChart className="w-6 h-6 text-black" />
@@ -1095,7 +1088,7 @@ function InvestmentAnalysisView({ data, projects }: { data?: any; projects?: Pro
       </div>
 
       {/* Investment Type Toggle */}
-      <div className="flex gap-2 p-1 bg-[#111] border border-[#1F1F1F] rounded-xl">
+      <div className="flex gap-2 p-1 bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl">
         <button
           onClick={() => setInvestmentType('rental')}
           className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-1 ${
@@ -1117,7 +1110,7 @@ function InvestmentAnalysisView({ data, projects }: { data?: any; projects?: Pro
       </div>
 
       {/* Holding Period */}
-      <div className="bg-[#111] border border-[#1F1F1F] rounded-xl p-3">
+      <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl p-3">
         <div className="flex justify-between mb-2">
           <span className="text-xs text-gray-400">Holding Period</span>
           <span className="text-xs font-bold text-white">{holdingPeriod} Years</span>
@@ -1139,7 +1132,7 @@ function InvestmentAnalysisView({ data, projects }: { data?: any; projects?: Pro
 
       {/* Key Metrics */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-[#111] border border-[#1F1F1F] rounded-xl p-3">
+        <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl p-3">
           <div className="flex items-center gap-2 mb-2">
             <Percent className="w-4 h-4 text-[#10B981]" />
             <span className="text-xs text-gray-400">Rental Yield</span>
@@ -1147,7 +1140,7 @@ function InvestmentAnalysisView({ data, projects }: { data?: any; projects?: Pro
           <p className="text-2xl font-bold text-[#10B981]">{rentalYield}%</p>
           <p className="text-[10px] text-gray-500">Annual gross yield</p>
         </div>
-        <div className="bg-[#111] border border-[#1F1F1F] rounded-xl p-3">
+        <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl p-3">
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp className="w-4 h-4 text-[#D4AF37]" />
             <span className="text-xs text-gray-400">Appreciation</span>
@@ -1229,7 +1222,7 @@ function NeighborhoodView({ data, projects }: { data?: any; projects?: Project[]
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0d1a17] to-[#0a0f0d] border border-emerald-900/30 p-4">
+      <div className="relative overflow-hidden rounded-2xl bg-transparent border border-emerald-900/30 p-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-gradient-to-br from-[#10B981] to-[#059669] rounded-xl flex items-center justify-center">
             <MapPin className="w-6 h-6 text-white" />
@@ -1252,7 +1245,7 @@ function NeighborhoodView({ data, projects }: { data?: any; projects?: Project[]
               className={`p-2 rounded-xl flex flex-col items-center gap-1 transition-all ${
                 activeCategory === cat
                   ? 'bg-[#10B981] text-white'
-                  : 'bg-[#111] border border-[#1F1F1F] text-gray-400 hover:text-white'
+                  : 'bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] text-gray-400 hover:text-white'
               }`}
             >
               <Icon className="w-4 h-4" />
@@ -1267,7 +1260,7 @@ function NeighborhoodView({ data, projects }: { data?: any; projects?: Project[]
         {categories[activeCategory].map((place, idx) => (
           <div
             key={idx}
-            className="flex items-center justify-between bg-[#111] border border-[#1F1F1F] rounded-xl p-3"
+            className="flex items-center justify-between bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl p-3"
           >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-[#10B981]/10 rounded-lg flex items-center justify-center">
@@ -1341,7 +1334,7 @@ function BookingView({ data, projects }: { data?: any; projects?: Project[] }) {
   if (isSubmitted) {
     return (
       <div className="space-y-4">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0d1a17] to-[#0a0f0d] border border-emerald-900/30 p-8 text-center">
+        <div className="relative overflow-hidden rounded-2xl bg-transparent border border-emerald-900/30 p-8 text-center">
           <div className="w-16 h-16 bg-[#10B981] rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle2 className="w-8 h-8 text-white" />
           </div>
@@ -1360,7 +1353,7 @@ function BookingView({ data, projects }: { data?: any; projects?: Project[] }) {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0d1a17] to-[#0a0f0d] border border-emerald-900/30 p-4">
+      <div className="relative overflow-hidden rounded-2xl bg-transparent border border-emerald-900/30 p-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-gradient-to-br from-[#D4AF37] to-[#B8941E] rounded-xl flex items-center justify-center">
             <CalendarDays className="w-6 h-6 text-black" />
@@ -1383,7 +1376,7 @@ function BookingView({ data, projects }: { data?: any; projects?: Project[] }) {
               className={`flex-shrink-0 w-14 py-3 rounded-xl text-center transition-all ${
                 selectedDate === d.full
                   ? 'bg-[#10B981] text-white'
-                  : 'bg-[#111] border border-[#1F1F1F] text-gray-400 hover:border-[#10B981]/50'
+                  : 'bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] text-gray-400 hover:border-[#10B981]/50'
               }`}
             >
               <p className="text-[10px]">{d.day}</p>
@@ -1404,7 +1397,7 @@ function BookingView({ data, projects }: { data?: any; projects?: Project[] }) {
               className={`py-2 px-3 rounded-lg text-xs font-medium transition-all ${
                 selectedTime === time
                   ? 'bg-[#10B981] text-white'
-                  : 'bg-[#111] border border-[#1F1F1F] text-gray-400 hover:border-[#10B981]/50'
+                  : 'bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] text-gray-400 hover:border-[#10B981]/50'
               }`}
             >
               {time}
@@ -1420,14 +1413,14 @@ function BookingView({ data, projects }: { data?: any; projects?: Project[] }) {
           placeholder="Your Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full px-4 py-3 bg-[#111] border border-[#1F1F1F] rounded-xl text-white text-sm placeholder:text-gray-500 focus:border-[#10B981]/50 focus:outline-none"
+          className="w-full px-4 py-3 bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl text-white text-sm placeholder:text-gray-500 focus:border-[#10B981]/50 focus:outline-none"
         />
         <input
           type="tel"
           placeholder="Phone Number"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          className="w-full px-4 py-3 bg-[#111] border border-[#1F1F1F] rounded-xl text-white text-sm placeholder:text-gray-500 focus:border-[#10B981]/50 focus:outline-none"
+          className="w-full px-4 py-3 bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl text-white text-sm placeholder:text-gray-500 focus:border-[#10B981]/50 focus:outline-none"
         />
       </div>
 
@@ -1462,7 +1455,7 @@ function FloorPlanView({ data, projects }: { data?: any; projects?: Project[] })
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0d1a17] to-[#0a0f0d] border border-emerald-900/30 p-4">
+      <div className="relative overflow-hidden rounded-2xl bg-transparent border border-emerald-900/30 p-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-gradient-to-br from-[#10B981] to-[#059669] rounded-xl flex items-center justify-center">
             <LayoutGrid className="w-6 h-6 text-white" />
@@ -1483,7 +1476,7 @@ function FloorPlanView({ data, projects }: { data?: any; projects?: Project[] })
             className={`flex-shrink-0 px-4 py-2 rounded-xl text-xs font-medium transition-all ${
               selectedUnit === idx
                 ? 'bg-[#10B981] text-white'
-                : 'bg-[#111] border border-[#1F1F1F] text-gray-400 hover:border-[#10B981]/50'
+                : 'bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] text-gray-400 hover:border-[#10B981]/50'
             }`}
           >
             {unit.type}
@@ -1492,7 +1485,7 @@ function FloorPlanView({ data, projects }: { data?: any; projects?: Project[] })
       </div>
 
       {/* Floor Plan Display */}
-      <div className="bg-[#111] border border-[#1F1F1F] rounded-2xl overflow-hidden">
+      <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-2xl overflow-hidden">
         {/* Plan Visualization */}
         <div className="h-48 bg-[#0A0A0A] flex items-center justify-center relative">
           {/* Simplified floor plan visualization */}
@@ -1552,7 +1545,7 @@ function FloorPlanView({ data, projects }: { data?: any; projects?: Project[] })
       </div>
 
       {/* Download Button */}
-      <button className="w-full py-3 bg-[#111] border border-[#1F1F1F] rounded-xl text-white font-medium text-sm flex items-center justify-center gap-2 hover:border-[#10B981]/50 transition-all">
+      <button className="w-full py-3 bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl text-white font-medium text-sm flex items-center justify-center gap-2 hover:border-[#10B981]/50 transition-all">
         <ArrowRight className="w-4 h-4" />
         Download Floor Plan PDF
       </button>
@@ -1579,7 +1572,7 @@ function PriceHistoryView({ data, projects }: { data?: any; projects?: Project[]
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0d1a17] to-[#0a0f0d] border border-emerald-900/30 p-4">
+      <div className="relative overflow-hidden rounded-2xl bg-transparent border border-emerald-900/30 p-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-gradient-to-br from-[#D4AF37] to-[#B8941E] rounded-xl flex items-center justify-center">
             <History className="w-6 h-6 text-black" />
@@ -1592,7 +1585,7 @@ function PriceHistoryView({ data, projects }: { data?: any; projects?: Project[]
       </div>
 
       {/* Price Chart */}
-      <div className="bg-[#111] border border-[#1F1F1F] rounded-2xl p-4">
+      <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-2xl p-4">
         <div className="flex justify-between items-center mb-4">
           <span className="text-xs text-gray-400">Price per sqft (AED)</span>
           <span className="text-xs font-bold text-[#10B981]">+54.2% since 2020</span>
@@ -1656,7 +1649,7 @@ function PriceHistoryView({ data, projects }: { data?: any; projects?: Project[]
       </div>
 
       {/* Forecast */}
-      <div className="bg-[#111] border border-[#1F1F1F] rounded-xl p-3">
+      <div className="bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl p-3">
         <div className="flex items-center gap-2 mb-2">
           <TrendingUp className="w-4 h-4 text-[#10B981]" />
           <span className="text-xs font-medium text-white">2025 Forecast</span>
@@ -1708,7 +1701,7 @@ function MapView({ data, projects }: { data?: any; projects?: Project[] }) {
   return (
     <div className="space-y-4">
       {/* Map Card */}
-      <div className="relative overflow-hidden rounded-2xl bg-[#111] border border-[#1F1F1F]">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F]">
         {/* Interactive Map */}
         <div className="relative h-64">
           <iframe
@@ -1872,7 +1865,7 @@ function LeadCaptureView({ data, onSubmit }: { data?: any; onSubmit?: (data: Lea
   if (isSubmitted) {
     return (
       <div className="space-y-4">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0d1a17] to-[#0a0f0d] border border-emerald-900/30 p-8 text-center">
+        <div className="relative overflow-hidden rounded-2xl bg-transparent border border-emerald-900/30 p-8 text-center">
           {/* Success glow */}
           <div className="absolute inset-0 bg-emerald-500/5" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl" />
@@ -1904,7 +1897,7 @@ function LeadCaptureView({ data, onSubmit }: { data?: any; onSubmit?: (data: Lea
   return (
     <div className="space-y-4">
       {/* Header Card */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0d1a17] to-[#0a0f0d] border border-emerald-900/30">
+      <div className="relative overflow-hidden rounded-2xl bg-transparent border border-emerald-900/30">
         {/* Subtle pattern */}
         <div className="absolute inset-0 opacity-30" style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, rgba(16,185,129,0.15) 1px, transparent 0)`,
@@ -1960,7 +1953,7 @@ function LeadCaptureView({ data, onSubmit }: { data?: any; onSubmit?: (data: Lea
             placeholder="Your Name"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full pl-10 pr-4 py-3 bg-[#111] border border-[#1F1F1F] rounded-xl text-white text-sm
+            className="w-full pl-10 pr-4 py-3 bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl text-white text-sm
               placeholder:text-gray-500 focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/30
               transition-all"
           />
@@ -1976,7 +1969,7 @@ function LeadCaptureView({ data, onSubmit }: { data?: any; onSubmit?: (data: Lea
             placeholder="Phone Number (e.g., 050-123-4567)"
             value={formData.phone}
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            className="w-full pl-10 pr-4 py-3 bg-[#111] border border-[#1F1F1F] rounded-xl text-white text-sm
+            className="w-full pl-10 pr-4 py-3 bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl text-white text-sm
               placeholder:text-gray-500 focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/30
               transition-all"
           />
@@ -1992,7 +1985,7 @@ function LeadCaptureView({ data, onSubmit }: { data?: any; onSubmit?: (data: Lea
             placeholder="Email Address"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full pl-10 pr-4 py-3 bg-[#111] border border-[#1F1F1F] rounded-xl text-white text-sm
+            className="w-full pl-10 pr-4 py-3 bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl text-white text-sm
               placeholder:text-gray-500 focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/30
               transition-all"
           />
@@ -2008,7 +2001,7 @@ function LeadCaptureView({ data, onSubmit }: { data?: any; onSubmit?: (data: Lea
             placeholder="Budget Range (optional)"
             value={formData.budget}
             onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-            className="w-full pl-12 pr-4 py-3 bg-[#111] border border-[#1F1F1F] rounded-xl text-white text-sm
+            className="w-full pl-12 pr-4 py-3 bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl text-white text-sm
               placeholder:text-gray-500 focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/30
               transition-all"
           />
@@ -2020,7 +2013,7 @@ function LeadCaptureView({ data, onSubmit }: { data?: any; onSubmit?: (data: Lea
           value={formData.notes}
           onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
           rows={2}
-          className="w-full px-4 py-3 bg-[#111] border border-[#1F1F1F] rounded-xl text-white text-sm
+          className="w-full px-4 py-3 bg-gradient-to-br from-[#10B981]/10 to-[#D4AF37]/5 border border-[#1F1F1F] rounded-xl text-white text-sm
             placeholder:text-gray-500 focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/30
             transition-all resize-none"
         />
