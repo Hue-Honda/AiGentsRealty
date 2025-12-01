@@ -51,14 +51,16 @@ export default function BudgetCalculatorPage() {
         {/* HERO SECTION */}
         <section className="relative pt-32 pb-16 px-6 lg:px-16">
           <div className="max-w-[1400px] mx-auto">
-            <Link href="/investment" className="inline-flex items-center gap-2 text-gray-400 hover:text-[#00C775] transition-colors mb-8 group">
-              <ArrowRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition-transform" />
-              <span>Back to Investment Hub</span>
-            </Link>
+            <div className="mb-8">
+              <Link href="/investment" className="inline-flex items-center gap-2 text-gray-400 hover:text-[#00C775] transition-colors group">
+                <ArrowRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition-transform" />
+                <span>Back to Investment Hub</span>
+              </Link>
+            </div>
 
-            <div className="inline-flex items-center gap-2 bg-[#00C775]/10 border border-[#00C775]/30 rounded-full px-6 py-2 mb-6">
-              <DollarSign className="w-4 h-4 text-[#00C775]" />
-              <span className="text-sm font-bold text-[#00C775]">AFFORDABILITY CALCULATOR</span>
+            <div className="inline-flex items-center gap-2 bg-[#00C775]/10 border border-[#00C775]/30 rounded-full px-5 py-1.5 mb-4">
+              <DollarSign className="w-3.5 h-3.5 text-[#00C775]" />
+              <span className="text-xs font-bold text-[#00C775] tracking-wide">AFFORDABILITY CALCULATOR</span>
             </div>
 
             <h1 className="text-6xl lg:text-8xl font-black text-white mb-6 leading-[1.05] tracking-tight">
