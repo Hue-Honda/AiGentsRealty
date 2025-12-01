@@ -276,7 +276,7 @@ export default function ROICalculatorPage() {
                 Explore our curated off-plan properties with guaranteed high returns
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <Link href="/explore" className="bg-gradient-to-r from-[#00C775] to-[#00A85D] px-10 py-5 rounded-full font-bold text-white text-lg shadow-[0_0_40px_rgba(0,199,117,0.4)] hover:shadow-[0_0_60px_rgba(0,199,117,0.6)] transition-all hover:-translate-y-1 inline-flex items-center gap-3">
+                <Link href="/projects" className="bg-gradient-to-r from-[#00C775] to-[#00A85D] px-10 py-5 rounded-full font-bold text-white text-lg shadow-[0_0_40px_rgba(0,199,117,0.4)] hover:shadow-[0_0_60px_rgba(0,199,117,0.6)] transition-all hover:-translate-y-1 inline-flex items-center gap-3">
                   <Sparkles className="w-6 h-6" />
                   <span>Browse Properties</span>
                   <ArrowRight className="w-6 h-6" />

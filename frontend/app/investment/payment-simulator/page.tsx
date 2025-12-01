@@ -349,7 +349,7 @@ export default function PaymentSimulatorPage() {
                   <span>ROI Calculator</span>
                   <ArrowRight className="w-6 h-6" />
                 </Link>
-                <Link href="/explore" className="bg-gradient-to-r from-[#F3C440] to-[#D4A936] px-10 py-5 rounded-full font-bold text-black text-lg shadow-[0_0_40px_rgba(243,196,64,0.4)] hover:shadow-[0_0_60px_rgba(243,196,64,0.6)] transition-all hover:-translate-y-1">
+                <Link href="/projects" className="bg-gradient-to-r from-[#F3C440] to-[#D4A936] px-10 py-5 rounded-full font-bold text-black text-lg shadow-[0_0_40px_rgba(243,196,64,0.4)] hover:shadow-[0_0_60px_rgba(243,196,64,0.6)] transition-all hover:-translate-y-1">
                   Browse Properties
                 </Link>
               </div>

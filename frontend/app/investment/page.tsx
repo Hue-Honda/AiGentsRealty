@@ -262,7 +262,7 @@ export default function InvestmentPage() {
               <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
                 Explore our curated off-plan properties with AI-powered insights and guaranteed high returns
               </p>
-              <Link href="/explore" className="inline-flex items-center gap-3 bg-gradient-to-r from-[#00C775] to-[#00A85D] px-10 py-5 rounded-full font-bold text-white text-lg shadow-[0_0_40px_rgba(0,199,117,0.4)] hover:shadow-[0_0_60px_rgba(0,199,117,0.6)] transition-all hover:-translate-y-1">
+              <Link href="/projects" className="inline-flex items-center gap-3 bg-gradient-to-r from-[#00C775] to-[#00A85D] px-10 py-5 rounded-full font-bold text-white text-lg shadow-[0_0_40px_rgba(0,199,117,0.4)] hover:shadow-[0_0_60px_rgba(0,199,117,0.6)] transition-all hover:-translate-y-1">
                 <Sparkles className="w-6 h-6" />
                 <span>Browse Properties</span>
                 <ArrowRight className="w-6 h-6" />
