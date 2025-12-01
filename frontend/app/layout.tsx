@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-// import Footer from "@/components/Footer"; // Footer hidden - fullscreen home page
+import Footer from "@/components/Footer";
 import FloatingAIChat from "@/components/FloatingAIChat";
 import AIButtonHandler from "@/components/AIButtonHandler";
 import { OrganizationJsonLd } from "@/components/seo/JsonLd";
@@ -215,9 +216,10 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans antialiased`} suppressHydrationWarning>
         <Navbar />
         {children}
-        {/* <Footer /> */}
+        <Footer />
         <AIButtonHandler />
         {/* <FloatingAIChat /> */}
+        <Analytics />
       </body>
     </html>
   );

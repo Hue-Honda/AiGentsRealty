@@ -214,8 +214,11 @@ export default function Home() {
         delay: 0.6
       });
 
-      // DATA CARDS STAGGER
+      // DATA CARDS STAGGER - Set initial state and animate
       if (dataCardsRef.current) {
+        // Ensure cards are visible first
+        gsap.set(dataCardsRef.current.children, { opacity: 1 });
+
         gsap.from(dataCardsRef.current.children, {
           opacity: 0,
           y: 40,
@@ -223,7 +226,8 @@ export default function Home() {
           duration: 0.8,
           stagger: 0.15,
           ease: 'back.out(1.2)',
-          delay: 0.8
+          delay: 0.8,
+          clearProps: 'all' // Clear inline styles after animation
         });
       }
 
@@ -274,7 +278,7 @@ export default function Home() {
       if (developersRef.current) {
         const devCards = developersRef.current.querySelectorAll('.dev-card');
         // Ensure cards are visible by default
-        gsap.set(devCards, { opacity: 1 });
+        gsap.set(devCards, { opacity: 1, visibility: 'visible' });
 
         gsap.from(devCards, {
           opacity: 0,
@@ -283,14 +287,11 @@ export default function Home() {
           duration: 0.6,
           stagger: 0.1,
           ease: 'back.out(1.1)',
+          clearProps: 'all', // Clear inline styles after animation
           scrollTrigger: {
             trigger: developersRef.current,
-            start: 'top 75%',
-            toggleActions: 'play none none none',
-            onEnter: () => {
-              // Force refresh on enter to ensure proper visibility
-              gsap.to(devCards, { opacity: 1, duration: 0 });
-            }
+            start: 'top 80%',
+            toggleActions: 'play none none none'
           }
         });
       }

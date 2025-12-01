@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import Link from 'next/link';
-import { Building2, ChevronDown, Menu, X, BookOpen, BarChart3, MapPin, Phone, Sparkles } from 'lucide-react';
+import { Building2, ChevronDown, Menu, X, BookOpen, BarChart3, MapPin, Phone, Sparkles, Newspaper } from 'lucide-react';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -101,6 +101,12 @@ export default function Navbar() {
           { name: 'Monthly Reports', href: '/insights/reports' },
           { name: 'Price Trends', href: '/insights/price-trends' },
           { name: 'Developer Updates', href: '/insights/developers' },
+        ]},
+        { section: 'Blog', items: [
+          { name: 'All Articles', href: '/blogs' },
+          { name: 'Investment Guides', href: '/blogs?category=investment-guides' },
+          { name: 'Area Guides', href: '/blogs?category=area-guides' },
+          { name: 'Tips & Tricks', href: '/blogs?category=tips-tricks' },
         ]}
       ]
     }

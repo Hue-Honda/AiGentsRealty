@@ -14,15 +14,24 @@ frontend/
 │   ├── layout.tsx          # Global metadata, Open Graph, Twitter Cards
 │   ├── sitemap.ts          # Dynamic sitemap generator (/sitemap.xml)
 │   ├── robots.ts           # Dynamic robots.txt generator (/robots.txt)
-│   └── genie/
-│       └── layout.tsx      # Genie page-specific metadata
+│   ├── genie/
+│   │   └── layout.tsx      # Genie page-specific metadata
+│   └── blogs/
+│       ├── layout.tsx      # Blog section SEO metadata
+│       ├── page.tsx        # Blog listing page
+│       └── [slug]/
+│           ├── page.tsx    # Individual blog post page
+│           └── BlogPostContent.tsx  # Markdown content renderer
 ├── components/
 │   └── seo/
 │       └── JsonLd.tsx      # JSON-LD structured data components
+├── lib/
+│   └── blog-data.ts        # Blog posts, categories, and helper functions
 └── public/
     ├── og-image.jpg        # Open Graph image (1200x630px) - TO CREATE
     ├── twitter-image.jpg   # Twitter Card image (1200x600px) - TO CREATE
     ├── genie-og-image.jpg  # Genie page OG image - TO CREATE
+    ├── blog-og-image.jpg   # Blog section OG image - TO CREATE
     └── favicon.ico         # Favicon
 ```
 
@@ -90,6 +99,31 @@ Configured rules:
 |------|------|-----------------|
 | Home | `app/layout.tsx` | Default metadata |
 | Genie | `app/genie/layout.tsx` | AI assistant focus |
+| Blog | `app/blogs/layout.tsx` | Blog section metadata |
+| Blog Posts | `app/blogs/[slug]/page.tsx` | Dynamic article metadata |
+
+### 6. **Blog System** (`app/blogs/`)
+
+| Feature | Status | Description |
+|---------|--------|-------------|
+| Blog Listing | ✅ | Category filtering, search, responsive grid |
+| Individual Posts | ✅ | Full markdown content with styling |
+| Dynamic Metadata | ✅ | Auto-generated from post data |
+| Article Schema | ✅ | Rich snippets for blog posts |
+| Social Sharing | ✅ | Twitter, LinkedIn, Facebook share buttons |
+| Related Posts | ✅ | Content recommendations |
+| Category System | ✅ | 5 categories with filtering |
+| Tags | ✅ | Tag-based search and filtering |
+| Trending Posts | ✅ | Sidebar with popular content |
+
+**Blog Categories:**
+- Market News - Latest market updates
+- Investment Guides - How-to guides for investors
+- Developer Spotlight - Developer reviews
+- Area Guides - Location deep dives
+- Tips & Tricks - Practical advice
+
+**Sample Posts Included:** 10 articles across all categories
 
 ---
 

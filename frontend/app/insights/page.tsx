@@ -222,6 +222,7 @@ export default function InsightsPage() {
                         src={insight.image}
                         alt={insight.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        suppressHydrationWarning
                       />
                       {insight.trending && (
                         <div className="absolute top-4 left-4 z-20">

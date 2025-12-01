@@ -34,6 +34,7 @@
 // =============================================================================
 
 import { MetadataRoute } from 'next';
+import { blogPosts } from '@/lib/blog-data';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aigentsrealty.com';
 
@@ -49,6 +50,7 @@ const staticPages = [
   { url: '/commercial', priority: 0.8, changeFrequency: 'weekly' as const },
   { url: '/investment', priority: 0.8, changeFrequency: 'weekly' as const },
   { url: '/insights', priority: 0.7, changeFrequency: 'daily' as const },
+  { url: '/blogs', priority: 0.9, changeFrequency: 'daily' as const },
   { url: '/contact', priority: 0.6, changeFrequency: 'monthly' as const },
 ];
 
@@ -203,6 +205,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Then add projectUrls to the return array below.
   // =============================================================================
 
+  // =============================================================================
+  // BLOG POSTS - Dynamically generated from blog-data.ts
+  // =============================================================================
+  const blogUrls = blogPosts.map((post) => ({
+    url: `${siteUrl}/blogs/${post.slug}`,
+    lastModified: post.updatedAt || post.publishedAt,
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+
   return [
     ...staticUrls,
     ...developerUrls,
@@ -210,6 +222,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...investmentUrls,
     ...commercialUrls,
     ...insightUrls,
+    ...blogUrls,
   ];
 }
 
