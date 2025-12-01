@@ -244,7 +244,7 @@ export default function ROICalculatorPage() {
                   <div className="space-y-3">
                     {Array.from({ length: holdingPeriod + 1 }).map((_, year) => {
                       const yearValue = purchasePrice * Math.pow(1 + annualAppreciation / 100, year);
-                      const percentage = (yearValue / futureValue) * 100;
+                      const percentage = Math.round((yearValue / futureValue) * 10000) / 100;
 
                       return (
                         <div key={year}>
