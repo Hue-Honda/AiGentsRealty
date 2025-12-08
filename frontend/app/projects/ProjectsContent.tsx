@@ -20,30 +20,52 @@ export default function ProjectsContent() {
     price: searchParams.get('price') || 'all',
     location: searchParams.get('location') || 'all',
     developer: searchParams.get('developer') || 'all',
-    bedrooms: searchParams.get('bedrooms') || 'all',
+    propertyType: searchParams.get('propertyType') || 'all',
+    handover: searchParams.get('handover') || 'all',
     paymentPlan: searchParams.get('paymentPlan') || 'all',
-    completionYear: searchParams.get('completionYear') || 'all',
   });
+
+  // Dynamic filter options from data
+  const [developers, setDevelopers] = useState<string[]>([]);
+  const [locations, setLocations] = useState<string[]>([]);
 
   const [sort, setSort] = useState(searchParams.get('sort') || 'featured');
 
-  // Fetch projects from API
+  // Fetch projects and developers from API
   useEffect(() => {
-    async function fetchProjects() {
+    async function fetchData() {
       try {
-        const res = await fetch(`${API_URL}/api/projects`);
-        const data = await res.json();
-        if (data.success) {
-          setProjects(data.data);
-          setFilteredProjects(data.data);
+        const [projectsRes, developersRes] = await Promise.all([
+          fetch(`${API_URL}/api/projects`),
+          fetch(`${API_URL}/api/developers`)
+        ]);
+
+        const projectsData = await projectsRes.json();
+        const developersData = await developersRes.json();
+
+        if (projectsData.success) {
+          setProjects(projectsData.data);
+          setFilteredProjects(projectsData.data);
+
+          // Extract unique locations from projects
+          const uniqueLocations = [...new Set(
+            projectsData.data
+              .map((p: any) => p.area_name || p.location)
+              .filter(Boolean)
+          )] as string[];
+          setLocations(uniqueLocations.sort());
+        }
+
+        if (developersData.success) {
+          setDevelopers(developersData.data.map((d: any) => d.name));
         }
       } catch (error) {
-        console.error('Error fetching projects:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     }
-    fetchProjects();
+    fetchData();
   }, []);
 
   // Apply filters when filters or projects change
@@ -84,22 +106,40 @@ export default function ProjectsContent() {
       );
     }
 
+    // Property Type filter
+    if (filters.propertyType !== 'all') {
+      filtered = filtered.filter(project => {
+        const types = project.property_types || [];
+        return types.some((t: string) =>
+          t.toLowerCase().includes(filters.propertyType.toLowerCase())
+        );
+      });
+    }
+
+    // Handover filter
+    if (filters.handover !== 'all') {
+      filtered = filtered.filter(project => {
+        const completion = project.completion_date || project.handover || '';
+        const match = completion.match(/Q(\d)\s*(\d{4})/i);
+        if (!match) return false;
+
+        const projectQuarter = parseInt(match[1]);
+        const projectYear = parseInt(match[2]);
+
+        const [filterQ, filterY] = filters.handover.split('-').map(Number);
+
+        // Check if project is before or equal to selected quarter
+        if (projectYear < filterY) return true;
+        if (projectYear === filterY && projectQuarter <= filterQ) return true;
+        return false;
+      });
+    }
+
     // Payment Plan filter
     if (filters.paymentPlan !== 'all') {
       filtered = filtered.filter(project =>
         project.payment_plan?.toLowerCase().includes(filters.paymentPlan.toLowerCase())
       );
-    }
-
-    // Completion Year filter
-    if (filters.completionYear !== 'all') {
-      filtered = filtered.filter(project => {
-        const year = project.completion_date?.match(/\d{4}/)?.[0];
-        if (filters.completionYear === '2028') {
-          return year && parseInt(year) >= 2028;
-        }
-        return year === filters.completionYear;
-      });
     }
 
     setFilteredProjects(filtered);
@@ -112,9 +152,9 @@ export default function ProjectsContent() {
     if (filters.price !== 'all') params.set('price', filters.price);
     if (filters.location !== 'all') params.set('location', filters.location);
     if (filters.developer !== 'all') params.set('developer', filters.developer);
-    if (filters.bedrooms !== 'all') params.set('bedrooms', filters.bedrooms);
+    if (filters.propertyType !== 'all') params.set('propertyType', filters.propertyType);
+    if (filters.handover !== 'all') params.set('handover', filters.handover);
     if (filters.paymentPlan !== 'all') params.set('paymentPlan', filters.paymentPlan);
-    if (filters.completionYear !== 'all') params.set('completionYear', filters.completionYear);
     if (sort !== 'featured') params.set('sort', sort);
 
     const queryString = params.toString();
@@ -129,11 +169,19 @@ export default function ProjectsContent() {
       price: 'all',
       location: 'all',
       developer: 'all',
-      bedrooms: 'all',
+      propertyType: 'all',
+      handover: 'all',
       paymentPlan: 'all',
-      completionYear: 'all',
     });
   };
+
+  // Generate handover options (Q1 2025 through Q4 2030)
+  const handoverOptions = [];
+  for (let year = 2025; year <= 2031; year++) {
+    for (let q = 1; q <= 4; q++) {
+      handoverOptions.push({ value: `${q}-${year}`, label: `Before Q${q} ${year}` });
+    }
+  }
 
   if (loading) {
     return (
@@ -192,6 +240,37 @@ export default function ProjectsContent() {
 
               {/* FILTERS ROW */}
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
+                {/* Property Type */}
+                <div className="relative group">
+                  <select
+                    value={filters.propertyType}
+                    onChange={(e) => setFilters({ ...filters, propertyType: e.target.value })}
+                    className="w-full bg-[#F9FAFB] border-2 border-gray-200 hover:border-[#10B981] rounded-full px-4 py-3 text-[#0A0A0A] text-sm font-semibold focus:outline-none focus:border-[#10B981] transition-all appearance-none cursor-pointer"
+                  >
+                    <option value="all">Property Type</option>
+                    <option value="apartment">Apartments</option>
+                    <option value="villa">Villas</option>
+                    <option value="townhouse">Townhouses</option>
+                    <option value="penthouse">Penthouses</option>
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#10B981] pointer-events-none" />
+                </div>
+
+                {/* Handover */}
+                <div className="relative group">
+                  <select
+                    value={filters.handover}
+                    onChange={(e) => setFilters({ ...filters, handover: e.target.value })}
+                    className="w-full bg-[#F9FAFB] border-2 border-gray-200 hover:border-[#10B981] rounded-full px-4 py-3 text-[#0A0A0A] text-sm font-semibold focus:outline-none focus:border-[#10B981] transition-all appearance-none cursor-pointer"
+                  >
+                    <option value="all">Handover</option>
+                    {handoverOptions.slice(0, 12).map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#10B981] pointer-events-none" />
+                </div>
+
                 {/* Price Range */}
                 <div className="relative group">
                   <select
@@ -208,53 +287,32 @@ export default function ProjectsContent() {
                   <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#10B981] pointer-events-none" />
                 </div>
 
-                {/* Locations */}
+                {/* Locations - Dynamic */}
                 <div className="relative group">
                   <select
                     value={filters.location}
                     onChange={(e) => setFilters({ ...filters, location: e.target.value })}
                     className="w-full bg-[#F9FAFB] border-2 border-gray-200 hover:border-[#10B981] rounded-full px-4 py-3 text-[#0A0A0A] text-sm font-semibold focus:outline-none focus:border-[#10B981] transition-all appearance-none cursor-pointer"
                   >
-                    <option value="all">Locations</option>
-                    <option value="downtown">Downtown Dubai</option>
-                    <option value="marina">Dubai Marina</option>
-                    <option value="hills">Dubai Hills</option>
-                    <option value="creek">Dubai Creek</option>
-                    <option value="south">Dubai South</option>
+                    <option value="all">All Locations</option>
+                    {locations.map(loc => (
+                      <option key={loc} value={loc}>{loc}</option>
+                    ))}
                   </select>
                   <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#10B981] pointer-events-none" />
                 </div>
 
-                {/* Developers */}
+                {/* Developers - Dynamic */}
                 <div className="relative group">
                   <select
                     value={filters.developer}
                     onChange={(e) => setFilters({ ...filters, developer: e.target.value })}
                     className="w-full bg-[#F9FAFB] border-2 border-gray-200 hover:border-[#10B981] rounded-full px-4 py-3 text-[#0A0A0A] text-sm font-semibold focus:outline-none focus:border-[#10B981] transition-all appearance-none cursor-pointer"
                   >
-                    <option value="all">Developers</option>
-                    <option value="emaar">Emaar</option>
-                    <option value="damac">DAMAC</option>
-                    <option value="nakheel">Nakheel</option>
-                    <option value="meraas">Meraas</option>
-                    <option value="sobha">Sobha</option>
-                  </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#10B981] pointer-events-none" />
-                </div>
-
-                {/* Bedrooms */}
-                <div className="relative group">
-                  <select
-                    value={filters.bedrooms}
-                    onChange={(e) => setFilters({ ...filters, bedrooms: e.target.value })}
-                    className="w-full bg-[#F9FAFB] border-2 border-gray-200 hover:border-[#10B981] rounded-full px-4 py-3 text-[#0A0A0A] text-sm font-semibold focus:outline-none focus:border-[#10B981] transition-all appearance-none cursor-pointer"
-                  >
-                    <option value="all">Bedrooms</option>
-                    <option value="studio">Studio</option>
-                    <option value="1">1 BR</option>
-                    <option value="2">2 BR</option>
-                    <option value="3">3 BR</option>
-                    <option value="4plus">4+ BR</option>
+                    <option value="all">All Developers</option>
+                    {developers.map(dev => (
+                      <option key={dev} value={dev}>{dev}</option>
+                    ))}
                   </select>
                   <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#10B981] pointer-events-none" />
                 </div>
@@ -267,27 +325,11 @@ export default function ProjectsContent() {
                     className="w-full bg-[#F9FAFB] border-2 border-gray-200 hover:border-[#10B981] rounded-full px-4 py-3 text-[#0A0A0A] text-sm font-semibold focus:outline-none focus:border-[#10B981] transition-all appearance-none cursor-pointer"
                   >
                     <option value="all">Payment Plan</option>
-                    <option value="80-20">80/20</option>
-                    <option value="70-30">70/30</option>
-                    <option value="60-40">60/40</option>
-                    <option value="50-50">50/50</option>
-                  </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#10B981] pointer-events-none" />
-                </div>
-
-                {/* Completion Year */}
-                <div className="relative group">
-                  <select
-                    value={filters.completionYear}
-                    onChange={(e) => setFilters({ ...filters, completionYear: e.target.value })}
-                    className="w-full bg-[#F9FAFB] border-2 border-gray-200 hover:border-[#10B981] rounded-full px-4 py-3 text-[#0A0A0A] text-sm font-semibold focus:outline-none focus:border-[#10B981] transition-all appearance-none cursor-pointer"
-                  >
-                    <option value="all">Completion Year</option>
-                    <option value="2024">2024</option>
-                    <option value="2025">2025</option>
-                    <option value="2026">2026</option>
-                    <option value="2027">2027</option>
-                    <option value="2028">2028+</option>
+                    <option value="80/20">80/20</option>
+                    <option value="70/30">70/30</option>
+                    <option value="60/40">60/40</option>
+                    <option value="50/50">50/50</option>
+                    <option value="post">Post Handover</option>
                   </select>
                   <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#10B981] pointer-events-none" />
                 </div>

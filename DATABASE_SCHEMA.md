@@ -9,9 +9,9 @@
 
 | Table | Rows | Description |
 |-------|------|-------------|
-| `areas` | 281 | Dubai areas/districts |
+| `areas` | 322 | Dubai areas/districts |
 | `projects` | 31 | Off-plan property projects |
-| `developers` | 14 | Property developers |
+| `developers` | 41 | Property developers |
 | `area_market_stats` | 256 | Real DLD market stats per area |
 | `market_trends` | 429 | Monthly market trends (1990-2025) |
 | `area_monthly_stats` | 33,881 | Detailed area stats per month |

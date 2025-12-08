@@ -97,7 +97,7 @@ async function getDatabaseStats() {
 }
 
 /**
- * Get detailed area data with real statistics
+ * Get detailed area data with real DLD market statistics
  */
 async function getAreaDetails(areaSlug) {
   try {
@@ -119,6 +119,112 @@ async function getAreaDetails(areaSlug) {
   } catch (error) {
     console.error('Error fetching area details:', error);
     return null;
+  }
+}
+
+/**
+ * Get real DLD market statistics for an area
+ */
+async function getAreaMarketStats(areaName) {
+  try {
+    // First try exact match, then fuzzy match
+    const exactQuery = `
+      SELECT
+        area_name, avg_price_sqft, median_price_sqft,
+        min_price, max_price, avg_transaction_value,
+        total_transactions_6m, total_transactions_12m, total_volume_12m,
+        yoy_price_change, mom_price_change, top_property_type, avg_unit_size
+      FROM area_market_stats
+      WHERE LOWER(area_name) = LOWER($1)
+    `;
+    let result = await query(exactQuery, [areaName]);
+
+    if (result.rows.length === 0) {
+      // Try fuzzy match
+      const fuzzyQuery = `
+        SELECT
+          area_name, avg_price_sqft, median_price_sqft,
+          min_price, max_price, avg_transaction_value,
+          total_transactions_6m, total_transactions_12m, total_volume_12m,
+          yoy_price_change, mom_price_change, top_property_type, avg_unit_size
+        FROM area_market_stats
+        WHERE LOWER(area_name) LIKE LOWER($1)
+        ORDER BY total_transactions_12m DESC NULLS LAST
+        LIMIT 1
+      `;
+      result = await query(fuzzyQuery, [`%${areaName}%`]);
+    }
+
+    return result.rows[0] || null;
+  } catch (error) {
+    console.error('Error fetching area market stats:', error);
+    return null;
+  }
+}
+
+/**
+ * Get recent market trends for context
+ */
+async function getRecentMarketTrends() {
+  try {
+    const trendsQuery = `
+      SELECT
+        year, month, total_transactions, total_volume_aed,
+        avg_price_sqft, top_area, top_area_transactions
+      FROM market_trends
+      WHERE year >= 2023
+      ORDER BY year DESC, month DESC
+      LIMIT 12
+    `;
+    const result = await query(trendsQuery);
+    return result.rows;
+  } catch (error) {
+    console.error('Error fetching market trends:', error);
+    return [];
+  }
+}
+
+/**
+ * Get top performing areas by transaction volume
+ */
+async function getTopPerformingAreas(limit = 10) {
+  try {
+    const topAreasQuery = `
+      SELECT
+        area_name, avg_price_sqft, total_transactions_12m,
+        yoy_price_change, total_volume_12m
+      FROM area_market_stats
+      WHERE total_transactions_12m > 0
+      ORDER BY total_transactions_12m DESC
+      LIMIT $1
+    `;
+    const result = await query(topAreasQuery, [limit]);
+    return result.rows;
+  } catch (error) {
+    console.error('Error fetching top areas:', error);
+    return [];
+  }
+}
+
+/**
+ * Search areas by name with fuzzy matching
+ */
+async function searchAreas(searchTerm, limit = 5) {
+  try {
+    const searchQuery = `
+      SELECT a.id, a.name, a.slug, a.description,
+        ams.avg_price_sqft, ams.total_transactions_12m, ams.yoy_price_change
+      FROM areas a
+      LEFT JOIN area_market_stats ams ON LOWER(a.name) = LOWER(ams.area_name)
+      WHERE LOWER(a.name) LIKE LOWER($1)
+      ORDER BY ams.total_transactions_12m DESC NULLS LAST
+      LIMIT $2
+    `;
+    const result = await query(searchQuery, [`%${searchTerm}%`, limit]);
+    return result.rows;
+  } catch (error) {
+    console.error('Error searching areas:', error);
+    return [];
   }
 }
 
@@ -319,41 +425,115 @@ async function detectCanvasAction(message, matchingProjects = [], dbStats = null
     };
   }
 
-  // Area info intent - Extended mapping with more keywords
+  // Area info intent - Extended mapping with 50+ popular areas
   const areaMapping = {
-    'marina': { title: 'marina', slug: 'dubai-marina' },
-    'dubai marina': { title: 'marina', slug: 'dubai-marina' },
-    'downtown': { title: 'downtown', slug: 'downtown-dubai' },
-    'downtown dubai': { title: 'downtown', slug: 'downtown-dubai' },
-    'hills': { title: 'hills', slug: 'dubai-hills-estate' },
-    'dubai hills': { title: 'hills', slug: 'dubai-hills-estate' },
-    'creek': { title: 'creek', slug: 'dubai-creek-harbour' },
-    'dubai creek': { title: 'creek', slug: 'dubai-creek-harbour' },
-    'creek harbour': { title: 'creek', slug: 'dubai-creek-harbour' },
-    'jvc': { title: 'jvc', slug: 'jumeirah-village-circle' },
-    'jumeirah village': { title: 'jvc', slug: 'jumeirah-village-circle' },
-    'jumeirah village circle': { title: 'jvc', slug: 'jumeirah-village-circle' },
-    'palm': { title: 'palm', slug: 'palm-jumeirah' },
-    'palm jumeirah': { title: 'palm', slug: 'palm-jumeirah' },
-    'business bay': { title: 'business bay', slug: 'business-bay' },
-    'jbr': { title: 'jbr', slug: 'jumeirah-beach-residence' },
-    'jumeirah beach': { title: 'jbr', slug: 'jumeirah-beach-residence' },
-    'emaar beachfront': { title: 'Emaar Beachfront', slug: 'emaar-beachfront' },
-    'beachfront': { title: 'Emaar Beachfront', slug: 'emaar-beachfront' },
+    // Premium/High-End Areas
+    'marina': { title: 'Dubai Marina', slug: 'dubai-marina' },
+    'dubai marina': { title: 'Dubai Marina', slug: 'dubai-marina' },
+    'downtown': { title: 'Downtown Dubai', slug: 'downtown-dubai' },
+    'downtown dubai': { title: 'Downtown Dubai', slug: 'downtown-dubai' },
+    'palm': { title: 'Palm Jumeirah', slug: 'palm-jumeirah' },
+    'palm jumeirah': { title: 'Palm Jumeirah', slug: 'palm-jumeirah' },
+    'business bay': { title: 'Business Bay', slug: 'business-bay' },
+    'jbr': { title: 'Jumeirah Beach Residence', slug: 'jumeirah-beach-residence' },
+    'jumeirah beach': { title: 'Jumeirah Beach Residence', slug: 'jumeirah-beach-residence' },
+    'city walk': { title: 'City Walk', slug: 'city-walk' },
+    'citywalk': { title: 'City Walk', slug: 'city-walk' },
+    'bluewaters': { title: 'Bluewaters Island', slug: 'bluewaters' },
+    'bluewaters island': { title: 'Bluewaters Island', slug: 'bluewaters' },
+    'la mer': { title: 'La Mer', slug: 'la-mer' },
+
+    // Hills & Golf Communities
+    'hills': { title: 'Dubai Hills Estate', slug: 'dubai-hills-estate' },
+    'dubai hills': { title: 'Dubai Hills Estate', slug: 'dubai-hills-estate' },
+    'dubai hills estate': { title: 'Dubai Hills Estate', slug: 'dubai-hills-estate' },
+    'damac hills': { title: 'DAMAC Hills', slug: 'damac-hills' },
+    'damac hills 2': { title: 'DAMAC Hills 2', slug: 'damac-hills-2' },
+    'jumeirah golf': { title: 'Jumeirah Golf Estates', slug: 'jumeirah-golf-estates' },
+    'jumeirah golf estates': { title: 'Jumeirah Golf Estates', slug: 'jumeirah-golf-estates' },
+    'tilal al ghaf': { title: 'Tilal Al Ghaf', slug: 'tilal-al-ghaf' },
+    'tilal': { title: 'Tilal Al Ghaf', slug: 'tilal-al-ghaf' },
+
+    // Creek & Harbour Areas
+    'creek': { title: 'Dubai Creek Harbour', slug: 'dubai-creek-harbour' },
+    'dubai creek': { title: 'Dubai Creek Harbour', slug: 'dubai-creek-harbour' },
+    'creek harbour': { title: 'Dubai Creek Harbour', slug: 'dubai-creek-harbour' },
+    'dubai creek harbour': { title: 'Dubai Creek Harbour', slug: 'dubai-creek-harbour' },
+    'dubai harbour': { title: 'Dubai Harbour', slug: 'dubai-harbour' },
+    'harbour': { title: 'Dubai Harbour', slug: 'dubai-harbour' },
+
+    // Jumeirah Areas
+    'jvc': { title: 'Jumeirah Village Circle', slug: 'jumeirah-village-circle' },
+    'jumeirah village circle': { title: 'Jumeirah Village Circle', slug: 'jumeirah-village-circle' },
+    'jvt': { title: 'Jumeirah Village Triangle', slug: 'jumeirah-village-triangle' },
+    'jumeirah village triangle': { title: 'Jumeirah Village Triangle', slug: 'jumeirah-village-triangle' },
+    'jumeirah islands': { title: 'Jumeirah Islands', slug: 'jumeirah-islands' },
+    'jumeirah heights': { title: 'Jumeirah Heights', slug: 'jumeirah-heights' },
+
+    // Master Communities
     'sobha hartland': { title: 'Sobha Hartland', slug: 'sobha-hartland' },
     'hartland': { title: 'Sobha Hartland', slug: 'sobha-hartland' },
-    'damac hills': { title: 'DAMAC Hills', slug: 'damac-hills' },
-    'damac lagoons': { title: 'DAMAC Lagoons', slug: 'damac-lagoons' },
-    'lagoons': { title: 'DAMAC Lagoons', slug: 'damac-lagoons' },
+    'arabian ranches': { title: 'Arabian Ranches', slug: 'arabian-ranches' },
+    'arabian ranches 2': { title: 'Arabian Ranches 2', slug: 'arabian-ranches-2' },
+    'arabian ranches 3': { title: 'Arabian Ranches 3', slug: 'arabian-ranches-3' },
+    'ranches': { title: 'Arabian Ranches', slug: 'arabian-ranches' },
+    'emirates living': { title: 'Emirates Living', slug: 'emirates-living' },
+    'the springs': { title: 'The Springs', slug: 'the-springs' },
+    'the meadows': { title: 'The Meadows', slug: 'the-meadows' },
+    'the lakes': { title: 'The Lakes', slug: 'the-lakes' },
+    'town square': { title: 'Town Square Dubai', slug: 'town-square-dubai' },
+    'town square dubai': { title: 'Town Square Dubai', slug: 'town-square-dubai' },
+
+    // MBR City & Meydan
+    'meydan': { title: 'Meydan', slug: 'meydan' },
+    'mbr city': { title: 'MBR City', slug: 'mbr-city' },
+    'mbr': { title: 'MBR City', slug: 'mbr-city' },
+    'mohammad bin rashid city': { title: 'MBR City', slug: 'mbr-city' },
+    'district one': { title: 'District One', slug: 'district-one' },
+
+    // Affordable/Emerging Areas
     'al furjan': { title: 'Al Furjan', slug: 'al-furjan' },
     'furjan': { title: 'Al Furjan', slug: 'al-furjan' },
-    'arabian ranches': { title: 'Arabian Ranches', slug: 'arabian-ranches' },
-    'ranches': { title: 'Arabian Ranches', slug: 'arabian-ranches' },
-    'meydan': { title: 'Meydan', slug: 'meydan' },
-    'city walk': { title: 'City Walk', slug: 'city-walk' },
-    'bluewaters': { title: 'Bluewaters', slug: 'bluewaters' },
-    'tilal al ghaf': { title: 'Tilal Al Ghaf', slug: 'tilal-al-ghaf' },
-    'town square': { title: 'Town Square', slug: 'town-square' },
+    'arjan': { title: 'Arjan', slug: 'arjan' },
+    'al barsha': { title: 'Al Barsha', slug: 'al-barsha' },
+    'barsha': { title: 'Al Barsha', slug: 'al-barsha' },
+    'barsha heights': { title: 'Barsha Heights', slug: 'barsha-heights' },
+    'tecom': { title: 'Barsha Heights', slug: 'barsha-heights' },
+    'motor city': { title: 'Motor City', slug: 'motor-city' },
+    'sports city': { title: 'Dubai Sports City', slug: 'dubai-sports-city' },
+    'dubai sports city': { title: 'Dubai Sports City', slug: 'dubai-sports-city' },
+    'silicon oasis': { title: 'Dubai Silicon Oasis', slug: 'dubai-silicon-oasis' },
+    'dso': { title: 'Dubai Silicon Oasis', slug: 'dubai-silicon-oasis' },
+    'dubai silicon oasis': { title: 'Dubai Silicon Oasis', slug: 'dubai-silicon-oasis' },
+    'international city': { title: 'International City', slug: 'international-city' },
+    'discovery gardens': { title: 'Discovery Gardens', slug: 'discovery-gardens' },
+
+    // Media/Production Areas
+    'production city': { title: 'Dubai Production City', slug: 'dubai-production-city' },
+    'dubai production city': { title: 'Dubai Production City', slug: 'dubai-production-city' },
+    'impz': { title: 'Dubai Production City', slug: 'dubai-production-city' },
+    'studio city': { title: 'Dubai Studio City', slug: 'dubai-studio-city' },
+    'dubai studio city': { title: 'Dubai Studio City', slug: 'dubai-studio-city' },
+    'media city': { title: 'Dubai Media City', slug: 'dubai-media-city' },
+
+    // Dubai South & Airport Areas
+    'dubai south': { title: 'Dubai South', slug: 'dubai-south' },
+    'expo city': { title: 'Expo City Dubai', slug: 'expo-city' },
+    'al maktoum': { title: 'Al Maktoum City', slug: 'al-maktoum-city' },
+    'jebel ali': { title: 'Jebel Ali', slug: 'jebel-ali' },
+
+    // Luxury/Villa Areas
+    'al barari': { title: 'Al Barari', slug: 'al-barari' },
+    'damac lagoons': { title: 'DAMAC Lagoons', slug: 'damac-lagoons' },
+    'lagoons': { title: 'DAMAC Lagoons', slug: 'damac-lagoons' },
+    'emaar beachfront': { title: 'Emaar Beachfront', slug: 'emaar-beachfront' },
+    'beachfront': { title: 'Emaar Beachfront', slug: 'emaar-beachfront' },
+    'mudon': { title: 'Mudon', slug: 'mudon' },
+    'villanova': { title: 'Villanova', slug: 'villanova' },
+    'the valley': { title: 'The Valley', slug: 'the-valley' },
+    'akoya': { title: 'AKOYA Oxygen', slug: 'akoya-oxygen' },
+    'akoya oxygen': { title: 'AKOYA Oxygen', slug: 'akoya-oxygen' },
+    'living legends': { title: 'Living Legends', slug: 'living-legends' },
   };
 
   // Check for area mentions - area info intent
@@ -364,18 +544,28 @@ async function detectCanvasAction(message, matchingProjects = [], dbStats = null
 
     for (const [keyword, areaInfo] of Object.entries(areaMapping)) {
       if (messageLower.includes(keyword)) {
-        // Fetch real data from database
-        const areaData = await getAreaDetails(areaInfo.slug);
+        // Fetch real data from database including DLD market stats
+        const [areaData, marketStats] = await Promise.all([
+          getAreaDetails(areaInfo.slug),
+          getAreaMarketStats(areaInfo.title)
+        ]);
+
+        const subtitle = marketStats
+          ? `AED ${Math.round(marketStats.avg_price_sqft).toLocaleString()}/sqft avg`
+          : areaData
+            ? `${areaData.project_count} projects available`
+            : 'Area overview and insights';
 
         return {
           type: 'area_info',
           title: areaInfo.title,
           slug: areaInfo.slug,
-          subtitle: areaData ? `${areaData.project_count} projects available` : 'Area overview and insights',
+          subtitle,
           data: {
             title: areaInfo.title,
             slug: areaInfo.slug,
-            dbData: areaData // Real database data
+            dbData: areaData, // Project data
+            marketStats // Real DLD market statistics
           }
         };
       }
@@ -385,18 +575,28 @@ async function detectCanvasAction(message, matchingProjects = [], dbStats = null
   // Also check for direct area mentions without "tell me about" etc.
   for (const [keyword, areaInfo] of Object.entries(areaMapping)) {
     if (messageLower.includes(keyword)) {
-      // Fetch real data from database
-      const areaData = await getAreaDetails(areaInfo.slug);
+      // Fetch real data from database including DLD market stats
+      const [areaData, marketStats] = await Promise.all([
+        getAreaDetails(areaInfo.slug),
+        getAreaMarketStats(areaInfo.title)
+      ]);
+
+      const subtitle = marketStats
+        ? `AED ${Math.round(marketStats.avg_price_sqft).toLocaleString()}/sqft avg`
+        : areaData
+          ? `${areaData.project_count} projects available`
+          : 'Area overview and insights';
 
       return {
         type: 'area_info',
         title: areaInfo.title,
         slug: areaInfo.slug,
-        subtitle: areaData ? `${areaData.project_count} projects available` : 'Area overview and insights',
+        subtitle,
         data: {
           title: areaInfo.title,
           slug: areaInfo.slug,
-          dbData: areaData
+          dbData: areaData,
+          marketStats
         }
       };
     }
@@ -475,8 +675,26 @@ async function findMatchingProjects(userMessage) {
       hasFilters = true;
     }
 
-    // Filter by area keywords
-    const areaKeywords = ['marina', 'downtown', 'hills', 'creek', 'business bay', 'jumeirah', 'palm', 'dubai south', 'jvc', 'jbr', 'beachfront', 'hartland'];
+    // Filter by area keywords - expanded list with common Dubai areas
+    const areaKeywords = [
+      'marina', 'downtown', 'hills', 'creek', 'business bay', 'jumeirah',
+      'palm', 'dubai south', 'jvc', 'jvt', 'jbr', 'beachfront', 'hartland',
+      'arjan', 'al furjan', 'furjan', 'silicon oasis', 'dso', 'motor city',
+      'sports city', 'production city', 'studio city', 'media city',
+      'town square', 'arabian ranches', 'ranches', 'damac hills', 'lagoons',
+      'meydan', 'mbr', 'mbr city', 'mohammad bin rashid', 'rashid',
+      'international city', 'discovery gardens', 'gardens', 'spring',
+      'meadows', 'lakes', 'emirates living', 'barsha', 'tecom',
+      'barsha heights', 'al quoz', 'al khail', 'remraam', 'dubailand',
+      'city walk', 'citywalk', 'bluewaters', 'la mer', 'tilal al ghaf',
+      'dubai harbour', 'harbour', 'rashid yachts', 'maritime city',
+      'jumeirah islands', 'al barari', 'victory heights', 'living legends',
+      'akoya', 'mudon', 'villanova', 'maple', 'the valley', 'emaar south',
+      'dubai creek harbour', 'ras al khor', 'culture village', 'al jadaf',
+      'nad al sheba', 'al warqa', 'mirdif', 'oud metha', 'karama', 'deira',
+      'al mamzar', 'al qusais', 'al nahda', 'al twar', 'international city',
+      'wasl', 'dubai investment park', 'dip', 'jebel ali', 'al maktoum'
+    ];
     for (const area of areaKeywords) {
       if (messageLower.includes(area)) {
         queryText += ` AND (LOWER(a.name) LIKE $${paramCount} OR LOWER(p.location) LIKE $${paramCount})`;
@@ -487,8 +705,16 @@ async function findMatchingProjects(userMessage) {
       }
     }
 
-    // Filter by developer
-    const developerKeywords = ['emaar', 'damac', 'nakheel', 'meraas', 'sobha', 'azizi', 'binghatti', 'ellington', 'samana'];
+    // Filter by developer - expanded list with all 40+ developers
+    const developerKeywords = [
+      'emaar', 'damac', 'nakheel', 'meraas', 'sobha', 'azizi', 'binghatti',
+      'ellington', 'samana', 'danube', 'select group', 'omniyat', 'aldar',
+      'dubai properties', 'deyaar', 'nshama', 'mag', 'dubai south',
+      'majid al futtaim', 'meydan', 'dubai holding', 'wasl', 'tiger',
+      'reportage', 'first group', 'seven tides', 'union properties',
+      'palma', 'vincitore', 'prescott', 'oro24', 'pantheon', 'signature',
+      'imtiaz', 'arada', 'object one', 'al barari', 'jumeirah golf estates'
+    ];
     for (const dev of developerKeywords) {
       if (messageLower.includes(dev)) {
         queryText += ` AND LOWER(d.name) LIKE $${paramCount}`;
@@ -694,6 +920,13 @@ router.post('/', async (req, res) => {
     const allProjects = await getAllProjects();
     console.log(`Loaded ${allProjects.length} projects for AI context`);
 
+    // Get real market data for context
+    const [topAreas, recentTrends] = await Promise.all([
+      getTopPerformingAreas(15),
+      getRecentMarketTrends()
+    ]);
+    console.log(`Loaded ${topAreas.length} top areas and ${recentTrends.length} market trends`);
+
     // Build project context for AI with FULL portfolio
     let projectContext = '';
     if (allProjects.length > 0) {
@@ -720,8 +953,36 @@ router.post('/', async (req, res) => {
       projectContext = '\n\n**NOTE**: No projects currently available in the database. Ask the client to check back later or contact the team directly.\n';
     }
 
+    // Add real DLD market data context
+    let marketContext = '\n\n## REAL DUBAI LAND DEPARTMENT (DLD) MARKET DATA:\n\n';
+
+    if (topAreas.length > 0) {
+      marketContext += '### Top Performing Areas by Transaction Volume (Last 12 Months):\n';
+      topAreas.forEach((area, i) => {
+        const pricePerSqft = area.avg_price_sqft ? `AED ${Math.round(area.avg_price_sqft).toLocaleString()}/sqft` : 'N/A';
+        const yoyChange = area.yoy_price_change ? `${area.yoy_price_change > 0 ? '+' : ''}${parseFloat(area.yoy_price_change).toFixed(1)}% YoY` : '';
+        const transactions = area.total_transactions_12m ? `${area.total_transactions_12m.toLocaleString()} transactions` : '';
+        marketContext += `${i + 1}. **${area.area_name}**: ${pricePerSqft} | ${yoyChange} | ${transactions}\n`;
+      });
+      marketContext += '\n';
+    }
+
+    if (recentTrends.length > 0) {
+      marketContext += '### Recent Market Trends:\n';
+      const latestMonth = recentTrends[0];
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      if (latestMonth) {
+        const monthName = monthNames[latestMonth.month - 1] || 'Unknown';
+        const totalVol = latestMonth.total_volume_aed ? `AED ${(parseFloat(latestMonth.total_volume_aed) / 1000000000).toFixed(1)}B` : 'N/A';
+        marketContext += `- Latest data (${monthName} ${latestMonth.year}): ${latestMonth.total_transactions?.toLocaleString() || 'N/A'} transactions, ${totalVol} volume\n`;
+        marketContext += `- Top area: ${latestMonth.top_area || 'N/A'} with ${latestMonth.top_area_transactions?.toLocaleString() || 'N/A'} transactions\n`;
+        marketContext += `- Average price: AED ${Math.round(parseFloat(latestMonth.avg_price_sqft || 0)).toLocaleString()}/sqft\n`;
+      }
+      marketContext += '\n**USE THIS REAL DATA**: When discussing market trends, ROI, or area comparisons, reference this actual DLD data. This is real transaction data from 1.6M+ transactions!\n';
+    }
+
     // Build the conversation context
-    const systemPrompt = `You are Genie, a senior off-plan property specialist at AiGentsRealty with over 10 years of experience in Dubai's real estate market. You are a trusted advisor who speaks with confidence, professionalism, and deep industry knowledge.${projectContext}
+    const systemPrompt = `You are Genie, a senior off-plan property specialist at AiGentsRealty with over 10 years of experience in Dubai's real estate market. You are a trusted advisor who speaks with confidence, professionalism, and deep industry knowledge.${projectContext}${marketContext}
 
 ## Your Expertise:
 - **Off-Plan Properties**: You specialize exclusively in pre-construction and under-construction properties in Dubai
