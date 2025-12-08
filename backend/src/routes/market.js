@@ -93,6 +93,33 @@ router.get('/area/:areaName/history', async (req, res) => {
   }
 });
 
+// Get top performing areas (for geniev2 popular districts)
+router.get('/top-areas', async (req, res) => {
+  try {
+    const { limit = 6 } = req.query;
+
+    // Join with areas table to get slugs
+    const result = await query(`
+      SELECT
+        ams.area_name as name,
+        COALESCE(a.slug, LOWER(REPLACE(ams.area_name, ' ', '-'))) as slug,
+        ams.avg_price_sqft,
+        ams.total_transactions_12m,
+        ams.yoy_price_change
+      FROM area_market_stats ams
+      LEFT JOIN areas a ON LOWER(a.name) = LOWER(ams.area_name)
+      WHERE ams.total_transactions_12m > 0
+      ORDER BY ams.total_transactions_12m DESC
+      LIMIT $1
+    `, [parseInt(limit)]);
+
+    res.json({ areas: result.rows });
+  } catch (error) {
+    console.error('Error fetching top areas:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Get market overview (dashboard stats)
 router.get('/overview', async (req, res) => {
   try {

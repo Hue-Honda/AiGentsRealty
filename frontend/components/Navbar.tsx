@@ -27,12 +27,15 @@ export default function Navbar() {
     timeoutRef.current = setTimeout(() => {
       setActiveDropdown(null);
       setActiveSubmenu(null);
-    }, 150);
+    }, 400);
   };
 
   const handleSubmenuEnter = (name: string) => {
     if (submenuTimeoutRef.current) {
       clearTimeout(submenuTimeoutRef.current);
+    }
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
     }
     setActiveSubmenu(name);
   };
@@ -40,7 +43,7 @@ export default function Navbar() {
   const handleSubmenuLeave = () => {
     submenuTimeoutRef.current = setTimeout(() => {
       setActiveSubmenu(null);
-    }, 100);
+    }, 400);
   };
 
   // Build dynamic areas submenu from API data
@@ -106,18 +109,21 @@ export default function Navbar() {
         },
         {
           name: 'Areas',
+          href: '/areas',
           icon: <MapPin className="w-4 h-4" />,
           description: 'Explore by location',
           submenu: areasSubmenu
         },
         {
           name: 'Developers',
+          href: '/developers',
           icon: <Users className="w-4 h-4" />,
           description: 'Top developers',
           submenu: developersSubmenu
         },
         {
           name: 'Commercial',
+          href: '/commercial',
           icon: <Briefcase className="w-4 h-4" />,
           description: 'Office & retail spaces',
           submenu: [
@@ -136,6 +142,7 @@ export default function Navbar() {
       items: [
         {
           name: 'Investment Guides',
+          href: '/investment',
           icon: <BookOpen className="w-4 h-4" />,
           description: 'Learn the basics',
           submenu: [
@@ -146,6 +153,7 @@ export default function Navbar() {
         },
         {
           name: 'Tools & Calculators',
+          href: '/investment/roi-calculator',
           icon: <Calculator className="w-4 h-4" />,
           description: 'Plan your investment',
           submenu: [
@@ -156,6 +164,7 @@ export default function Navbar() {
         },
         {
           name: 'Strategies',
+          href: '/investment',
           icon: <TrendingUp className="w-4 h-4" />,
           description: 'Investment approaches',
           submenu: [
@@ -264,17 +273,20 @@ export default function Navbar() {
                             {menuItem.href ? (
                               <Link
                                 href={menuItem.href}
-                                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors group"
+                                className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors group"
                               >
-                                <div className="w-8 h-8 rounded-lg bg-[#F9FAFB] flex items-center justify-center group-hover:bg-[#10B981]/10 transition-colors">
-                                  <span className="text-gray-400 group-hover:text-[#10B981]">{menuItem.icon}</span>
+                                <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 rounded-lg bg-[#F9FAFB] flex items-center justify-center group-hover:bg-[#10B981]/10 transition-colors">
+                                    <span className="text-gray-400 group-hover:text-[#10B981]">{menuItem.icon}</span>
+                                  </div>
+                                  <div>
+                                    <div className="text-sm font-medium text-[#0A0A0A] group-hover:text-[#10B981]">{menuItem.name}</div>
+                                    {menuItem.description && (
+                                      <div className="text-xs text-gray-400">{menuItem.description}</div>
+                                    )}
+                                  </div>
                                 </div>
-                                <div>
-                                  <div className="text-sm font-medium text-[#0A0A0A] group-hover:text-[#10B981]">{menuItem.name}</div>
-                                  {menuItem.description && (
-                                    <div className="text-xs text-gray-400">{menuItem.description}</div>
-                                  )}
-                                </div>
+                                {menuItem.submenu && <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[#10B981]" />}
                               </Link>
                             ) : (
                               <div className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors group cursor-pointer">
@@ -296,11 +308,11 @@ export default function Navbar() {
                             {/* Sub-dropdown */}
                             {menuItem.submenu && activeSubmenu === menuItem.name && (
                               <div
-                                className="absolute left-full top-0 ml-1 pt-0"
+                                className="absolute left-[calc(100%-8px)] top-0 pl-2"
                                 onMouseEnter={() => handleSubmenuEnter(menuItem.name)}
                                 onMouseLeave={handleSubmenuLeave}
                               >
-                                <div className="bg-white rounded-xl shadow-xl border border-gray-100 py-2 min-w-[200px] animate-in fade-in slide-in-from-left-1 duration-150">
+                                <div className="bg-white rounded-xl shadow-xl border border-gray-100 py-2 min-w-[200px]">
                                   {menuItem.submenu.map((subItem, subIdx) => (
                                     <Link
                                       key={subIdx}

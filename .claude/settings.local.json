@@ -60,7 +60,8 @@
       "Bash(where:*)",
       "Bash(grep:*)",
       "Bash(cd:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(del \"d:\\AiGentsRealty\\frontend\\app\\developers\\[slug]\\DeveloperPageClient.tsx\")"
     ],
     "deny": [],
     "ask": []

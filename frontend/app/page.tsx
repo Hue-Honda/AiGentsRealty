@@ -121,7 +121,7 @@ export default function Home() {
             developer: p.developer_name,
             location: p.location || p.area_name,
             price: p.price_from?.replace('AED ', '') || 'TBA',
-            roi: p.match_score ? `${p.match_score}%` : '12%',
+            status: p.status || 'Off Plan',
             payment: p.payment_plan || '80/20',
             completion: p.completion_date || 'Q4 2026',
             image: p.images?.[0] || 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1200',
@@ -147,9 +147,8 @@ export default function Home() {
             name: d.name,
             slug: d.slug,
             projects: parseInt(d.project_count) || 0,
-            rating: 4.5 + (Math.random() * 0.4),
-            roi: d.avg_roi ? `${d.avg_roi}%` : '12%',
-            onTime: 90 + Math.floor(Math.random() * 8),
+            // Use real data where available, otherwise show project count as primary metric
+            projectsLabel: parseInt(d.project_count) > 0 ? `${d.project_count} Active` : 'View Projects',
             image: d.logo || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800',
             featured: idx === 0
           }));
@@ -459,7 +458,7 @@ export default function Home() {
         {/* Content Overlay - Split into title area and fixed search area */}
         <div className="relative z-20 h-full flex flex-col">
           {/* Title Section - Centered vertically in available space */}
-          <div className="flex-1 flex items-center pt-20">
+          <div className="flex-1 flex items-center pt-10">
             <div className="max-w-[1800px] mx-auto px-6 lg:px-16 w-full">
               <div className="max-w-4xl">
                 {/* Location Badge */}
@@ -758,10 +757,12 @@ export default function Home() {
                     suppressHydrationWarning
                   />
 
-                  {/* ROI Badge */}
-                  <div className="absolute top-6 left-6 bg-[#D4AF37] text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg z-20">
-                    {projects[0].roi} ROI
+                  {/* Status Badge */}
+                  {projects[0]?.status && (
+                  <div className="absolute top-6 left-6 bg-[#10B981] text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg z-20">
+                    {projects[0].status}
                   </div>
+                  )}
 
                   {/* Content */}
                   <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
@@ -812,9 +813,11 @@ export default function Home() {
                     suppressHydrationWarning
                   />
 
-                  <div className="absolute top-4 left-4 bg-[#D4AF37] text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
-                    {projects[1].roi} ROI
+                  {projects[1]?.status && (
+                  <div className="absolute top-4 left-4 bg-[#10B981] text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+                    {projects[1].status}
                   </div>
+                  )}
 
                   <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
                     <h3 className="text-2xl font-black text-white mb-2 group-hover:text-[#10B981] transition-colors">{projects[1].name}</h3>
@@ -843,9 +846,11 @@ export default function Home() {
                     suppressHydrationWarning
                   />
 
-                  <div className="absolute top-4 left-4 bg-[#D4AF37] text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
-                    {projects[2].roi} ROI
+                  {projects[2]?.status && (
+                  <div className="absolute top-4 left-4 bg-[#10B981] text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+                    {projects[2].status}
                   </div>
+                  )}
 
                   <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
                     <h3 className="text-lg font-black text-white mb-1 group-hover:text-[#D4AF37] transition-colors line-clamp-1">{projects[2].name}</h3>
@@ -872,9 +877,11 @@ export default function Home() {
                     suppressHydrationWarning
                   />
 
-                  <div className="absolute top-4 left-4 bg-[#D4AF37] text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
-                    {projects[3].roi} ROI
+                  {projects[3]?.status && (
+                  <div className="absolute top-4 left-4 bg-[#10B981] text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+                    {projects[3].status}
                   </div>
+                  )}
 
                   <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
                     <h3 className="text-lg font-black text-white mb-1 group-hover:text-[#10B981] transition-colors line-clamp-1">{projects[3].name}</h3>
@@ -950,26 +957,22 @@ export default function Home() {
                     {developers[0].name}
                   </h3>
 
-                  {/* Stats */}
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                  {/* Stats - Only showing real data */}
+                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                     <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-5">
                       <div className="text-3xl lg:text-4xl font-black text-white mb-2">{developers[0].projects}</div>
-                      <div className="text-sm font-semibold text-gray-300 uppercase tracking-wide">Total Projects</div>
+                      <div className="text-sm font-semibold text-gray-300 uppercase tracking-wide">Active Projects</div>
                     </div>
                     <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-5">
-                      <div className="text-3xl lg:text-4xl font-black text-[#D4AF37] mb-2">{developers[0].roi}</div>
-                      <div className="text-sm font-semibold text-gray-300 uppercase tracking-wide">Average ROI</div>
-                    </div>
-                    <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-5">
-                      <div className="flex items-center gap-2 text-3xl lg:text-4xl font-black text-white mb-2">
+                      <div className="flex items-center gap-2 text-3xl lg:text-4xl font-black text-[#D4AF37] mb-2">
                         <Star className="w-7 h-7 fill-[#D4AF37] text-[#D4AF37]" />
-                        <span>{developers[0].rating.toFixed(1)}</span>
+                        <span>Elite</span>
                       </div>
-                      <div className="text-sm font-semibold text-gray-300 uppercase tracking-wide">Rating</div>
+                      <div className="text-sm font-semibold text-gray-300 uppercase tracking-wide">Partner Status</div>
                     </div>
                     <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-5">
-                      <div className="text-3xl lg:text-4xl font-black text-[#10B981] mb-2">{developers[0].onTime}%</div>
-                      <div className="text-sm font-semibold text-gray-300 uppercase tracking-wide">On-Time Delivery</div>
+                      <div className="text-3xl lg:text-4xl font-black text-[#10B981] mb-2">Dubai</div>
+                      <div className="text-sm font-semibold text-gray-300 uppercase tracking-wide">Primary Market</div>
                     </div>
                   </div>
 
@@ -984,7 +987,7 @@ export default function Home() {
 
           {/* Other Developers Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {developers.slice(1).map((dev, idx) => (
+            {developers.slice(1).map((dev) => (
               <Link
                 key={dev.slug}
                 href={`/developers/${dev.slug}`}
@@ -1000,28 +1003,24 @@ export default function Home() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/80 to-transparent"></div>
 
-                  {/* Rating Badge */}
-                  <div className="absolute top-4 right-4 bg-[#D4AF37] px-3 py-1 rounded-full flex items-center gap-1">
-                    <Star className="w-3 h-3 fill-white text-white" />
-                    <span className="text-xs font-bold text-white">{dev.rating.toFixed(1)}</span>
+                  {/* Projects Badge */}
+                  <div className="absolute top-4 right-4 bg-[#10B981] px-3 py-1 rounded-full flex items-center gap-1">
+                    <Building2 className="w-3 h-3 text-white" />
+                    <span className="text-xs font-bold text-white">{dev.projects} Projects</span>
                   </div>
                 </div>
 
                 {/* Info */}
                 <div className="p-6">
-                  <h3 className="text-xl font-black text-[#0A0A0A] mb-4 group-hover:text-[#10B981] transition-colors">
+                  <h3 className="text-xl font-black text-[#0A0A0A] mb-3 group-hover:text-[#10B981] transition-colors">
                     {dev.name}
                   </h3>
 
-                  {/* Mini Stats */}
-                  <div className="grid grid-cols-2 gap-3 mb-4">
-                    <div className="bg-[#F9FAFB] rounded-xl p-3 text-center">
-                      <div className="text-lg font-black text-[#0A0A0A]">{dev.projects}</div>
-                      <div className="text-xs text-gray-500">Projects</div>
-                    </div>
-                    <div className="bg-[#F9FAFB] rounded-xl p-3 text-center">
-                      <div className="text-lg font-black text-[#10B981]">{dev.roi}</div>
-                      <div className="text-xs text-gray-500">ROI</div>
+                  {/* Status */}
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#D4AF37]/10 rounded-lg">
+                      <Star className="w-3.5 h-3.5 fill-[#D4AF37] text-[#D4AF37]" />
+                      <span className="text-xs font-bold text-[#D4AF37]">Verified Partner</span>
                     </div>
                   </div>
 

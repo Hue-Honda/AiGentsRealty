@@ -1,280 +1,114 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { MapPin, TrendingUp, Building2, Home, Sparkles, ChevronRight } from 'lucide-react';
+import { MapPin, TrendingUp, Building2, Sparkles, ChevronRight, Calendar, Bed, Home, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
+interface Project {
+  id: number;
+  name: string;
+  slug: string;
+  description: string;
+  starting_price: string;
+  price_range: string;
+  bedrooms: string;
+  completion_date: string;
+  status: string;
+  image: string;
+  developer_name?: string;
+  developer_logo?: string;
 }
 
-// Location data
-const locationsData: Record<string, {
+interface MarketStats {
+  area_name: string;
+  avg_price_sqft: number;
+  median_price_sqft: number;
+  total_transactions_6m: number;
+  total_transactions_12m: number;
+  top_property_type: string;
+  yoy_price_change: number;
+}
+
+interface Area {
+  id: number;
   name: string;
-  tagline: string;
+  slug: string;
   description: string;
-  heroImage: string;
-  stats: {
-    avgPrice: string;
-    roi: string;
-    projects: number;
-    growthRate: string;
-  };
-  highlights: string[];
-  amenities: string[];
-  nearbyProjects: Array<{
-    name: string;
-    developer: string;
-    price: string;
-    image: string;
-    slug: string;
-  }>;
-}> = {
-  'dubai-hills-estate': {
-    name: 'Dubai Hills Estate',
-    tagline: 'Where Urban Sophistication Meets Natural Serenity',
-    description: 'Dubai Hills Estate is a prestigious master-planned community featuring world-class golf courses, parks, and premium residential developments. This thriving neighborhood offers an unparalleled blend of luxury living and natural landscapes.',
-    heroImage: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1920&h=1080&fit=crop',
-    stats: {
-      avgPrice: 'AED 1.8M',
-      roi: '11.2%',
-      projects: 24,
-      growthRate: '+18.5%'
-    },
-    highlights: [
-      '18-hole championship golf course',
-      'Dubai Hills Mall - 2M sq ft retail',
-      'Direct access to Al Khail Road',
-      '180km of cycling and running tracks',
-      'Premium international schools',
-      'Central Park spanning 180,000 sqm'
-    ],
-    amenities: [
-      'Dubai Hills Golf Club',
-      'Dubai Hills Mall',
-      'Dubai Hills Park',
-      'Multiple International Schools',
-      'Healthcare Facilities',
-      'Fine Dining Restaurants',
-      'Luxury Hotels',
-      'Fitness & Wellness Centers'
-    ],
-    nearbyProjects: [
-      {
-        name: 'Golf Grove',
-        developer: 'Emaar',
-        price: 'From AED 1.2M',
-        image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&h=400&fit=crop',
-        slug: 'golf-grove'
-      },
-      {
-        name: 'Park Heights',
-        developer: 'Emaar',
-        price: 'From AED 950K',
-        image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&h=400&fit=crop',
-        slug: 'park-heights'
-      },
-      {
-        name: 'Maple',
-        developer: 'Emaar',
-        price: 'From AED 1.5M',
-        image: 'https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=600&h=400&fit=crop',
-        slug: 'maple'
-      }
-    ]
-  },
-  'dubai-marina': {
-    name: 'Dubai Marina',
-    tagline: 'Waterfront Living at Its Finest',
-    description: 'Dubai Marina is a stunning waterfront community featuring high-rise towers, luxury yachts, and vibrant dining and entertainment options. This iconic location offers cosmopolitan living with breathtaking marina views.',
-    heroImage: 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=1920&h=1080&fit=crop',
-    stats: {
-      avgPrice: 'AED 2.2M',
-      roi: '9.8%',
-      projects: 18,
-      growthRate: '+12.3%'
-    },
-    highlights: [
-      'Man-made canal city spanning 3km',
-      'Dubai Marina Walk - dining & retail',
-      'Marina Beach & JBR Beach proximity',
-      'Metro station connectivity',
-      'World-class restaurants & cafes',
-      'Yacht clubs and water sports'
-    ],
-    amenities: [
-      'Dubai Marina Mall',
-      'Marina Walk Promenade',
-      'Beach Clubs',
-      'International Schools',
-      'Premium Fitness Centers',
-      'Fine Dining',
-      'Marina Yacht Club',
-      'Water Sports Facilities'
-    ],
-    nearbyProjects: [
-      {
-        name: 'Marina Gate',
-        developer: 'Select Group',
-        price: 'From AED 1.8M',
-        image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&h=400&fit=crop',
-        slug: 'marina-gate'
-      },
-      {
-        name: 'Emaar Beachfront',
-        developer: 'Emaar',
-        price: 'From AED 2.5M',
-        image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&h=400&fit=crop',
-        slug: 'emaar-beachfront'
-      },
-      {
-        name: 'Marina Vista',
-        developer: 'DAMAC',
-        price: 'From AED 1.6M',
-        image: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?w=600&h=400&fit=crop',
-        slug: 'marina-vista'
-      }
-    ]
-  },
-  'downtown-dubai': {
-    name: 'Downtown Dubai',
-    tagline: 'The Heart of the City',
-    description: 'Downtown Dubai is the vibrant epicenter of the city, home to the iconic Burj Khalifa, Dubai Mall, and Dubai Fountain. This prestigious address offers unmatched access to world-class dining, shopping, and entertainment.',
-    heroImage: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1920&h=1080&fit=crop',
-    stats: {
-      avgPrice: 'AED 3.5M',
-      roi: '8.5%',
-      projects: 15,
-      growthRate: '+14.7%'
-    },
-    highlights: [
-      'Burj Khalifa - world\'s tallest building',
-      'Dubai Mall - world\'s largest shopping center',
-      'Dubai Fountain shows',
-      'Opera District cultural hub',
-      'Souk Al Bahar traditional marketplace',
-      'Metro and tram connectivity'
-    ],
-    amenities: [
-      'The Dubai Mall',
-      'Dubai Opera',
-      'Burj Park',
-      'Souk Al Bahar',
-      'Premium Hotels',
-      'Michelin Star Restaurants',
-      'Art Galleries',
-      'Metro Station'
-    ],
-    nearbyProjects: [
-      {
-        name: 'Boulevard Point',
-        developer: 'Emaar',
-        price: 'From AED 2.8M',
-        image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&h=400&fit=crop',
-        slug: 'boulevard-point'
-      },
-      {
-        name: 'Act One | Act Two',
-        developer: 'Emaar',
-        price: 'From AED 3.2M',
-        image: 'https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=600&h=400&fit=crop',
-        slug: 'act-one-act-two'
-      },
-      {
-        name: 'Grande',
-        developer: 'Emaar',
-        price: 'From AED 4.5M',
-        image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&h=400&fit=crop',
-        slug: 'grande'
-      }
-    ]
-  }
-};
+  image: string;
+  projects: Project[];
+}
 
 export default function LocationPage() {
   const params = useParams();
-  const slug = params.slug as string;
-  const location = locationsData[slug];
+  const slug = params?.slug as string;
 
-  const heroRef = useRef<HTMLDivElement>(null);
-  const statsRef = useRef<HTMLDivElement>(null);
-  const highlightsRef = useRef<HTMLDivElement>(null);
-  const projectsRef = useRef<HTMLDivElement>(null);
+  const [area, setArea] = useState<Area | null>(null);
+  const [marketStats, setMarketStats] = useState<MarketStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // HERO SECTION FADE IN
-      if (heroRef.current) {
-        gsap.from(heroRef.current.querySelector('.hero-content'), {
-          opacity: 0,
-          y: 60,
-          duration: 1,
-          ease: 'power3.out',
-          delay: 0.2
-        });
-      }
+    async function fetchData() {
+      if (!slug) return;
 
-      // STATS CARDS STAGGER
-      if (statsRef.current) {
-        gsap.from(statsRef.current.querySelectorAll('.stat-card'), {
-          opacity: 0,
-          y: 40,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: statsRef.current,
-            start: 'top 80%'
+      try {
+        // Fetch area data and market stats in parallel
+        const [areaRes, marketRes] = await Promise.all([
+          fetch(`${API_URL}/api/areas/${slug}`),
+          fetch(`${API_URL}/api/market/area/${slug}`).catch(() => null)
+        ]);
+
+        const areaData = await areaRes.json();
+
+        if (areaData.success && areaData.data) {
+          setArea(areaData.data);
+        } else {
+          setError('Area not found');
+          setLoading(false);
+          return;
+        }
+
+        // Market stats might not exist for all areas
+        if (marketRes && marketRes.ok) {
+          const marketData = await marketRes.json();
+          if (marketData && !marketData.error) {
+            setMarketStats(marketData);
           }
-        });
+        }
+      } catch (err) {
+        console.error('Error fetching area:', err);
+        setError('Failed to load area data');
+      } finally {
+        setLoading(false);
       }
+    }
 
-      // HIGHLIGHTS LIST
-      if (highlightsRef.current) {
-        gsap.from(highlightsRef.current.querySelectorAll('li'), {
-          opacity: 0,
-          x: -30,
-          duration: 0.5,
-          stagger: 0.08,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: highlightsRef.current,
-            start: 'top 75%'
-          }
-        });
-      }
-
-      // PROJECTS CARDS
-      if (projectsRef.current) {
-        gsap.from(projectsRef.current.querySelectorAll('.project-card'), {
-          opacity: 0,
-          scale: 0.95,
-          duration: 0.6,
-          stagger: 0.15,
-          ease: 'back.out(1.2)',
-          scrollTrigger: {
-            trigger: projectsRef.current,
-            start: 'top 75%'
-          }
-        });
-      }
-    });
-
-    return () => ctx.revert();
+    fetchData();
   }, [slug]);
 
-  // If location not found
-  if (!location) {
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#10B981] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-500">Loading location...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !area) {
     return (
       <div className="min-h-screen bg-white text-[#0A0A0A] flex items-center justify-center pt-20">
         <div className="text-center">
+          <MapPin className="w-16 h-16 text-gray-300 mx-auto mb-4" />
           <h1 className="text-4xl font-bold mb-4">Location Not Found</h1>
           <p className="text-gray-600 mb-8">The location "{slug}" doesn't exist in our database.</p>
-          <Link href="/explore" className="inline-flex items-center gap-2 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] text-black px-6 py-3 rounded-xl font-bold hover:shadow-[0_0_30px_rgba(212,175,55,0.6)] transition-all">
-            Explore Properties
+          <Link href="/areas" className="inline-flex items-center gap-2 bg-[#10B981] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#0D9668] transition-colors">
+            Browse All Areas
             <ChevronRight className="w-5 h-5" />
           </Link>
         </div>
@@ -282,182 +116,291 @@ export default function LocationPage() {
     );
   }
 
+  const formatPrice = (price: number) => {
+    if (price >= 1000) {
+      return `AED ${(price / 1).toLocaleString()}`;
+    }
+    return `AED ${price}`;
+  };
+
   return (
     <div className="min-h-screen bg-white text-[#0A0A0A]">
       {/* HERO SECTION */}
-      <div ref={heroRef} className="relative h-[70vh] min-h-[600px] overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0">
-          <img
-            src={location.heroImage}
-            alt={location.name}
-            className="w-full h-full object-cover"
-            suppressHydrationWarning
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-white/30 to-white"></div>
+      <div className="relative min-h-[500px] overflow-hidden bg-gradient-to-br from-[#0A0A0A] via-[#1a1a1a] to-[#0A0A0A]">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#D4AF37] rounded-full blur-[150px]"></div>
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#10B981] rounded-full blur-[120px]"></div>
         </div>
 
         {/* Hero Content */}
-        <div className="hero-content relative max-w-[1600px] mx-auto px-6 lg:px-16 h-full flex flex-col justify-center pt-24">
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-20 pt-32">
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
+          <div className="flex items-center gap-2 text-sm text-white/60 mb-8">
             <Link href="/" className="hover:text-[#10B981] transition-colors">Home</Link>
             <ChevronRight className="w-4 h-4" />
-            <Link href="/explore" className="hover:text-[#10B981] transition-colors">Explore</Link>
+            <Link href="/areas" className="hover:text-[#10B981] transition-colors">Areas</Link>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-[#D4AF37]">{location.name}</span>
+            <span className="text-white">{area.name}</span>
           </div>
 
           {/* Location Badge */}
-          <div className="inline-flex items-center gap-2 bg-[#10B981]/10 border border-[#10B981]/30 px-4 py-2 rounded-full mb-6 w-fit">
+          <div className="inline-flex items-center gap-2 bg-[#10B981]/20 border border-[#10B981]/40 px-4 py-2 rounded-full mb-6 w-fit">
             <MapPin className="w-4 h-4 text-[#10B981]" />
             <span className="text-sm font-semibold text-[#10B981]">Premium Location</span>
           </div>
 
           {/* Title */}
-          <h1 className="text-5xl lg:text-7xl font-black mb-4 bg-gradient-to-r from-[#0A0A0A] via-[#D4AF37] to-[#0A0A0A] bg-clip-text text-transparent">
-            {location.name}
+          <h1 className="text-4xl lg:text-6xl font-black mb-6 text-white">
+            {area.name}
           </h1>
 
-          {/* Tagline */}
-          <p className="text-xl lg:text-2xl text-gray-700 font-light mb-8 max-w-3xl">
-            {location.tagline}
+          {/* Description */}
+          <p className="text-lg text-white/70 mb-8 max-w-3xl leading-relaxed">
+            {area.description || `Discover premium off-plan properties in ${area.name}, one of Dubai's most sought-after locations.`}
           </p>
 
           {/* CTA */}
-          <div className="flex items-center gap-4">
-            <button className="flex items-center gap-2 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] text-black px-8 py-4 rounded-xl font-bold hover:shadow-[0_0_30px_rgba(212,175,55,0.6)] transition-all hover:scale-105">
+          <div className="flex flex-wrap items-center gap-4">
+            <Link href="/geniev2" className="flex items-center gap-2 bg-gradient-to-r from-[#D4AF37] to-[#E8C547] text-black px-8 py-4 rounded-xl font-bold hover:shadow-lg transition-all">
               <Sparkles className="w-5 h-5" />
-              <span>Explore Properties</span>
-            </button>
-            <button className="flex items-center gap-2 bg-white border border-gray-200 text-[#0A0A0A] px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all shadow-md">
+              <span>Ask Genie About This Area</span>
+            </Link>
+            <Link href="/projects" className="flex items-center gap-2 bg-white/10 border border-white/20 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/20 transition-all">
               <Building2 className="w-5 h-5" />
-              <span>View Map</span>
-            </button>
+              <span>All Projects</span>
+            </Link>
           </div>
         </div>
       </div>
 
       {/* STATS SECTION */}
-      <div ref={statsRef} className="relative -mt-20 z-10">
-        <div className="max-w-[1600px] mx-auto px-6 lg:px-16">
+      <div className="relative -mt-12 z-10">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="stat-card bg-gradient-to-br from-[#D4AF37] to-[#B8941F] rounded-2xl p-6 text-center shadow-md">
-              <div className="text-3xl font-black text-black mb-2">{location.stats.avgPrice}</div>
-              <div className="text-sm font-semibold text-black/70">Avg. Price</div>
+            <div className="bg-gradient-to-br from-[#D4AF37] to-[#E8C547] rounded-2xl p-6 text-center shadow-lg">
+              <div className="text-3xl font-black text-black mb-2">{area.projects.length}</div>
+              <div className="text-sm font-semibold text-black/70">Active Projects</div>
             </div>
-            <div className="stat-card bg-white border border-gray-200 rounded-2xl p-6 text-center shadow-md">
-              <div className="text-3xl font-black text-[#10B981] mb-2">{location.stats.roi}</div>
-              <div className="text-sm font-semibold text-gray-600">Avg. ROI</div>
-            </div>
-            <div className="stat-card bg-white border border-gray-200 rounded-2xl p-6 text-center shadow-md">
-              <div className="text-3xl font-black text-[#0A0A0A] mb-2">{location.stats.projects}</div>
-              <div className="text-sm font-semibold text-gray-600">Active Projects</div>
-            </div>
-            <div className="stat-card bg-white border border-gray-200 rounded-2xl p-6 text-center shadow-md">
-              <div className="flex items-center justify-center gap-2 text-3xl font-black text-[#10B981] mb-2">
-                <TrendingUp className="w-7 h-7" />
-                <span>{location.stats.growthRate}</span>
-              </div>
-              <div className="text-sm font-semibold text-gray-600">Annual Growth</div>
-            </div>
+
+            {marketStats ? (
+              <>
+                <div className="bg-white border border-gray-200 rounded-2xl p-6 text-center shadow-lg">
+                  <div className="text-3xl font-black text-[#10B981] mb-2">
+                    {formatPrice(Math.round(marketStats.avg_price_sqft))}/sqft
+                  </div>
+                  <div className="text-sm font-semibold text-gray-600">Avg. Price</div>
+                </div>
+
+                <div className="bg-white border border-gray-200 rounded-2xl p-6 text-center shadow-lg">
+                  <div className="text-3xl font-black text-[#0A0A0A] mb-2">
+                    {marketStats.total_transactions_12m.toLocaleString()}
+                  </div>
+                  <div className="text-sm font-semibold text-gray-600">Transactions (12m)</div>
+                </div>
+
+                <div className="bg-white border border-gray-200 rounded-2xl p-6 text-center shadow-lg">
+                  <div className={`flex items-center justify-center gap-2 text-3xl font-black mb-2 ${
+                    marketStats.yoy_price_change >= 0 ? 'text-[#10B981]' : 'text-red-500'
+                  }`}>
+                    <TrendingUp className={`w-7 h-7 ${marketStats.yoy_price_change < 0 ? 'rotate-180' : ''}`} />
+                    <span>{marketStats.yoy_price_change >= 0 ? '+' : ''}{marketStats.yoy_price_change?.toFixed(1) || '0'}%</span>
+                  </div>
+                  <div className="text-sm font-semibold text-gray-600">YoY Price Change</div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="bg-white border border-gray-200 rounded-2xl p-6 text-center shadow-lg">
+                  <div className="text-3xl font-black text-[#10B981] mb-2">Dubai</div>
+                  <div className="text-sm font-semibold text-gray-600">Location</div>
+                </div>
+
+                <div className="bg-white border border-gray-200 rounded-2xl p-6 text-center shadow-lg">
+                  <div className="text-3xl font-black text-[#0A0A0A] mb-2">Premium</div>
+                  <div className="text-sm font-semibold text-gray-600">Category</div>
+                </div>
+
+                <div className="bg-white border border-gray-200 rounded-2xl p-6 text-center shadow-lg">
+                  <div className="flex items-center justify-center gap-2 text-3xl font-black text-[#D4AF37] mb-2">
+                    <BarChart3 className="w-7 h-7" />
+                    <span>Active</span>
+                  </div>
+                  <div className="text-sm font-semibold text-gray-600">Market Status</div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
 
-      {/* DESCRIPTION & HIGHLIGHTS */}
-      <div className="max-w-[1600px] mx-auto px-6 lg:px-16 py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Description */}
-          <div>
-            <h2 className="text-3xl font-black mb-6 text-[#0A0A0A]">
-              About <span className="text-[#D4AF37]">{location.name}</span>
+      {/* MARKET INSIGHTS (only if we have market data) */}
+      {marketStats && (
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
+          <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-3xl p-8">
+            <h2 className="text-2xl font-black text-[#0A0A0A] mb-6 flex items-center gap-3">
+              <BarChart3 className="w-7 h-7 text-[#D4AF37]" />
+              Market Insights - {area.name}
             </h2>
-            <p className="text-gray-600 leading-relaxed text-lg mb-8">
-              {location.description}
-            </p>
 
-            {/* Amenities */}
-            <h3 className="text-xl font-bold mb-4 text-[#D4AF37]">Key Amenities</h3>
-            <div className="grid grid-cols-2 gap-3">
-              {location.amenities.map((amenity, index) => (
-                <div key={index} className="flex items-center gap-2 text-sm text-gray-600">
-                  <div className="w-1.5 h-1.5 bg-[#10B981] rounded-full"></div>
-                  <span>{amenity}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Highlights */}
-          <div ref={highlightsRef}>
-            <h2 className="text-3xl font-black mb-6 text-[#0A0A0A]">Location Highlights</h2>
-            <ul className="space-y-4">
-              {location.highlights.map((highlight, index) => (
-                <li key={index} className="flex items-start gap-4 bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-all shadow-sm">
-                  <div className="w-10 h-10 bg-[#10B981]/10 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                    <Sparkles className="w-5 h-5 text-[#10B981]" />
-                  </div>
-                  <span className="text-gray-600 leading-relaxed">{highlight}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* NEARBY PROJECTS */}
-      <div ref={projectsRef} className="max-w-[1600px] mx-auto px-6 lg:px-16 py-20">
-        <div className="mb-12">
-          <h2 className="text-4xl font-black mb-4 text-[#0A0A0A]">
-            Featured Projects in <span className="text-[#D4AF37]">{location.name}</span>
-          </h2>
-          <p className="text-gray-600 text-lg">Discover premium off-plan developments in this prestigious location</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {location.nearbyProjects.map((project, index) => (
-            <Link key={index} href={`/projects/${project.slug}`}>
-              <div className="project-card group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-[#D4AF37]/50 transition-all cursor-pointer shadow-md hover:shadow-xl">
-                {/* Image */}
-                <div className="relative h-56 overflow-hidden">
-                  <img
-                    src={project.image}
-                    alt={project.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    suppressHydrationWarning
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-
-                  {/* Price Badge */}
-                  <div className="absolute bottom-4 left-4 bg-[#D4AF37] text-black px-4 py-2 rounded-lg font-bold">
-                    {project.price}
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2 text-[#0A0A0A] group-hover:text-[#D4AF37] transition-colors">
-                    {project.name}
-                  </h3>
-                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
-                    <Building2 className="w-4 h-4 text-[#10B981]" />
-                    <span>{project.developer}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-[#D4AF37] font-semibold group-hover:gap-3 transition-all">
-                    <span>View Details</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white rounded-xl p-5 border border-gray-100">
+                <div className="text-sm text-gray-500 mb-1">Median Price</div>
+                <div className="text-2xl font-bold text-[#0A0A0A]">
+                  {formatPrice(Math.round(marketStats.median_price_sqft))}/sqft
                 </div>
               </div>
-            </Link>
-          ))}
+
+              <div className="bg-white rounded-xl p-5 border border-gray-100">
+                <div className="text-sm text-gray-500 mb-1">Top Property Type</div>
+                <div className="text-2xl font-bold text-[#0A0A0A]">
+                  {marketStats.top_property_type || 'Residential'}
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl p-5 border border-gray-100">
+                <div className="text-sm text-gray-500 mb-1">6-Month Transactions</div>
+                <div className="text-2xl font-bold text-[#0A0A0A]">
+                  {marketStats.total_transactions_6m.toLocaleString()}
+                </div>
+              </div>
+            </div>
+
+            <p className="text-sm text-gray-500 mt-4">
+              * Data sourced from Dubai Land Department (DLD) official records
+            </p>
+          </div>
         </div>
+      )}
+
+      {/* PROJECTS IN THIS AREA */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
+        <div className="mb-12">
+          <h2 className="text-3xl font-black mb-4 text-[#0A0A0A]">
+            Projects in <span className="text-[#D4AF37]">{area.name}</span>
+          </h2>
+          <p className="text-gray-600 text-lg">
+            Discover {area.projects.length} premium off-plan development{area.projects.length !== 1 ? 's' : ''} in this prestigious location
+          </p>
+        </div>
+
+        {area.projects.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {area.projects.map((project) => (
+              <Link key={project.id} href={`/projects/${project.slug}`}>
+                <div className="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-[#10B981]/50 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-xl">
+                  {/* Image */}
+                  <div className="relative h-56 overflow-hidden">
+                    <img
+                      src={project.image}
+                      alt={project.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = `https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop&q=90`;
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+
+                    {/* Status Badge */}
+                    <div className={`absolute top-4 right-4 px-3 py-1.5 rounded-full text-xs font-bold shadow-lg ${
+                      project.status === 'Off Plan' ? 'bg-[#10B981] text-white' :
+                      project.status === 'Ready' ? 'bg-[#D4AF37] text-black' :
+                      'bg-white/90 text-[#0A0A0A]'
+                    }`}>
+                      {project.status}
+                    </div>
+
+                    {/* Developer Badge */}
+                    {project.developer_name && (
+                      <div className="absolute bottom-4 left-4 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-1.5">
+                        <Building2 className="w-4 h-4 text-[#D4AF37]" />
+                        <span className="text-xs font-semibold text-[#0A0A0A]">{project.developer_name}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-5">
+                    <h3 className="text-xl font-bold text-[#0A0A0A] mb-2 group-hover:text-[#10B981] transition-colors">
+                      {project.name}
+                    </h3>
+
+                    {/* Price */}
+                    <div className="text-xl font-black text-[#10B981] mb-3">
+                      {project.starting_price ? `From AED ${parseInt(project.starting_price).toLocaleString()}` : project.price_range || 'Price on Request'}
+                    </div>
+
+                    {/* Details */}
+                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                      {project.bedrooms && (
+                        <div className="flex items-center gap-1">
+                          <Bed className="w-4 h-4 text-[#D4AF37]" />
+                          <span>{project.bedrooms}</span>
+                        </div>
+                      )}
+                      {project.completion_date && (
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-4 h-4 text-[#D4AF37]" />
+                          <span>{project.completion_date}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-16 bg-gray-50 rounded-2xl">
+            <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-700 mb-2">No Projects Yet</h3>
+            <p className="text-gray-500 mb-6">
+              We don't have any projects listed in {area.name} yet.
+            </p>
+            <Link href="/projects" className="inline-flex items-center gap-2 text-[#10B981] font-semibold hover:gap-3 transition-all">
+              Browse All Projects
+              <ChevronRight className="w-5 h-5" />
+            </Link>
+          </div>
+        )}
 
         {/* View All CTA */}
-        <div className="text-center mt-12">
-          <Link href="/explore" className="inline-flex items-center gap-2 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] text-black px-8 py-4 rounded-xl font-bold hover:shadow-[0_0_30px_rgba(212,175,55,0.6)] transition-all hover:scale-105">
-            <span>View All Properties</span>
+        {area.projects.length > 0 && (
+          <div className="text-center mt-12">
+            <Link href="/projects" className="inline-flex items-center gap-2 bg-[#10B981] text-white px-8 py-4 rounded-xl font-bold hover:bg-[#0D9668] transition-all">
+              <Home className="w-5 h-5" />
+              <span>View All Projects</span>
+              <ChevronRight className="w-5 h-5" />
+            </Link>
+          </div>
+        )}
+      </div>
+
+      {/* CTA SECTION */}
+      <div className="relative py-16 overflow-hidden bg-gradient-to-br from-[#0A0A0A] via-[#1a1a1a] to-[#0A0A0A]">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#D4AF37] rounded-full blur-[120px]"></div>
+          <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-[#10B981] rounded-full blur-[100px]"></div>
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center gap-2 bg-[#D4AF37]/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
+            <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+            <span className="text-xs font-bold text-[#D4AF37] uppercase tracking-wide">AI-Powered Insights</span>
+          </div>
+
+          <h2 className="text-3xl lg:text-4xl font-black text-white mb-6 leading-tight">
+            Want to Know More About {area.name}?
+          </h2>
+
+          <p className="text-lg text-white/70 font-medium mb-8 max-w-2xl mx-auto">
+            Ask our AI Genie for personalized insights about properties, market trends, and investment opportunities in {area.name}.
+          </p>
+
+          <Link href="/geniev2" className="inline-flex items-center gap-2 bg-gradient-to-r from-[#D4AF37] to-[#E8C547] text-black px-8 py-4 rounded-xl font-bold hover:shadow-lg transition-all">
+            <Sparkles className="w-5 h-5" />
+            <span>Ask Genie</span>
             <ChevronRight className="w-5 h-5" />
           </Link>
         </div>

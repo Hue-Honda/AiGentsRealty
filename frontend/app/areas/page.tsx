@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { MapPin, Building2, ChevronRight, ChevronDown, ChevronUp, Phone, Mail } from 'lucide-react';
+import { MapPin, Building2, ChevronRight, ChevronDown, ChevronUp, Phone, Mail, Search, TrendingUp, Home, DollarSign, Sparkles } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -62,19 +62,50 @@ const offices = [
   }
 ];
 
+// Filter categories
+const filterCategories = [
+  { id: 'all', label: 'All Areas', icon: MapPin },
+  { id: 'premium', label: 'Premium', icon: Sparkles },
+  { id: 'affordable', label: 'Affordable', icon: DollarSign },
+  { id: 'family', label: 'Family-Friendly', icon: Home },
+  { id: 'trending', label: 'Trending', icon: TrendingUp },
+];
+
+// Premium areas (high avg price)
+const premiumAreaNames = ['palm jumeirah', 'downtown dubai', 'dubai marina', 'jumeirah bay island', 'emirates hills', 'bluewaters island', 'city walk', 'jumeirah beach residence'];
+// Affordable areas
+const affordableAreaNames = ['international city', 'discovery gardens', 'dubai sports city', 'dubai silicon oasis', 'al warsan', 'liwan', 'dubailand', 'arjan'];
+// Family-friendly areas
+const familyAreaNames = ['arabian ranches', 'dubai hills estate', 'jumeirah village circle', 'al furjan', 'mudon', 'damac hills', 'town square', 'villanova', 'tilal al ghaf'];
+
 export default function AreasPage() {
   const [areasData, setAreasData] = useState<any[]>([]);
+  const [topAreasData, setTopAreasData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [openFAQ, setOpenFAQ] = useState<number | null>(null);
   const [email, setEmail] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeFilter, setActiveFilter] = useState('all');
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     async function fetchAreas() {
       try {
-        const res = await fetch(`${API_URL}/api/areas`);
-        const data = await res.json();
-        if (data.success) {
-          setAreasData(data.data);
+        // Fetch all areas and top areas in parallel
+        const [areasRes, topAreasRes] = await Promise.all([
+          fetch(`${API_URL}/api/areas`),
+          fetch(`${API_URL}/api/market/top-areas?limit=12`)
+        ]);
+
+        const areasDataRes = await areasRes.json();
+        const topAreasDataRes = await topAreasRes.json();
+
+        if (areasDataRes.success) {
+          setAreasData(areasDataRes.data);
+        }
+
+        if (topAreasDataRes.areas) {
+          setTopAreasData(topAreasDataRes.areas);
         }
       } catch (error) {
         console.error('Error fetching areas:', error);
@@ -84,6 +115,59 @@ export default function AreasPage() {
     }
     fetchAreas();
   }, []);
+
+  // Filter and search logic
+  const filteredAreas = useMemo(() => {
+    let areas = showAll ? areasData : areasData.slice(0, 12);
+
+    // If we have top areas data and not showing all, prioritize by market activity
+    if (!showAll && topAreasData.length > 0) {
+      const topSlugs = new Set(topAreasData.map(a => a.slug));
+      const topAreas = areasData.filter(a => topSlugs.has(a.slug));
+      const otherAreas = areasData.filter(a => !topSlugs.has(a.slug));
+      areas = [...topAreas, ...otherAreas].slice(0, 12);
+    }
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      areas = areasData.filter(area =>
+        area.name.toLowerCase().includes(query) ||
+        (area.description && area.description.toLowerCase().includes(query))
+      );
+    }
+
+    // Apply category filter
+    if (activeFilter !== 'all' && !searchQuery.trim()) {
+      const allAreas = showAll ? areasData : areas;
+      switch (activeFilter) {
+        case 'premium':
+          areas = allAreas.filter(area =>
+            premiumAreaNames.some(name => area.name.toLowerCase().includes(name))
+          );
+          break;
+        case 'affordable':
+          areas = allAreas.filter(area =>
+            affordableAreaNames.some(name => area.name.toLowerCase().includes(name))
+          );
+          break;
+        case 'family':
+          areas = allAreas.filter(area =>
+            familyAreaNames.some(name => area.name.toLowerCase().includes(name))
+          );
+          break;
+        case 'trending':
+          // Top areas by transaction volume are trending
+          if (topAreasData.length > 0) {
+            const trendingSlugs = new Set(topAreasData.slice(0, 8).map(a => a.slug));
+            areas = allAreas.filter(area => trendingSlugs.has(area.slug));
+          }
+          break;
+      }
+    }
+
+    return areas;
+  }, [areasData, topAreasData, searchQuery, activeFilter, showAll]);
 
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,14 +207,88 @@ export default function AreasPage() {
           <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
             Discover Dubai's best neighbourhoods powered by AI insights — from waterfront districts to family communities and investment hotspots.
           </p>
+
+          {/* Search Bar */}
+          <div className="max-w-xl mx-auto mt-8">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  if (e.target.value.trim()) setShowAll(true);
+                }}
+                placeholder="Search areas by name..."
+                className="w-full pl-12 pr-4 py-4 bg-white border-2 border-gray-200 rounded-xl text-[#0A0A0A] placeholder:text-gray-400 focus:outline-none focus:border-[#10B981] transition-all shadow-lg"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Filter Chips */}
+          <div className="flex flex-wrap justify-center gap-3 mt-6">
+            {filterCategories.map((category) => {
+              const Icon = category.icon;
+              const isActive = activeFilter === category.id;
+              return (
+                <button
+                  key={category.id}
+                  onClick={() => {
+                    setActiveFilter(category.id);
+                    setSearchQuery('');
+                    if (category.id !== 'all') setShowAll(false);
+                  }}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                    isActive
+                      ? 'bg-[#10B981] text-white shadow-lg'
+                      : 'bg-white border border-gray-200 text-gray-600 hover:border-[#10B981] hover:text-[#10B981]'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {category.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </section>
 
       {/* MEGA GRID OF AREAS */}
       <section className="relative py-16">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          {/* Results count */}
+          <div className="flex items-center justify-between mb-6">
+            <p className="text-sm text-gray-500">
+              {searchQuery ? (
+                <>Found <span className="font-semibold text-[#10B981]">{filteredAreas.length}</span> areas matching "{searchQuery}"</>
+              ) : activeFilter !== 'all' ? (
+                <>Showing <span className="font-semibold text-[#10B981]">{filteredAreas.length}</span> {filterCategories.find(f => f.id === activeFilter)?.label.toLowerCase()} areas</>
+              ) : showAll ? (
+                <>Showing all <span className="font-semibold text-[#10B981]">{areasData.length}</span> areas</>
+              ) : (
+                <>Showing top <span className="font-semibold text-[#10B981]">{filteredAreas.length}</span> areas by market activity</>
+              )}
+            </p>
+            {!showAll && !searchQuery && activeFilter === 'all' && areasData.length > 12 && (
+              <button
+                onClick={() => setShowAll(true)}
+                className="text-sm font-semibold text-[#10B981] hover:text-[#0D9668] transition-colors"
+              >
+                View all {areasData.length} areas →
+              </button>
+            )}
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {areasData.map((area, index) => (
+            {filteredAreas.map((area, index) => (
               <Link
                 key={area.slug}
                 href={`/areas/${area.slug}`}
@@ -186,6 +344,56 @@ export default function AreasPage() {
               </Link>
             ))}
           </div>
+
+          {/* Empty state */}
+          {filteredAreas.length === 0 && (
+            <div className="text-center py-16">
+              <MapPin className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-gray-700 mb-2">No areas found</h3>
+              <p className="text-gray-500 mb-6">
+                {searchQuery
+                  ? `No areas match "${searchQuery}". Try a different search term.`
+                  : 'No areas match the selected filter.'}
+              </p>
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setActiveFilter('all');
+                  setShowAll(false);
+                }}
+                className="px-6 py-3 bg-[#10B981] text-white rounded-lg font-semibold hover:bg-[#0D9668] transition-colors"
+              >
+                Show all areas
+              </button>
+            </div>
+          )}
+
+          {/* Show All Areas Button */}
+          {!showAll && !searchQuery && activeFilter === 'all' && areasData.length > 12 && filteredAreas.length > 0 && (
+            <div className="text-center mt-12">
+              <button
+                onClick={() => setShowAll(true)}
+                className="inline-flex items-center gap-2 px-8 py-4 bg-white border-2 border-[#10B981] text-[#10B981] rounded-xl font-bold hover:bg-[#10B981] hover:text-white transition-all shadow-lg"
+              >
+                <Building2 className="w-5 h-5" />
+                Show All {areasData.length} Areas
+                <ChevronDown className="w-5 h-5" />
+              </button>
+            </div>
+          )}
+
+          {/* Show Less Button */}
+          {showAll && activeFilter === 'all' && !searchQuery && (
+            <div className="text-center mt-12">
+              <button
+                onClick={() => setShowAll(false)}
+                className="inline-flex items-center gap-2 px-8 py-4 bg-white border-2 border-gray-300 text-gray-600 rounded-xl font-bold hover:border-[#10B981] hover:text-[#10B981] transition-all"
+              >
+                <ChevronUp className="w-5 h-5" />
+                Show Less
+              </button>
+            </div>
+          )}
         </div>
       </section>
 

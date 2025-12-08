@@ -41,15 +41,24 @@ interface SearchFilters {
 const residentialTypes = ['Apartment', 'Villa', 'Townhouse', 'Penthouse', 'Hotel Apartment', 'Residential Building', 'Villa Compound', 'Residential Floor'];
 const commercialTypes = ['Office', 'Retail', 'Warehouse', 'Showroom', 'Mixed Use', 'Shop', 'Commercial Building', 'Commercial Floor'];
 
-// Suggested properties/districts
-const suggestions = [
-  { type: 'district', name: 'Dubai Marina', slug: 'dubai-marina', icon: MapPin, stats: '12 Projects' },
-  { type: 'district', name: 'Downtown Dubai', slug: 'downtown-dubai', icon: Building2, stats: '8 Projects' },
-  { type: 'district', name: 'Business Bay', slug: 'business-bay', icon: TrendingUp, stats: '15 Projects' },
-  { type: 'district', name: 'Palm Jumeirah', slug: 'palm-jumeirah', icon: MapPin, stats: '6 Projects' },
-  { type: 'district', name: 'JVC', slug: 'jvc', icon: Building2, stats: '20 Projects' },
-  { type: 'district', name: 'MBR City', slug: 'mbr-city', icon: TrendingUp, stats: '10 Projects' },
+// Default suggested districts (will be replaced with real data)
+const defaultSuggestions = [
+  { type: 'district', name: 'Dubai Marina', slug: 'dubai-marina', icon: MapPin, stats: 'Loading...' },
+  { type: 'district', name: 'Downtown Dubai', slug: 'downtown-dubai', icon: Building2, stats: 'Loading...' },
+  { type: 'district', name: 'Business Bay', slug: 'business-bay', icon: TrendingUp, stats: 'Loading...' },
+  { type: 'district', name: 'Palm Jumeirah', slug: 'palm-jumeirah', icon: MapPin, stats: 'Loading...' },
+  { type: 'district', name: 'JVC', slug: 'jumeirah-village-circle', icon: Building2, stats: 'Loading...' },
+  { type: 'district', name: 'Dubai Hills', slug: 'dubai-hills-estate', icon: TrendingUp, stats: 'Loading...' },
 ];
+
+// Area market stats interface
+interface AreaStats {
+  name: string;
+  slug: string;
+  avg_price_sqft?: number;
+  total_transactions_12m?: number;
+  yoy_price_change?: number;
+}
 
 // Price range presets
 const priceRanges = [
@@ -61,6 +70,15 @@ const priceRanges = [
   { label: '10M+', min: 10000000, max: 50000000 },
 ];
 
+// Suggestion type
+interface Suggestion {
+  type: string;
+  name: string;
+  slug: string;
+  icon: typeof MapPin;
+  stats: string;
+}
+
 export default function GenieV2Page() {
   // Genie Chat State
   const [messages, setMessages] = useState<Message[]>([
@@ -68,6 +86,9 @@ export default function GenieV2Page() {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Popular districts with real market data
+  const [suggestions, setSuggestions] = useState<Suggestion[]>(defaultSuggestions);
 
   // Background carousel state
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -78,6 +99,36 @@ export default function GenieV2Page() {
       setCurrentImageIndex((prev) => (prev + 1) % carouselImages.length);
     }, 5000); // Change every 5 seconds
     return () => clearInterval(interval);
+  }, []);
+
+  // Fetch real market data for popular districts
+  useEffect(() => {
+    const fetchMarketData = async () => {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+        const response = await fetch(`${apiUrl}/api/market/top-areas?limit=6`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.areas && data.areas.length > 0) {
+            const icons = [MapPin, Building2, TrendingUp, MapPin, Building2, TrendingUp];
+            setSuggestions(data.areas.map((area: AreaStats, idx: number) => ({
+              type: 'district',
+              name: area.name,
+              slug: area.slug,
+              icon: icons[idx % icons.length],
+              stats: area.avg_price_sqft
+                ? `AED ${Math.round(area.avg_price_sqft).toLocaleString()}/sqft`
+                : area.total_transactions_12m
+                  ? `${area.total_transactions_12m.toLocaleString()} sales`
+                  : 'View details'
+            })));
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch market data:', error);
+      }
+    };
+    fetchMarketData();
   }, []);
 
   // Search Filters State

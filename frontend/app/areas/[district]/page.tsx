@@ -246,17 +246,17 @@ export default function DistrictDetailsPage() {
         <div className="relative max-w-7xl mx-auto px-6 lg:px-8 h-full flex flex-col justify-end pb-16">
           {/* Breadcrumb */}
           <div className="mb-6">
-            <div className="flex items-center gap-2 text-sm text-[#0A0A0A]/60">
+            <div className="flex items-center gap-2 text-sm text-white/70">
               <Link href="/" className="hover:text-[#10B981] transition-colors">Home</Link>
               <ChevronRight className="w-4 h-4" />
               <Link href="/areas" className="hover:text-[#10B981] transition-colors">Areas</Link>
               <ChevronRight className="w-4 h-4" />
-              <span className="text-[#0A0A0A]/90">{area.name}</span>
+              <span className="text-white">{area.name}</span>
             </div>
           </div>
 
           {/* District Name */}
-          <h1 className="text-5xl md:text-6xl font-black text-[#0A0A0A] mb-6 tracking-tight">
+          <h1 className="text-5xl md:text-6xl font-black text-white mb-6 tracking-tight">
             {area.name}
           </h1>
 
@@ -264,14 +264,14 @@ export default function DistrictDetailsPage() {
           <div className="flex flex-wrap items-center gap-6">
             <div className="flex items-center gap-2">
               <Building2 className="w-5 h-5 text-[#10B981]" />
-              <span className="text-[#0A0A0A] font-semibold text-lg">
+              <span className="text-white font-semibold text-lg">
                 {area.projects?.length || 0} Projects Available
               </span>
             </div>
             {startingPrice > 0 && (
               <div className="flex items-center gap-2">
                 <DollarSign className="w-5 h-5 text-[#D4AF37]" />
-                <span className="text-[#0A0A0A] font-semibold text-lg">
+                <span className="text-white font-semibold text-lg">
                   Starting from {area.starting_price}
                 </span>
               </div>
@@ -279,7 +279,7 @@ export default function DistrictDetailsPage() {
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-[#10B981] rounded-full animate-pulse"></div>
               <MapPin className="w-5 h-5 text-[#10B981]" />
-              <span className="text-[#0A0A0A]/90 font-semibold text-lg">Prime Location</span>
+              <span className="text-white/90 font-semibold text-lg">Prime Location</span>
             </div>
           </div>
         </div>
@@ -580,8 +580,8 @@ export default function DistrictDetailsPage() {
         {/* ========================================
             6) AI GENIE CTA (FULL WIDTH)
         ======================================== */}
-        <section className="py-16 border-t border-gray-200/10">
-          <div className="bg-gradient-to-br from-[#D4AF37]/10 via-black/40 to-[#10B981]/5 border border-[#D4AF37]/30 rounded-2xl p-12 text-center relative overflow-hidden">
+        <section className="py-16 border-t border-gray-200">
+          <div className="bg-gradient-to-br from-[#D4AF37]/10 via-[#D4AF37]/5 to-[#10B981]/5 border border-[#D4AF37]/30 rounded-2xl p-12 text-center relative overflow-hidden">
             {/* Glow Effect */}
             <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/5 to-transparent pointer-events-none"></div>
 
@@ -599,7 +599,7 @@ export default function DistrictDetailsPage() {
               <h2 className="text-3xl font-black text-[#0A0A0A] mb-4">
                 Need Help Finding the Right Property?
               </h2>
-              <p className="text-[#0A0A0A]/60 mb-8 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
                 Let AI Genie analyze your preferences and recommend the best property in {area.name}.
               </p>
 
@@ -618,13 +618,13 @@ export default function DistrictDetailsPage() {
         {/* ========================================
             7) NEWSLETTER / LEAD CAPTURE CTA
         ======================================== */}
-        <section className="py-16 border-t border-gray-200/10">
-          <div className="bg-gradient-to-br from-[#10B981]/10 via-black/40 to-black/40 border border-[#10B981]/30 rounded-2xl p-12">
+        <section className="py-16 border-t border-gray-200">
+          <div className="bg-gradient-to-br from-[#10B981]/10 via-[#10B981]/5 to-white border border-[#10B981]/30 rounded-2xl p-12">
             <div className="max-w-2xl mx-auto text-center">
               <h2 className="text-3xl font-black text-[#0A0A0A] mb-4">
                 Stay Updated on New Launches in {area.name}
               </h2>
-              <p className="text-[#0A0A0A]/60 mb-8 leading-relaxed">
+              <p className="text-gray-600 mb-8 leading-relaxed">
                 Be the first to know about new property launches, exclusive deals, and market insights in {area.name}.
               </p>
 
@@ -635,11 +635,11 @@ export default function DistrictDetailsPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email address"
                   required
-                  className="flex-1 px-6 py-4 bg-white/5 border border-gray-200 rounded-xl text-[#0A0A0A] placeholder:text-[#0A0A0A]/40 focus:outline-none focus:border-[#10B981]/50 focus:bg-white/10 transition-all"
+                  className="flex-1 px-6 py-4 bg-white border border-gray-300 rounded-xl text-[#0A0A0A] placeholder:text-gray-400 focus:outline-none focus:border-[#10B981] focus:ring-2 focus:ring-[#10B981]/20 transition-all"
                 />
                 <button
                   type="submit"
-                  className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#D4AF37]/90 text-black rounded-xl font-bold hover:shadow-[0_0_30px_rgba(232,196,104,0.4)] transition-all hover:scale-105 whitespace-nowrap"
+                  className="px-8 py-4 bg-gradient-to-r from-[#10B981] to-[#059669] text-white rounded-xl font-bold hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] transition-all hover:scale-105 whitespace-nowrap"
                 >
                   Subscribe
                 </button>

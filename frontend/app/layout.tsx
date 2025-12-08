@@ -13,6 +13,8 @@ import { NavDataProvider } from "@/contexts/NavDataContext";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
 // =============================================================================
@@ -215,7 +217,7 @@ export default function RootLayout({
         {/* Organization JSON-LD - Global structured data */}
         <OrganizationJsonLd />
       </head>
-      <body className={`${inter.variable} font-sans antialiased`} suppressHydrationWarning>
+      <body className={`${inter.variable} ${inter.className} antialiased`} suppressHydrationWarning>
         <NavDataProvider>
           <Navbar />
           {children}
