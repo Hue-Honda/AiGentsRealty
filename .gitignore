@@ -64,3 +64,4 @@ postgres-data/
 # Docker
 docker-compose.override.yml
 .dockerignore
+Transactions.csv

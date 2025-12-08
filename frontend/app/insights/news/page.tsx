@@ -139,40 +139,25 @@ export default function NewsPage() {
   const currentArticles = newsArticles.slice(indexOfFirstArticle, indexOfLastArticle);
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
-      {/* AI PARTICLE GLOW BACKGROUND */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#00C775]/5 rounded-full blur-[150px] animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#F3C440]/5 rounded-full blur-[120px] animate-pulse" style={{animationDelay: '1s'}}></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#00C775]/3 rounded-full blur-[200px]"></div>
-      </div>
-
-      {/* NEURAL GRID OVERLAY */}
-      <div className="fixed inset-0 pointer-events-none opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `linear-gradient(#00C775 1px, transparent 1px), linear-gradient(90deg, #00C775 1px, transparent 1px)`,
-          backgroundSize: '80px 80px'
-        }}></div>
-      </div>
-
+    <div className="min-h-screen bg-white text-[#0A0A0A] relative overflow-hidden">
       <div className="relative z-10">
         {/* HERO SECTION */}
         <section className="relative pt-32 pb-16 px-6 lg:px-16">
           <div className="max-w-[1600px] mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-[#00C775]/10 border border-[#00C775]/30 rounded-full px-6 py-2 mb-6">
-              <Sparkles className="w-4 h-4 text-[#00C775]" />
-              <span className="text-sm font-bold text-[#00C775]">REAL-TIME UPDATES</span>
+            <div className="inline-flex items-center gap-2 bg-[#10B981]/10 border border-[#10B981]/30 rounded-full px-6 py-2 mb-6">
+              <Sparkles className="w-4 h-4 text-[#10B981]" />
+              <span className="text-sm font-bold text-[#10B981]">REAL-TIME UPDATES</span>
             </div>
 
-            <h1 className="text-6xl lg:text-8xl font-black text-white mb-6 leading-[1.05] tracking-tight">
+            <h1 className="text-6xl lg:text-8xl font-black text-[#0A0A0A] mb-6 leading-[1.05] tracking-tight">
               Latest Market News
               <br />
-              <span className="bg-gradient-to-r from-[#F3C440] via-[#FFD700] to-[#F3C440] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#D4AF37] via-[#FFD700] to-[#D4AF37] bg-clip-text text-transparent">
                 & Updates
               </span>
             </h1>
 
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Stay informed with the latest developments in Dubai's real estate market
             </p>
           </div>
@@ -181,7 +166,7 @@ export default function NewsPage() {
         {/* FILTER BAR */}
         <section className="sticky top-20 z-50 px-6 lg:px-16 mb-12">
           <div className="max-w-[1600px] mx-auto">
-            <div className="bg-[#0D0D0D]/95 backdrop-blur-2xl border border-[#00C775]/20 rounded-3xl shadow-[0_20px_80px_rgba(0,199,117,0.15)] p-6">
+            <div className="bg-white border border-gray-200 rounded-3xl shadow-lg p-6">
 
               {/* FILTERS ROW */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
@@ -190,7 +175,7 @@ export default function NewsPage() {
                   <select
                     value={filters.category}
                     onChange={(e) => setFilters({ ...filters, category: e.target.value })}
-                    className="w-full bg-[#0D0D0D] border border-[#00C775]/20 hover:border-[#00C775]/50 rounded-full px-4 py-3 text-white text-sm font-semibold focus:outline-none focus:border-[#00C775] transition-all appearance-none cursor-pointer"
+                    className="w-full bg-white border border-gray-200 hover:border-[#10B981] rounded-full px-4 py-3 text-[#0A0A0A] text-sm font-semibold focus:outline-none focus:border-[#10B981] transition-all appearance-none cursor-pointer"
                   >
                     <option value="all">All Categories</option>
                     <option value="policy">Policy</option>
@@ -198,7 +183,7 @@ export default function NewsPage() {
                     <option value="new-launches">New Launches</option>
                     <option value="economy">Economy</option>
                   </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#00C775] pointer-events-none" />
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#10B981] pointer-events-none" />
                 </div>
 
                 {/* Sort By */}
@@ -206,19 +191,19 @@ export default function NewsPage() {
                   <select
                     value={filters.sortBy}
                     onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })}
-                    className="w-full bg-[#0D0D0D] border border-[#00C775]/20 hover:border-[#00C775]/50 rounded-full px-4 py-3 text-white text-sm font-semibold focus:outline-none focus:border-[#00C775] transition-all appearance-none cursor-pointer"
+                    className="w-full bg-white border border-gray-200 hover:border-[#10B981] rounded-full px-4 py-3 text-[#0A0A0A] text-sm font-semibold focus:outline-none focus:border-[#10B981] transition-all appearance-none cursor-pointer"
                   >
                     <option value="latest">Latest First</option>
                     <option value="oldest">Oldest First</option>
                     <option value="trending">Most Popular</option>
                   </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#00C775] pointer-events-none" />
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#10B981] pointer-events-none" />
                 </div>
 
                 {/* Reset */}
                 <button
                   onClick={resetFilters}
-                  className="bg-transparent border border-white/10 hover:border-white/30 px-5 py-3 rounded-full font-semibold text-white text-sm hover:bg-white/5 transition-all"
+                  className="bg-white border border-gray-200 hover:border-gray-300 px-5 py-3 rounded-full font-semibold text-[#0A0A0A] text-sm hover:bg-gray-50 transition-all"
                 >
                   <div className="flex items-center justify-center gap-2">
                     <X className="w-4 h-4" />
@@ -228,7 +213,7 @@ export default function NewsPage() {
               </div>
 
               {/* RESULTS COUNT */}
-              <div className="text-sm text-gray-400 font-semibold">
+              <div className="text-sm text-gray-600 font-semibold">
                 Showing {currentArticles.length} of {newsArticles.length} articles
               </div>
             </div>
@@ -242,7 +227,7 @@ export default function NewsPage() {
               {currentArticles.map((article) => (
                 <div
                   key={article.id}
-                  className="group relative block overflow-hidden rounded-3xl border border-white/10 hover:border-[#00C775]/60 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_80px_rgba(0,199,117,0.3)] cursor-pointer"
+                  className="group relative block overflow-hidden rounded-3xl bg-white border border-gray-200 shadow-md hover:border-[#10B981] transition-all duration-500 hover:-translate-y-2 hover:shadow-lg cursor-pointer"
                 >
                   <div className="relative h-64 overflow-hidden">
                     <img
@@ -255,8 +240,8 @@ export default function NewsPage() {
 
                     {/* Category Badge */}
                     <div className="absolute top-4 left-4 z-20">
-                      <div className="bg-[#00C775]/20 backdrop-blur-xl border border-[#00C775]/50 rounded-lg px-3 py-1.5 flex items-center gap-1.5">
-                        <Tag className="w-3.5 h-3.5 text-[#00C775]" />
+                      <div className="bg-[#10B981]/20 backdrop-blur-xl border border-[#10B981]/50 rounded-lg px-3 py-1.5 flex items-center gap-1.5">
+                        <Tag className="w-3.5 h-3.5 text-[#10B981]" />
                         <span className="text-xs font-bold text-white">{article.category}</span>
                       </div>
                     </div>
@@ -264,7 +249,7 @@ export default function NewsPage() {
                     {/* Trending Badge */}
                     {article.trending && (
                       <div className="absolute top-4 right-4 z-20">
-                        <div className="bg-[#F3C440] text-black px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5">
+                        <div className="bg-[#D4AF37] text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5">
                           <TrendingUp className="w-3.5 h-3.5" />
                           TRENDING
                         </div>
@@ -273,15 +258,15 @@ export default function NewsPage() {
                   </div>
 
                   {/* Content */}
-                  <div className="bg-[#0D0D0D]/80 backdrop-blur-xl p-6">
-                    <h3 className="text-xl font-black text-white mb-3 leading-tight group-hover:text-[#00C775] transition-colors line-clamp-2">
+                  <div className="bg-white p-6">
+                    <h3 className="text-xl font-black text-[#0A0A0A] mb-3 leading-tight group-hover:text-[#10B981] transition-colors line-clamp-2">
                       {article.title}
                     </h3>
 
-                    <p className="text-sm text-gray-400 mb-4 line-clamp-3">{article.excerpt}</p>
+                    <p className="text-sm text-gray-600 mb-4 line-clamp-3">{article.excerpt}</p>
 
                     {/* Meta Info */}
-                    <div className="flex flex-wrap items-center gap-3 mb-4 text-xs text-gray-500">
+                    <div className="flex flex-wrap items-center gap-3 mb-4 text-xs text-gray-600">
                       <div className="flex items-center gap-1.5">
                         <Calendar className="w-3.5 h-3.5" />
                         {new Date(article.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
@@ -299,7 +284,7 @@ export default function NewsPage() {
                     </div>
 
                     {/* Read More */}
-                    <div className="flex items-center gap-2 text-[#F3C440] font-bold text-sm group-hover:gap-3 transition-all">
+                    <div className="flex items-center gap-2 text-[#D4AF37] font-bold text-sm group-hover:gap-3 transition-all">
                       <span>Read Full Article</span>
                       <ArrowRight className="w-4 h-4" />
                     </div>
@@ -317,7 +302,7 @@ export default function NewsPage() {
               <button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="bg-[#0D0D0D] border border-[#00C775]/20 hover:border-[#00C775]/60 px-6 py-3 rounded-full font-bold text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5"
+                className="bg-white border border-gray-200 hover:border-[#10B981] px-6 py-3 rounded-full font-bold text-[#0A0A0A] disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5 shadow-md"
               >
                 Previous
               </button>
@@ -326,10 +311,10 @@ export default function NewsPage() {
                 <button
                   key={index}
                   onClick={() => setCurrentPage(index + 1)}
-                  className={`w-12 h-12 rounded-full font-bold transition-all ${
+                  className={`w-12 h-12 rounded-full font-bold transition-all shadow-md ${
                     currentPage === index + 1
-                      ? 'bg-gradient-to-r from-[#00C775] to-[#00A85D] text-white shadow-[0_0_20px_rgba(0,199,117,0.4)]'
-                      : 'bg-[#0D0D0D] border border-white/10 text-white hover:border-[#00C775]/50'
+                      ? 'bg-gradient-to-r from-[#10B981] to-[#059669] text-white'
+                      : 'bg-white border border-gray-200 text-[#0A0A0A] hover:border-[#10B981]'
                   }`}
                 >
                   {index + 1}
@@ -339,7 +324,7 @@ export default function NewsPage() {
               <button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="bg-[#0D0D0D] border border-[#00C775]/20 hover:border-[#00C775]/60 px-6 py-3 rounded-full font-bold text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5"
+                className="bg-white border border-gray-200 hover:border-[#10B981] px-6 py-3 rounded-full font-bold text-[#0A0A0A] disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5 shadow-md"
               >
                 Next
               </button>

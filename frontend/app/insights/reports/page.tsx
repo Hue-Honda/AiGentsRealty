@@ -183,40 +183,25 @@ export default function ReportsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
-      {/* AI PARTICLE GLOW BACKGROUND */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#00C775]/5 rounded-full blur-[150px] animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#F3C440]/5 rounded-full blur-[120px] animate-pulse" style={{animationDelay: '1s'}}></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#00C775]/3 rounded-full blur-[200px]"></div>
-      </div>
-
-      {/* NEURAL GRID OVERLAY */}
-      <div className="fixed inset-0 pointer-events-none opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `linear-gradient(#00C775 1px, transparent 1px), linear-gradient(90deg, #00C775 1px, transparent 1px)`,
-          backgroundSize: '80px 80px'
-        }}></div>
-      </div>
-
+    <div className="min-h-screen bg-white text-[#0A0A0A] relative overflow-hidden">
       <div className="relative z-10">
         {/* HERO SECTION */}
         <section className="relative pt-32 pb-16 px-6 lg:px-16">
           <div className="max-w-[1600px] mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-[#00C775]/10 border border-[#00C775]/30 rounded-full px-6 py-2 mb-6">
-              <Sparkles className="w-4 h-4 text-[#00C775]" />
-              <span className="text-sm font-bold text-[#00C775]">COMPREHENSIVE ANALYSIS</span>
+            <div className="inline-flex items-center gap-2 bg-[#10B981]/10 border border-[#10B981]/30 rounded-full px-6 py-2 mb-6">
+              <Sparkles className="w-4 h-4 text-[#10B981]" />
+              <span className="text-sm font-bold text-[#10B981]">COMPREHENSIVE ANALYSIS</span>
             </div>
 
-            <h1 className="text-6xl lg:text-8xl font-black text-white mb-6 leading-[1.05] tracking-tight">
+            <h1 className="text-6xl lg:text-8xl font-black text-[#0A0A0A] mb-6 leading-[1.05] tracking-tight">
               Monthly Market
               <br />
-              <span className="bg-gradient-to-r from-[#F3C440] via-[#FFD700] to-[#F3C440] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#D4AF37] via-[#F4D03F] to-[#D4AF37] bg-clip-text text-transparent">
                 Reports
               </span>
             </h1>
 
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               In-depth market analysis and performance insights delivered monthly
             </p>
           </div>
@@ -225,34 +210,34 @@ export default function ReportsPage() {
         {/* KEY METRICS SUMMARY */}
         <section className="px-6 lg:px-16 pb-16">
           <div className="max-w-[1600px] mx-auto">
-            <div className="bg-gradient-to-br from-[#0D0D0D] via-[#0D0D0D] to-[#00C775]/5 backdrop-blur-xl border border-[#00C775]/20 rounded-3xl p-10">
+            <div className="bg-white border border-gray-200 rounded-3xl shadow-lg p-10">
               <div className="flex items-center gap-3 mb-8">
-                <BarChart3 className="w-8 h-8 text-[#F3C440]" />
-                <h2 className="text-3xl font-black text-white">Current Market Metrics</h2>
-                <span className="text-sm text-gray-400 ml-auto">November 2024</span>
+                <BarChart3 className="w-8 h-8 text-[#D4AF37]" />
+                <h2 className="text-3xl font-black text-[#0A0A0A]">Current Market Metrics</h2>
+                <span className="text-sm text-gray-600 ml-auto">November 2024</span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {keyMetrics.map((metric, index) => (
                   <div
                     key={index}
-                    className="bg-[#0D0D0D]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-[#00C775]/60 transition-all hover:-translate-y-1"
+                    className="bg-white border border-gray-200 rounded-2xl shadow-md p-6 hover:border-[#10B981] transition-all hover:-translate-y-1"
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                        metric.trend === 'up' ? 'bg-[#00C775]/10 text-[#00C775]' : 'bg-red-500/10 text-red-500'
+                        metric.trend === 'up' ? 'bg-[#10B981]/10 text-[#10B981]' : 'bg-red-500/10 text-red-500'
                       }`}>
                         {metric.icon}
                       </div>
                       <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold ${
-                        metric.trend === 'up' ? 'bg-[#00C775]/10 text-[#00C775]' : 'bg-red-500/10 text-red-500'
+                        metric.trend === 'up' ? 'bg-[#10B981]/10 text-[#10B981]' : 'bg-red-500/10 text-red-500'
                       }`}>
                         {metric.trend === 'up' ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
                         {metric.change}
                       </div>
                     </div>
-                    <div className="text-3xl font-black text-white mb-2">{metric.value}</div>
-                    <div className="text-sm text-gray-400 uppercase font-semibold tracking-wide">{metric.label}</div>
+                    <div className="text-3xl font-black text-[#0A0A0A] mb-2">{metric.value}</div>
+                    <div className="text-sm text-gray-600 uppercase font-semibold tracking-wide">{metric.label}</div>
                   </div>
                 ))}
               </div>
@@ -264,10 +249,10 @@ export default function ReportsPage() {
         <section className="px-6 lg:px-16 pb-20">
           <div className="max-w-[1600px] mx-auto">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-4xl lg:text-5xl font-black text-white">
-                Reports <span className="text-[#00C775]">Archive</span>
+              <h2 className="text-4xl lg:text-5xl font-black text-[#0A0A0A]">
+                Reports <span className="text-[#10B981]">Archive</span>
               </h2>
-              <div className="text-sm text-gray-400 font-semibold">
+              <div className="text-sm text-gray-600 font-semibold">
                 {reports.length} reports available
               </div>
             </div>
@@ -276,7 +261,7 @@ export default function ReportsPage() {
               {reports.map((report, index) => (
                 <div
                   key={index}
-                  className="group relative block overflow-hidden rounded-3xl border border-white/10 hover:border-[#00C775]/60 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_80px_rgba(0,199,117,0.3)]"
+                  className="group relative block overflow-hidden rounded-3xl border border-gray-200 hover:border-[#10B981] transition-all duration-500 hover:-translate-y-2 shadow-md hover:shadow-lg"
                 >
                   {/* Report Cover */}
                   <div className="relative h-64 overflow-hidden">
@@ -290,38 +275,38 @@ export default function ReportsPage() {
 
                     {/* Month/Year Badge */}
                     <div className="absolute top-4 left-4 right-4 z-20">
-                      <div className="bg-[#F3C440]/20 backdrop-blur-xl border border-[#F3C440]/50 rounded-xl px-4 py-3 text-center">
-                        <div className="text-2xl font-black text-white">{report.month}</div>
-                        <div className="text-sm font-bold text-gray-300">{report.year}</div>
+                      <div className="bg-white/95 backdrop-blur-xl border border-gray-200 rounded-xl px-4 py-3 text-center shadow-md">
+                        <div className="text-2xl font-black text-[#0A0A0A]">{report.month}</div>
+                        <div className="text-sm font-bold text-gray-600">{report.year}</div>
                       </div>
                     </div>
 
                     {/* PDF Icon */}
                     <div className="absolute top-4 right-4 z-20">
-                      <div className="w-12 h-12 bg-[#00C775]/20 backdrop-blur-xl border border-[#00C775]/50 rounded-xl flex items-center justify-center">
-                        <FileText className="w-6 h-6 text-[#00C775]" />
+                      <div className="w-12 h-12 bg-white/95 backdrop-blur-xl border border-gray-200 rounded-xl flex items-center justify-center shadow-md">
+                        <FileText className="w-6 h-6 text-[#10B981]" />
                       </div>
                     </div>
                   </div>
 
                   {/* Content */}
-                  <div className="bg-[#0D0D0D]/80 backdrop-blur-xl p-6">
-                    <h3 className="text-xl font-black text-white mb-4 group-hover:text-[#00C775] transition-colors">
+                  <div className="bg-white p-6">
+                    <h3 className="text-xl font-black text-[#0A0A0A] mb-4 group-hover:text-[#10B981] transition-colors">
                       Market Report
                     </h3>
 
                     {/* Key Highlights */}
                     <div className="space-y-2 mb-6">
                       {report.highlights.map((highlight, idx) => (
-                        <div key={idx} className="flex items-start gap-2 text-sm text-gray-400">
-                          <div className="w-1.5 h-1.5 bg-[#00C775] rounded-full mt-1.5 flex-shrink-0"></div>
+                        <div key={idx} className="flex items-start gap-2 text-sm text-gray-600">
+                          <div className="w-1.5 h-1.5 bg-[#10B981] rounded-full mt-1.5 flex-shrink-0"></div>
                           <span>{highlight}</span>
                         </div>
                       ))}
                     </div>
 
                     {/* Download Button */}
-                    <button className="w-full bg-gradient-to-r from-[#00C775] to-[#00A85D] px-6 py-3.5 rounded-full font-bold text-white shadow-[0_0_30px_rgba(0,199,117,0.4)] hover:shadow-[0_0_50px_rgba(0,199,117,0.6)] transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                    <button className="w-full bg-gradient-to-r from-[#10B981] to-[#059669] px-6 py-3.5 rounded-full font-bold text-white shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2">
                       <Download className="w-5 h-5" />
                       <span>Download Report</span>
                     </button>
@@ -335,23 +320,23 @@ export default function ReportsPage() {
         {/* SUBSCRIBE CTA */}
         <section className="px-6 lg:px-16 pb-20">
           <div className="max-w-[1600px] mx-auto">
-            <div className="bg-gradient-to-br from-[#0D0D0D] via-[#0D0D0D] to-[#F3C440]/5 backdrop-blur-xl border border-[#F3C440]/20 rounded-3xl p-12 text-center">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-[#F3C440]/10 rounded-2xl mb-6">
-                <Calendar className="w-10 h-10 text-[#F3C440]" />
+            <div className="bg-white border border-gray-200 rounded-3xl shadow-lg p-12 text-center">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-[#D4AF37]/10 rounded-2xl mb-6">
+                <Calendar className="w-10 h-10 text-[#D4AF37]" />
               </div>
-              <h2 className="text-4xl lg:text-5xl font-black text-white mb-4">
+              <h2 className="text-4xl lg:text-5xl font-black text-[#0A0A0A] mb-4">
                 Get Reports Delivered Monthly
               </h2>
-              <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
+              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
                 Subscribe to receive comprehensive market reports directly to your inbox
               </p>
               <div className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto">
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  className="flex-1 bg-[#0D0D0D] border border-[#F3C440]/30 rounded-full px-6 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-[#F3C440] transition-all"
+                  className="flex-1 bg-white border border-gray-200 rounded-full px-6 py-4 text-[#0A0A0A] placeholder-gray-400 focus:outline-none focus:border-[#D4AF37] transition-all shadow-md"
                 />
-                <button className="bg-gradient-to-r from-[#F3C440] to-[#D4A936] px-8 py-4 rounded-full font-bold text-black shadow-[0_0_30px_rgba(243,196,64,0.4)] hover:shadow-[0_0_50px_rgba(243,196,64,0.6)] transition-all hover:-translate-y-1">
+                <button className="bg-gradient-to-r from-[#D4AF37] to-[#C19A2E] px-8 py-4 rounded-full font-bold text-white shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
                   Subscribe Now
                 </button>
               </div>

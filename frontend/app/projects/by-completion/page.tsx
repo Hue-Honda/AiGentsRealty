@@ -44,14 +44,9 @@ const completionDates = [
 
 export default function BrowseByCompletion() {
   return (
-    <main className="min-h-screen bg-[#0A0A0A]">
+    <main className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-[#1A1A1A] to-[#0A0A0A] py-20">
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-[20%] w-[400px] h-[400px] bg-[#10B981]/10 rounded-full blur-[120px]"></div>
-          <div className="absolute bottom-10 right-[15%] w-[500px] h-[500px] bg-[#D4AF37]/10 rounded-full blur-[140px]"></div>
-        </div>
-
+      <section className="relative bg-gradient-to-b from-gray-50 to-white py-20">
         <div className="relative max-w-[1600px] mx-auto px-6 lg:px-16">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#10B981]/10 border border-[#10B981]/30 rounded-full mb-6">
@@ -59,7 +54,7 @@ export default function BrowseByCompletion() {
               <span className="text-sm font-semibold text-[#10B981]">Timeline Planning</span>
             </div>
 
-            <h1 className="text-5xl lg:text-7xl font-black text-white mb-6 leading-tight">
+            <h1 className="text-5xl lg:text-7xl font-black text-[#0A0A0A] mb-6 leading-tight">
               Browse by
               <br />
               <span className="bg-gradient-to-r from-[#D4AF37] to-[#B8941E] bg-clip-text text-transparent">
@@ -67,7 +62,7 @@ export default function BrowseByCompletion() {
               </span>
             </h1>
 
-            <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Plan your investment timeline. Find projects based on when you want to move in or start earning rental income.
             </p>
           </div>
@@ -82,7 +77,7 @@ export default function BrowseByCompletion() {
               <Link
                 key={date.slug}
                 href={`/projects?completionYear=${date.slug}`}
-                className="group relative bg-[#1A1A1A] rounded-3xl overflow-hidden border border-white/5 hover:border-[#10B981]/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_80px_rgba(16,185,129,0.2)]"
+                className="group relative bg-white rounded-3xl overflow-hidden border border-gray-200 shadow-md hover:shadow-lg hover:border-[#10B981]/50 transition-all duration-500 hover:-translate-y-2"
               >
                 <div className="p-10">
                   <div className="flex items-start justify-between mb-6">
@@ -94,11 +89,11 @@ export default function BrowseByCompletion() {
                     </span>
                   </div>
 
-                  <h2 className="text-4xl font-black text-white mb-4 group-hover:text-[#10B981] transition-colors">
+                  <h2 className="text-4xl font-black text-[#0A0A0A] mb-4 group-hover:text-[#10B981] transition-colors">
                     {date.title}
                   </h2>
 
-                  <p className="text-gray-400 text-lg mb-6 leading-relaxed">
+                  <p className="text-gray-600 text-lg mb-6 leading-relaxed">
                     {date.description}
                   </p>
 
@@ -107,8 +102,8 @@ export default function BrowseByCompletion() {
                     <span className="text-sm font-bold text-[#D4AF37]">{date.timeline}</span>
                   </div>
 
-                  <div className="flex items-center justify-between pt-6 border-t border-white/10">
-                    <div className="text-sm text-gray-400">{date.count}</div>
+                  <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+                    <div className="text-sm text-gray-600">{date.count}</div>
 
                     <div className="flex items-center gap-3 text-[#10B981] font-bold text-lg group-hover:gap-5 transition-all">
                       <span>View Projects</span>
@@ -123,21 +118,21 @@ export default function BrowseByCompletion() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-6 lg:px-16 bg-gradient-to-b from-[#0A0A0A] to-[#1A1A1A]">
+      <section className="py-20 px-6 lg:px-16 bg-gradient-to-br from-emerald-50 via-white to-amber-50">
         <div className="max-w-[1600px] mx-auto text-center">
-          <h2 className="text-4xl font-black text-white mb-4">
+          <h2 className="text-4xl font-black text-[#0A0A0A] mb-4">
             Need Help With Timeline Planning?
           </h2>
-          <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Our investment advisors can help you choose the right completion date for your goals
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <button className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8941E] text-black rounded-xl font-bold hover:shadow-[0_0_40px_rgba(212,175,55,0.6)] transition-all duration-300">
+            <button className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8941E] text-black rounded-xl font-bold hover:shadow-xl transition-all duration-300">
               Schedule Consultation
             </button>
             <Link
               href="/projects"
-              className="px-8 py-4 bg-[#0A0A0A]/80 backdrop-blur-xl border-2 border-[#10B981]/40 text-white rounded-xl font-bold hover:bg-[#10B981]/10 hover:border-[#10B981]/60 transition-all duration-300"
+              className="px-8 py-4 bg-white border-2 border-[#10B981]/40 text-[#0A0A0A] rounded-xl font-bold hover:bg-[#10B981]/10 hover:border-[#10B981]/60 transition-all duration-300 shadow-md"
             >
               Browse All Projects
             </Link>

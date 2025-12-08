@@ -56,7 +56,11 @@
       "Bash(bash migrate-to-supabase.sh:*)",
       "Bash(find:*)",
       "Bash(cmd /c \"taskkill /F /PID 40884\")",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(where:*)",
+      "Bash(grep:*)",
+      "Bash(cd:*)",
+      "Bash(git reset:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,137 +1,225 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import Link from 'next/link';
-import { Building2, ChevronDown, Menu, X, BookOpen, BarChart3, MapPin, Phone, Sparkles, Newspaper } from 'lucide-react';
+import { Building2, ChevronDown, ChevronRight, Menu, X, BookOpen, BarChart3, MapPin, Phone, Sparkles, Newspaper, Home, Briefcase, Users, TrendingUp, Calculator, FileText, ArrowRight } from 'lucide-react';
+import { useNavData } from '@/contexts/NavDataContext';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const submenuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Get dynamic areas and developers from context
+  const { areas, developers, loading } = useNavData();
 
   const handleMouseEnter = (name: string) => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
     setActiveDropdown(name);
+    setActiveSubmenu(null);
   };
 
   const handleMouseLeave = () => {
     timeoutRef.current = setTimeout(() => {
       setActiveDropdown(null);
+      setActiveSubmenu(null);
     }, 150);
   };
 
+  const handleSubmenuEnter = (name: string) => {
+    if (submenuTimeoutRef.current) {
+      clearTimeout(submenuTimeoutRef.current);
+    }
+    setActiveSubmenu(name);
+  };
+
+  const handleSubmenuLeave = () => {
+    submenuTimeoutRef.current = setTimeout(() => {
+      setActiveSubmenu(null);
+    }, 100);
+  };
+
+  // Build dynamic areas submenu from API data
+  const dynamicAreasSubmenu = useMemo(() => {
+    const areaItems = areas.map(area => ({
+      name: area.name,
+      href: `/areas/${area.slug}`,
+      highlight: false
+    }));
+    // Always add "All Areas" at the end
+    areaItems.push({ name: 'All Areas', href: '/areas', highlight: true });
+    return areaItems;
+  }, [areas]);
+
+  // Build dynamic developers submenu from API data
+  const dynamicDevelopersSubmenu = useMemo(() => {
+    const devItems = developers.map(dev => ({
+      name: dev.name,
+      href: `/developers/${dev.slug}`,
+      highlight: false
+    }));
+    // Always add "All Developers" at the end
+    devItems.push({ name: 'All Developers', href: '/developers', highlight: true });
+    return devItems;
+  }, [developers]);
+
+  // Fallback areas if API hasn't loaded yet
+  const fallbackAreas = [
+    { name: 'Dubai Marina', href: '/areas/dubai-marina', highlight: false },
+    { name: 'Downtown Dubai', href: '/areas/downtown-dubai', highlight: false },
+    { name: 'Business Bay', href: '/areas/business-bay', highlight: false },
+    { name: 'Palm Jumeirah', href: '/areas/palm-jumeirah', highlight: false },
+    { name: 'JVC', href: '/areas/jvc', highlight: false },
+    { name: 'All Areas', href: '/areas', highlight: true },
+  ];
+
+  // Fallback developers if API hasn't loaded yet
+  const fallbackDevelopers = [
+    { name: 'Emaar Properties', href: '/developers/emaar', highlight: false },
+    { name: 'DAMAC Properties', href: '/developers/damac', highlight: false },
+    { name: 'Nakheel', href: '/developers/nakheel', highlight: false },
+    { name: 'Sobha Realty', href: '/developers/sobha', highlight: false },
+    { name: 'All Developers', href: '/developers', highlight: true },
+  ];
+
+  // Use dynamic data if loaded, otherwise fallback
+  const areasSubmenu = areas.length > 0 ? dynamicAreasSubmenu : fallbackAreas;
+  const developersSubmenu = developers.length > 0 ? dynamicDevelopersSubmenu : fallbackDevelopers;
+
+  // Navigation with dynamic submenus
   const navigation = [
     {
       name: 'Properties',
       icon: <Building2 className="w-4 h-4" />,
       href: '/projects',
-      dropdown: [
-        { section: 'Residential', items: [
-          { name: 'All Projects', href: '/projects' },
-          { name: 'By Price Range', href: '/projects/by-price' },
-          { name: 'By Location', href: '/projects/by-location' },
-          { name: 'New Launches', href: '/projects/new-launches' },
-          { name: 'Best ROI', href: '/projects/best-roi' },
-        ]},
-        { section: 'Commercial', items: [
-          { name: 'Office Spaces', href: '/commercial/office-spaces' },
-          { name: 'Retail Units', href: '/commercial/retail' },
-          { name: 'Warehouses', href: '/commercial/warehouses' },
-          { name: 'High Yield', href: '/commercial/high-yield' },
-        ]},
-        { section: 'Developers', items: [
-          { name: 'Emaar Properties', href: '/developers/emaar' },
-          { name: 'DAMAC Properties', href: '/developers/damac' },
-          { name: 'Nakheel', href: '/developers/nakheel' },
-          { name: 'All Developers', href: '/developers' },
-        ]}
-      ]
-    },
-    {
-      name: 'Areas',
-      icon: <MapPin className="w-4 h-4" />,
-      href: '/areas',
-      dropdown: [
-        { section: 'Popular Areas', items: [
-          { name: 'Dubai Marina', href: '/areas/dubai-marina' },
-          { name: 'Downtown Dubai', href: '/areas/downtown-dubai' },
-          { name: 'Business Bay', href: '/areas/business-bay' },
-          { name: 'Palm Jumeirah', href: '/areas/palm-jumeirah' },
-          { name: 'Dubai Creek Harbour', href: '/areas/dubai-creek-harbour' },
-        ]},
-        { section: 'Emerging Areas', items: [
-          { name: 'Dubai South', href: '/areas/dubai-south' },
-          { name: 'Jumeirah Village Circle', href: '/areas/jvc' },
-          { name: 'Mohammed Bin Rashid City', href: '/areas/mbr-city' },
-          { name: 'All Areas', href: '/areas' },
-        ]}
+      hasSubmenu: true,
+      items: [
+        {
+          name: 'All Projects',
+          href: '/projects',
+          icon: <Home className="w-4 h-4" />,
+          description: 'Browse all off-plan properties'
+        },
+        {
+          name: 'Areas',
+          icon: <MapPin className="w-4 h-4" />,
+          description: 'Explore by location',
+          submenu: areasSubmenu
+        },
+        {
+          name: 'Developers',
+          icon: <Users className="w-4 h-4" />,
+          description: 'Top developers',
+          submenu: developersSubmenu
+        },
+        {
+          name: 'Commercial',
+          icon: <Briefcase className="w-4 h-4" />,
+          description: 'Office & retail spaces',
+          submenu: [
+            { name: 'Office Spaces', href: '/commercial/office-spaces', highlight: false },
+            { name: 'Retail Units', href: '/commercial/retail', highlight: false },
+            { name: 'Warehouses', href: '/commercial/warehouses', highlight: false },
+          ]
+        },
       ]
     },
     {
       name: 'Invest',
-      icon: <BookOpen className="w-4 h-4" />,
+      icon: <TrendingUp className="w-4 h-4" />,
       href: '/investment',
-      dropdown: [
-        { section: 'Guides', items: [
-          { name: 'Off-Plan 101', href: '/investment/offplan-101' },
-          { name: 'Why Dubai Off-Plan?', href: '/investment/why-dubai' },
-          { name: 'First-Time Buyer Guide', href: '/investment/first-time' },
-        ]},
-        { section: 'Tools', items: [
-          { name: 'ROI Calculator', href: '/investment/roi-calculator' },
-          { name: 'Payment Plan Simulator', href: '/investment/payment-simulator' },
-          { name: 'Budget Calculator', href: '/investment/budget-calculator' },
-        ]},
-        { section: 'Strategies', items: [
-          { name: 'Flip Strategy', href: '/investment/flip-strategy' },
-          { name: 'Rental Income', href: '/investment/rental-strategy' },
-          { name: 'Long-Term Growth', href: '/investment/appreciation' },
-        ]}
+      hasSubmenu: true,
+      items: [
+        {
+          name: 'Investment Guides',
+          icon: <BookOpen className="w-4 h-4" />,
+          description: 'Learn the basics',
+          submenu: [
+            { name: 'Off-Plan 101', href: '/investment/offplan-101', highlight: false },
+            { name: 'Why Dubai Off-Plan?', href: '/investment/why-dubai', highlight: false },
+            { name: 'First-Time Buyer Guide', href: '/investment/first-time', highlight: false },
+          ]
+        },
+        {
+          name: 'Tools & Calculators',
+          icon: <Calculator className="w-4 h-4" />,
+          description: 'Plan your investment',
+          submenu: [
+            { name: 'ROI Calculator', href: '/investment/roi-calculator', highlight: false },
+            { name: 'Payment Plan Simulator', href: '/investment/payment-simulator', highlight: false },
+            { name: 'Budget Calculator', href: '/investment/budget-calculator', highlight: false },
+          ]
+        },
+        {
+          name: 'Strategies',
+          icon: <TrendingUp className="w-4 h-4" />,
+          description: 'Investment approaches',
+          submenu: [
+            { name: 'Flip Strategy', href: '/investment/flip-strategy', highlight: false },
+            { name: 'Rental Income', href: '/investment/rental-strategy', highlight: false },
+            { name: 'Long-Term Growth', href: '/investment/appreciation', highlight: false },
+          ]
+        },
       ]
     },
     {
       name: 'Insights',
       icon: <BarChart3 className="w-4 h-4" />,
       href: '/insights',
-      dropdown: [
-        { section: 'Market Intelligence', items: [
-          { name: 'Market News', href: '/insights/news' },
-          { name: 'Monthly Reports', href: '/insights/reports' },
-          { name: 'Price Trends', href: '/insights/price-trends' },
-          { name: 'Developer Updates', href: '/insights/developers' },
-        ]},
-        { section: 'Blog', items: [
-          { name: 'All Articles', href: '/blogs' },
-          { name: 'Investment Guides', href: '/blogs?category=investment-guides' },
-          { name: 'Area Guides', href: '/blogs?category=area-guides' },
-          { name: 'Tips & Tricks', href: '/blogs?category=tips-tricks' },
-        ]}
+      hasSubmenu: true,
+      items: [
+        {
+          name: 'Market News',
+          href: '/insights/news',
+          icon: <Newspaper className="w-4 h-4" />,
+          description: 'Latest updates'
+        },
+        {
+          name: 'Reports',
+          href: '/insights/reports',
+          icon: <FileText className="w-4 h-4" />,
+          description: 'Market analysis'
+        },
+        {
+          name: 'Blog',
+          href: '/blogs',
+          icon: <BookOpen className="w-4 h-4" />,
+          description: 'Articles & guides'
+        },
       ]
     }
   ];
 
   return (
     <>
-      {/* Luxury Black Glass Navbar with Gold Top Line */}
-      <nav className="sticky top-0 z-50 bg-gradient-to-b from-[#0A0A0A]/95 to-[#0A0A0A]/90 backdrop-blur-2xl border-t border-[#D4AF37] shadow-[0_8px_32px_rgba(0,0,0,0.8)]">
-        <div className="max-w-[1800px] mx-auto px-6 lg:px-16">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo with Emerald AI Pulse Orb */}
+      {/* Premium Clean Navbar */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/98 backdrop-blur-xl shadow-sm">
+        {/* Subtle gold accent line at top */}
+        <div className="h-0.5 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
+
+        <div className="max-w-[1800px] mx-auto px-6 lg:px-12">
+          <div className="flex items-center justify-between h-[72px]">
+            {/* Logo */}
             <Link href="/" className="flex items-center gap-3 group relative">
-              {/* Gold Monoline Icon */}
+              {/* Logo Icon - Premium with subtle shadow */}
               <div className="relative">
-                {/* Emerald AI Pulse Orb */}
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#10B981] rounded-full animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.8)] z-10"></div>
-                <div className="w-12 h-12 border-2 border-[#D4AF37] rounded-lg flex items-center justify-center shadow-[0_0_20px_rgba(212,175,55,0.4)] group-hover:shadow-[0_0_30px_rgba(212,175,55,0.6)] transition-all bg-[#0A0A0A]/50 backdrop-blur-xl">
-                  <Building2 className="w-6 h-6 text-[#D4AF37]" />
+                {/* AI Indicator */}
+                <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-[#10B981] rounded-full animate-pulse shadow-[0_0_6px_rgba(16,185,129,0.5)] z-10"></div>
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#0A0A0A] to-[#1a1a1a] flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300">
+                  <Building2 className="w-5 h-5 text-[#D4AF37]" />
                 </div>
               </div>
-              {/* Premium Gold Typography */}
-              <span className="font-black text-2xl tracking-tight bg-gradient-to-r from-[#D4AF37] via-[#F4E5B8] to-[#D4AF37] bg-clip-text text-transparent">
-                AiGentsRealty
-              </span>
+              {/* Brand Name */}
+              <div className="flex flex-col">
+                <span className="font-black text-xl tracking-tight text-[#0A0A0A] leading-none">
+                  AiGents<span className="text-[#D4AF37]">Realty</span>
+                </span>
+                <span className="text-[10px] text-gray-400 font-medium tracking-wider">DUBAI OFF-PLAN</span>
+              </div>
             </Link>
 
             {/* Desktop Navigation */}
@@ -145,43 +233,94 @@ export default function Navbar() {
                 >
                   <Link
                     href={item.href}
-                    className="group flex items-center gap-2 px-4 py-2.5 text-gray-300 hover:text-[#D4AF37] font-semibold text-sm transition-all rounded-lg relative whitespace-nowrap"
+                    className={`group flex items-center gap-2 px-4 py-2 text-[#0A0A0A] font-medium text-sm transition-all rounded-lg relative whitespace-nowrap hover:bg-gray-50 ${
+                      activeDropdown === item.name ? 'bg-gray-50 text-[#D4AF37]' : ''
+                    }`}
                   >
-                    {item.icon}
-                    <span className="relative">
-                      {item.name}
-                      {/* Thin Gold Hover Underline */}
-                      <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-gradient-to-r from-[#D4AF37] to-transparent group-hover:w-full transition-all duration-300"></span>
+                    <span className={`${activeDropdown === item.name ? 'text-[#D4AF37]' : 'text-gray-500 group-hover:text-[#D4AF37]'} transition-colors`}>
+                      {item.icon}
                     </span>
-                    {item.dropdown && <ChevronDown className="w-3.5 h-3.5" />}
+                    <span>{item.name}</span>
+                    {item.hasSubmenu && (
+                      <ChevronDown className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 ${activeDropdown === item.name ? 'rotate-180 text-[#D4AF37]' : ''}`} />
+                    )}
                   </Link>
 
-                  {/* Dropdown Menu - Black Glass with Gold Accents */}
-                  {item.dropdown && activeDropdown === item.name && (
+                  {/* Dropdown Menu */}
+                  {item.hasSubmenu && activeDropdown === item.name && (
                     <div
-                      className="absolute top-full left-0 mt-2 w-72 bg-[#0A0A0A]/95 backdrop-blur-2xl rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.9)] border border-[#D4AF37]/30 py-3 animate-in fade-in slide-in-from-top-2 duration-200"
+                      className="absolute top-full left-0 mt-1 pt-2"
                       onMouseEnter={() => handleMouseEnter(item.name)}
                       onMouseLeave={handleMouseLeave}
                     >
-                      {item.dropdown.map((section, idx) => (
-                        <div key={idx} className={idx > 0 ? 'border-t border-[#D4AF37]/10 mt-3 pt-3' : ''}>
-                          <div className="px-5 py-2 text-xs font-bold text-[#D4AF37] uppercase tracking-wider">
-                            {section.section}
+                      <div className="bg-white rounded-xl shadow-xl border border-gray-100 py-2 min-w-[240px] animate-in fade-in slide-in-from-top-1 duration-150">
+                        {item.items.map((menuItem, idx) => (
+                          <div
+                            key={idx}
+                            className="relative"
+                            onMouseEnter={() => menuItem.submenu && handleSubmenuEnter(menuItem.name)}
+                            onMouseLeave={() => menuItem.submenu && handleSubmenuLeave()}
+                          >
+                            {menuItem.href ? (
+                              <Link
+                                href={menuItem.href}
+                                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors group"
+                              >
+                                <div className="w-8 h-8 rounded-lg bg-[#F9FAFB] flex items-center justify-center group-hover:bg-[#10B981]/10 transition-colors">
+                                  <span className="text-gray-400 group-hover:text-[#10B981]">{menuItem.icon}</span>
+                                </div>
+                                <div>
+                                  <div className="text-sm font-medium text-[#0A0A0A] group-hover:text-[#10B981]">{menuItem.name}</div>
+                                  {menuItem.description && (
+                                    <div className="text-xs text-gray-400">{menuItem.description}</div>
+                                  )}
+                                </div>
+                              </Link>
+                            ) : (
+                              <div className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors group cursor-pointer">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 rounded-lg bg-[#F9FAFB] flex items-center justify-center group-hover:bg-[#10B981]/10 transition-colors">
+                                    <span className="text-gray-400 group-hover:text-[#10B981]">{menuItem.icon}</span>
+                                  </div>
+                                  <div>
+                                    <div className="text-sm font-medium text-[#0A0A0A] group-hover:text-[#10B981]">{menuItem.name}</div>
+                                    {menuItem.description && (
+                                      <div className="text-xs text-gray-400">{menuItem.description}</div>
+                                    )}
+                                  </div>
+                                </div>
+                                <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[#10B981]" />
+                              </div>
+                            )}
+
+                            {/* Sub-dropdown */}
+                            {menuItem.submenu && activeSubmenu === menuItem.name && (
+                              <div
+                                className="absolute left-full top-0 ml-1 pt-0"
+                                onMouseEnter={() => handleSubmenuEnter(menuItem.name)}
+                                onMouseLeave={handleSubmenuLeave}
+                              >
+                                <div className="bg-white rounded-xl shadow-xl border border-gray-100 py-2 min-w-[200px] animate-in fade-in slide-in-from-left-1 duration-150">
+                                  {menuItem.submenu.map((subItem, subIdx) => (
+                                    <Link
+                                      key={subIdx}
+                                      href={subItem.href}
+                                      className={`flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 transition-colors group ${
+                                        subItem.highlight ? 'border-t border-gray-100 mt-1 pt-3' : ''
+                                      }`}
+                                    >
+                                      <span className={`text-sm ${subItem.highlight ? 'font-semibold text-[#10B981]' : 'text-gray-600 group-hover:text-[#0A0A0A]'}`}>
+                                        {subItem.name}
+                                      </span>
+                                      {subItem.highlight && <ArrowRight className="w-3.5 h-3.5 text-[#10B981]" />}
+                                    </Link>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                           </div>
-                          {section.items.map((subItem) => (
-                            <Link
-                              key={subItem.name}
-                              href={subItem.href}
-                              className="block px-5 py-2.5 text-sm text-gray-300 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37] transition-all relative group"
-                            >
-                              <span className="relative">
-                                {subItem.name}
-                                <span className="absolute left-0 -bottom-0.5 w-0 h-[1px] bg-[#D4AF37] group-hover:w-full transition-all duration-200"></span>
-                              </span>
-                            </Link>
-                          ))}
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -190,18 +329,18 @@ export default function Navbar() {
 
             {/* Right Actions */}
             <div className="hidden lg:flex items-center gap-3">
-              {/* Ask Genie Button - Emerald with Gold Sparkle */}
+              {/* Ask Genie Button */}
               <Link
                 href="/genie"
-                className="group flex items-center gap-2 bg-gradient-to-r from-[#10B981] to-[#059669] text-white px-5 py-2.5 rounded-xl font-semibold hover:-translate-y-0.5 transition-all duration-300 shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)]"
+                className="group flex items-center gap-2 bg-gradient-to-r from-[#10B981] to-[#059669] text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:-translate-y-0.5 transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-[#10B981]/25"
               >
-                <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+                <Sparkles className="w-4 h-4" />
                 <span>Ask Genie</span>
               </Link>
-              {/* Contact Button - Gold Border with Emerald Hover */}
+              {/* Contact Button */}
               <Link
                 href="/contact"
-                className="group flex items-center gap-2 bg-[#0A0A0A]/80 backdrop-blur-xl border border-[#D4AF37] text-[#D4AF37] px-5 py-2.5 rounded-xl font-semibold hover:-translate-y-0.5 transition-all duration-300 shadow-[0_0_15px_rgba(212,175,55,0.2)] hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] hover:border-[#10B981] hover:text-[#10B981]"
+                className="group flex items-center gap-2 bg-[#0A0A0A] text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:-translate-y-0.5 transition-all duration-300 shadow-md hover:shadow-lg"
               >
                 <Phone className="w-4 h-4" />
                 <span>Contact</span>
@@ -211,41 +350,76 @@ export default function Navbar() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-2 text-[#D4AF37] hover:bg-[#D4AF37]/10 rounded-lg transition-colors border border-[#D4AF37]/30"
+              className="lg:hidden p-2.5 text-[#0A0A0A] hover:bg-gray-100 rounded-xl transition-colors"
             >
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="lg:hidden border-t border-[#D4AF37]/20 bg-[#0A0A0A]">
-            <div className="px-4 py-4 space-y-2">
+          <div className="lg:hidden border-t border-gray-100 bg-white max-h-[calc(100vh-72px)] overflow-y-auto">
+            <div className="px-4 py-4 space-y-1">
               {navigation.map((item) => (
-                <div key={item.name}>
+                <div key={item.name} className="space-y-1">
                   <Link
                     href={item.href}
-                    className="flex items-center gap-2 px-4 py-3 text-gray-300 hover:bg-white/5 hover:text-[#D4AF37] rounded-lg font-medium transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 text-[#0A0A0A] hover:bg-gray-50 rounded-xl font-medium transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    {item.icon}
+                    <span className="text-gray-400">{item.icon}</span>
                     {item.name}
                   </Link>
+                  {/* Mobile sub-items */}
+                  {item.items && (
+                    <div className="pl-6 space-y-1">
+                      {item.items.map((subItem, idx) => (
+                        <div key={idx}>
+                          {subItem.href ? (
+                            <Link
+                              href={subItem.href}
+                              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-[#10B981] rounded-lg transition-colors"
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              <span className="text-gray-300">{subItem.icon}</span>
+                              {subItem.name}
+                            </Link>
+                          ) : (
+                            <div className="px-4 py-2 text-sm text-gray-400 font-medium">{subItem.name}</div>
+                          )}
+                          {subItem.submenu && (
+                            <div className="pl-4 space-y-1">
+                              {subItem.submenu.map((sub, subIdx) => (
+                                <Link
+                                  key={subIdx}
+                                  href={sub.href}
+                                  className="block px-4 py-2 text-sm text-gray-500 hover:text-[#10B981] transition-colors"
+                                  onClick={() => setIsMenuOpen(false)}
+                                >
+                                  {sub.name}
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
-              <div className="pt-4 border-t border-[#D4AF37]/20 space-y-3">
+              <div className="pt-4 mt-4 border-t border-gray-100 space-y-2">
                 <Link
                   href="/genie"
-                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#10B981] to-[#059669] text-white px-4 py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-[#10B981]/30 transition-all"
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#10B981] to-[#059669] text-white px-4 py-3 rounded-xl font-semibold transition-all"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+                  <Sparkles className="w-4 h-4" />
                   Ask Genie
                 </Link>
                 <Link
                   href="/contact"
-                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#D4AF37] to-[#B8941E] text-black px-4 py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all"
+                  className="w-full flex items-center justify-center gap-2 bg-[#0A0A0A] text-white px-4 py-3 rounded-xl font-semibold transition-all"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <Phone className="w-4 h-4" />
@@ -256,6 +430,9 @@ export default function Navbar() {
           </div>
         )}
       </nav>
+
+      {/* Spacer for fixed navbar */}
+      <div className="h-[72px]"></div>
     </>
   );
 }

@@ -269,11 +269,11 @@ export default function LocationPage() {
   // If location not found
   if (!location) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center pt-20">
+      <div className="min-h-screen bg-white text-[#0A0A0A] flex items-center justify-center pt-20">
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">Location Not Found</h1>
-          <p className="text-gray-400 mb-8">The location "{slug}" doesn't exist in our database.</p>
-          <Link href="/explore" className="inline-flex items-center gap-2 bg-gradient-to-r from-[#E8C676] to-[#D4AF37] text-black px-6 py-3 rounded-xl font-bold hover:shadow-[0_0_30px_rgba(232,198,118,0.6)] transition-all">
+          <p className="text-gray-600 mb-8">The location "{slug}" doesn't exist in our database.</p>
+          <Link href="/explore" className="inline-flex items-center gap-2 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] text-black px-6 py-3 rounded-xl font-bold hover:shadow-[0_0_30px_rgba(212,175,55,0.6)] transition-all">
             Explore Properties
             <ChevronRight className="w-5 h-5" />
           </Link>
@@ -283,7 +283,7 @@ export default function LocationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-white text-[#0A0A0A]">
       {/* HERO SECTION */}
       <div ref={heroRef} className="relative h-[70vh] min-h-[600px] overflow-hidden">
         {/* Background Image */}
@@ -294,43 +294,43 @@ export default function LocationPage() {
             className="w-full h-full object-cover"
             suppressHydrationWarning
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-white/30 to-white"></div>
         </div>
 
         {/* Hero Content */}
         <div className="hero-content relative max-w-[1600px] mx-auto px-6 lg:px-16 h-full flex flex-col justify-center pt-24">
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm text-gray-300 mb-6">
-            <Link href="/" className="hover:text-[#E8C676] transition-colors">Home</Link>
+          <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
+            <Link href="/" className="hover:text-[#10B981] transition-colors">Home</Link>
             <ChevronRight className="w-4 h-4" />
-            <Link href="/explore" className="hover:text-[#E8C676] transition-colors">Explore</Link>
+            <Link href="/explore" className="hover:text-[#10B981] transition-colors">Explore</Link>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-[#E8C676]">{location.name}</span>
+            <span className="text-[#D4AF37]">{location.name}</span>
           </div>
 
           {/* Location Badge */}
-          <div className="inline-flex items-center gap-2 bg-[#00C870]/20 border border-[#00C870]/40 px-4 py-2 rounded-full mb-6 w-fit">
-            <MapPin className="w-4 h-4 text-[#00C870]" />
-            <span className="text-sm font-semibold text-[#00C870]">Premium Location</span>
+          <div className="inline-flex items-center gap-2 bg-[#10B981]/10 border border-[#10B981]/30 px-4 py-2 rounded-full mb-6 w-fit">
+            <MapPin className="w-4 h-4 text-[#10B981]" />
+            <span className="text-sm font-semibold text-[#10B981]">Premium Location</span>
           </div>
 
           {/* Title */}
-          <h1 className="text-5xl lg:text-7xl font-black mb-4 bg-gradient-to-r from-white via-[#E8C676] to-white bg-clip-text text-transparent">
+          <h1 className="text-5xl lg:text-7xl font-black mb-4 bg-gradient-to-r from-[#0A0A0A] via-[#D4AF37] to-[#0A0A0A] bg-clip-text text-transparent">
             {location.name}
           </h1>
 
           {/* Tagline */}
-          <p className="text-xl lg:text-2xl text-gray-300 font-light mb-8 max-w-3xl">
+          <p className="text-xl lg:text-2xl text-gray-700 font-light mb-8 max-w-3xl">
             {location.tagline}
           </p>
 
           {/* CTA */}
           <div className="flex items-center gap-4">
-            <button className="flex items-center gap-2 bg-gradient-to-r from-[#E8C676] to-[#D4AF37] text-black px-8 py-4 rounded-xl font-bold hover:shadow-[0_0_30px_rgba(232,198,118,0.6)] transition-all hover:scale-105">
+            <button className="flex items-center gap-2 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] text-black px-8 py-4 rounded-xl font-bold hover:shadow-[0_0_30px_rgba(212,175,55,0.6)] transition-all hover:scale-105">
               <Sparkles className="w-5 h-5" />
               <span>Explore Properties</span>
             </button>
-            <button className="flex items-center gap-2 bg-white/10 backdrop-blur-md text-white px-8 py-4 rounded-xl font-semibold border border-white/20 hover:bg-white/20 transition-all">
+            <button className="flex items-center gap-2 bg-white border border-gray-200 text-[#0A0A0A] px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all shadow-md">
               <Building2 className="w-5 h-5" />
               <span>View Map</span>
             </button>
@@ -342,24 +342,24 @@ export default function LocationPage() {
       <div ref={statsRef} className="relative -mt-20 z-10">
         <div className="max-w-[1600px] mx-auto px-6 lg:px-16">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="stat-card bg-gradient-to-br from-[#E8C676] to-[#D4AF37] rounded-2xl p-6 text-center">
+            <div className="stat-card bg-gradient-to-br from-[#D4AF37] to-[#B8941F] rounded-2xl p-6 text-center shadow-md">
               <div className="text-3xl font-black text-black mb-2">{location.stats.avgPrice}</div>
               <div className="text-sm font-semibold text-black/70">Avg. Price</div>
             </div>
-            <div className="stat-card bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 text-center">
-              <div className="text-3xl font-black text-[#00C870] mb-2">{location.stats.roi}</div>
-              <div className="text-sm font-semibold text-gray-400">Avg. ROI</div>
+            <div className="stat-card bg-white border border-gray-200 rounded-2xl p-6 text-center shadow-md">
+              <div className="text-3xl font-black text-[#10B981] mb-2">{location.stats.roi}</div>
+              <div className="text-sm font-semibold text-gray-600">Avg. ROI</div>
             </div>
-            <div className="stat-card bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 text-center">
-              <div className="text-3xl font-black text-white mb-2">{location.stats.projects}</div>
-              <div className="text-sm font-semibold text-gray-400">Active Projects</div>
+            <div className="stat-card bg-white border border-gray-200 rounded-2xl p-6 text-center shadow-md">
+              <div className="text-3xl font-black text-[#0A0A0A] mb-2">{location.stats.projects}</div>
+              <div className="text-sm font-semibold text-gray-600">Active Projects</div>
             </div>
-            <div className="stat-card bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 text-center">
-              <div className="flex items-center justify-center gap-2 text-3xl font-black text-[#00C870] mb-2">
+            <div className="stat-card bg-white border border-gray-200 rounded-2xl p-6 text-center shadow-md">
+              <div className="flex items-center justify-center gap-2 text-3xl font-black text-[#10B981] mb-2">
                 <TrendingUp className="w-7 h-7" />
                 <span>{location.stats.growthRate}</span>
               </div>
-              <div className="text-sm font-semibold text-gray-400">Annual Growth</div>
+              <div className="text-sm font-semibold text-gray-600">Annual Growth</div>
             </div>
           </div>
         </div>
@@ -370,19 +370,19 @@ export default function LocationPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Description */}
           <div>
-            <h2 className="text-3xl font-black mb-6">
-              About <span className="text-[#E8C676]">{location.name}</span>
+            <h2 className="text-3xl font-black mb-6 text-[#0A0A0A]">
+              About <span className="text-[#D4AF37]">{location.name}</span>
             </h2>
-            <p className="text-gray-300 leading-relaxed text-lg mb-8">
+            <p className="text-gray-600 leading-relaxed text-lg mb-8">
               {location.description}
             </p>
 
             {/* Amenities */}
-            <h3 className="text-xl font-bold mb-4 text-[#E8C676]">Key Amenities</h3>
+            <h3 className="text-xl font-bold mb-4 text-[#D4AF37]">Key Amenities</h3>
             <div className="grid grid-cols-2 gap-3">
               {location.amenities.map((amenity, index) => (
-                <div key={index} className="flex items-center gap-2 text-sm text-gray-400">
-                  <div className="w-1.5 h-1.5 bg-[#00C870] rounded-full"></div>
+                <div key={index} className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="w-1.5 h-1.5 bg-[#10B981] rounded-full"></div>
                   <span>{amenity}</span>
                 </div>
               ))}
@@ -391,14 +391,14 @@ export default function LocationPage() {
 
           {/* Highlights */}
           <div ref={highlightsRef}>
-            <h2 className="text-3xl font-black mb-6">Location Highlights</h2>
+            <h2 className="text-3xl font-black mb-6 text-[#0A0A0A]">Location Highlights</h2>
             <ul className="space-y-4">
               {location.highlights.map((highlight, index) => (
-                <li key={index} className="flex items-start gap-4 bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-colors">
-                  <div className="w-10 h-10 bg-[#00C870]/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Sparkles className="w-5 h-5 text-[#00C870]" />
+                <li key={index} className="flex items-start gap-4 bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-all shadow-sm">
+                  <div className="w-10 h-10 bg-[#10B981]/10 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                    <Sparkles className="w-5 h-5 text-[#10B981]" />
                   </div>
-                  <span className="text-gray-200 leading-relaxed">{highlight}</span>
+                  <span className="text-gray-600 leading-relaxed">{highlight}</span>
                 </li>
               ))}
             </ul>
@@ -409,16 +409,16 @@ export default function LocationPage() {
       {/* NEARBY PROJECTS */}
       <div ref={projectsRef} className="max-w-[1600px] mx-auto px-6 lg:px-16 py-20">
         <div className="mb-12">
-          <h2 className="text-4xl font-black mb-4">
-            Featured Projects in <span className="text-[#E8C676]">{location.name}</span>
+          <h2 className="text-4xl font-black mb-4 text-[#0A0A0A]">
+            Featured Projects in <span className="text-[#D4AF37]">{location.name}</span>
           </h2>
-          <p className="text-gray-400 text-lg">Discover premium off-plan developments in this prestigious location</p>
+          <p className="text-gray-600 text-lg">Discover premium off-plan developments in this prestigious location</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {location.nearbyProjects.map((project, index) => (
             <Link key={index} href={`/projects/${project.slug}`}>
-              <div className="project-card group bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-[#E8C676]/50 transition-all cursor-pointer">
+              <div className="project-card group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-[#D4AF37]/50 transition-all cursor-pointer shadow-md hover:shadow-xl">
                 {/* Image */}
                 <div className="relative h-56 overflow-hidden">
                   <img
@@ -427,24 +427,24 @@ export default function LocationPage() {
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     suppressHydrationWarning
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
 
                   {/* Price Badge */}
-                  <div className="absolute bottom-4 left-4 bg-[#E8C676] text-black px-4 py-2 rounded-lg font-bold">
+                  <div className="absolute bottom-4 left-4 bg-[#D4AF37] text-black px-4 py-2 rounded-lg font-bold">
                     {project.price}
                   </div>
                 </div>
 
                 {/* Content */}
                 <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2 group-hover:text-[#E8C676] transition-colors">
+                  <h3 className="text-xl font-bold mb-2 text-[#0A0A0A] group-hover:text-[#D4AF37] transition-colors">
                     {project.name}
                   </h3>
-                  <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
-                    <Building2 className="w-4 h-4 text-[#00C870]" />
+                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
+                    <Building2 className="w-4 h-4 text-[#10B981]" />
                     <span>{project.developer}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-[#E8C676] font-semibold group-hover:gap-3 transition-all">
+                  <div className="flex items-center gap-2 text-sm text-[#D4AF37] font-semibold group-hover:gap-3 transition-all">
                     <span>View Details</span>
                     <ChevronRight className="w-4 h-4" />
                   </div>
@@ -456,7 +456,7 @@ export default function LocationPage() {
 
         {/* View All CTA */}
         <div className="text-center mt-12">
-          <Link href="/explore" className="inline-flex items-center gap-2 bg-gradient-to-r from-[#E8C676] to-[#D4AF37] text-black px-8 py-4 rounded-xl font-bold hover:shadow-[0_0_30px_rgba(232,198,118,0.6)] transition-all hover:scale-105">
+          <Link href="/explore" className="inline-flex items-center gap-2 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] text-black px-8 py-4 rounded-xl font-bold hover:shadow-[0_0_30px_rgba(212,175,55,0.6)] transition-all hover:scale-105">
             <span>View All Properties</span>
             <ChevronRight className="w-5 h-5" />
           </Link>

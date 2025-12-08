@@ -314,21 +314,21 @@ export default function ExplorePage() {
   };
 
   return (
-    <main className="min-h-screen bg-black">
+    <main className="min-h-screen bg-white">
       {/* HERO SECTION */}
       <section ref={heroRef} className="relative min-h-screen flex items-center overflow-hidden pt-24 pb-20">
         {/* Background Dubai Skyline */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-black via-black/95 to-black/90 z-10"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-white via-white/95 to-white/90 z-10"></div>
           <img
             src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1920&h=1080&fit=crop"
             alt="Dubai"
-            className="w-full h-full object-cover opacity-20"
+            className="w-full h-full object-cover opacity-10"
             suppressHydrationWarning
           />
-          {/* Emerald + Gold Glows */}
-          <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-[#00C870]/10 rounded-full blur-[120px] z-20"></div>
-          <div className="absolute bottom-1/4 left-1/4 w-[500px] h-[500px] bg-[#E8C676]/8 rounded-full blur-[100px] z-20"></div>
+          {/* Subtle Light Gradients */}
+          <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-[#10B981]/5 rounded-full blur-[120px] z-20"></div>
+          <div className="absolute bottom-1/4 left-1/4 w-[500px] h-[500px] bg-[#D4AF37]/5 rounded-full blur-[100px] z-20"></div>
         </div>
 
         <div className="relative z-30 max-w-[1800px] mx-auto px-6 lg:px-16 w-full">
@@ -337,43 +337,43 @@ export default function ExplorePage() {
             <div className="lg:col-span-7 space-y-10">
               {/* Headline */}
               <div className="space-y-6">
-                <h1 className="hero-title text-6xl sm:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-tight">
+                <h1 className="hero-title text-6xl sm:text-7xl lg:text-8xl font-black text-[#0A0A0A] leading-[0.9] tracking-tight">
                   Explore Dubai's <br />
-                  <span className="bg-gradient-to-r from-[#00C870] via-[#E8C676] to-[#00C870] bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-[#10B981] via-[#D4AF37] to-[#10B981] bg-clip-text text-transparent">
                     Off-Plan Market
                   </span>
                 </h1>
-                <p className="hero-subtitle text-xl lg:text-2xl text-gray-300 max-w-2xl font-light leading-relaxed">
-                  AI-powered property discovery with <span className="text-[#00C870] font-semibold">real-time ROI analysis</span>
-                  {' '}and <span className="text-[#E8C676] font-semibold">developer analytics</span>.
+                <p className="hero-subtitle text-xl lg:text-2xl text-gray-600 max-w-2xl font-light leading-relaxed">
+                  AI-powered property discovery with <span className="text-[#10B981] font-semibold">real-time ROI analysis</span>
+                  {' '}and <span className="text-[#D4AF37] font-semibold">developer analytics</span>.
                 </p>
               </div>
 
               {/* AI SUPER SEARCH BAR */}
               <div ref={searchBarRef} className="relative">
-                <div className="relative bg-black/60 backdrop-blur-2xl border-2 border-[#E8C676]/40 rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.9)] hover:border-[#00C870]/60 transition-all duration-300 group">
+                <div className="relative bg-white border-2 border-[#D4AF37]/40 rounded-2xl overflow-hidden shadow-md hover:border-[#10B981]/60 hover:shadow-lg transition-all duration-300 group">
                   <div className="flex items-stretch">
                     {/* Gold Icon Capsule */}
-                    <div className="flex items-center justify-center px-6 bg-gradient-to-br from-[#E8C676] to-[#D4AF37]">
-                      <Sparkles className="w-6 h-6 text-black" />
+                    <div className="flex items-center justify-center px-6 bg-gradient-to-br from-[#D4AF37] to-[#B8941F]">
+                      <Sparkles className="w-6 h-6 text-white" />
                     </div>
 
                     {/* Input */}
                     <input
                       type="text"
                       placeholder="Ask Genie anything..."
-                      className="flex-1 text-lg px-6 py-6 bg-transparent outline-none text-white placeholder-gray-500 font-light"
+                      className="flex-1 text-lg px-6 py-6 bg-transparent outline-none text-[#0A0A0A] placeholder-gray-400 font-light"
                     />
 
                     {/* Search Button */}
-                    <button className="px-10 bg-gradient-to-r from-[#00C870] to-[#059669] text-white font-bold hover:shadow-[0_0_30px_rgba(0,200,112,0.4)] transition-all duration-300 flex items-center gap-3">
+                    <button className="px-10 bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-bold hover:shadow-lg transition-all duration-300 flex items-center gap-3">
                       <Search className="w-5 h-5" />
                       <span className="hidden sm:inline">Search</span>
                     </button>
                   </div>
 
                   {/* Top Gold Line */}
-                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#E8C676] to-transparent"></div>
+                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
                 </div>
 
                 {/* Suggestion Chips */}
@@ -381,7 +381,7 @@ export default function ExplorePage() {
                   {suggestions.map((suggestion, idx) => (
                     <button
                       key={idx}
-                      className="text-xs bg-black/60 backdrop-blur-xl text-gray-400 hover:text-[#00C870] px-4 py-2 rounded-full border border-[#00C870]/30 hover:border-[#00C870] hover:shadow-[0_0_15px_rgba(0,200,112,0.3)] transition-all duration-300"
+                      className="text-xs bg-white text-gray-600 hover:text-[#10B981] px-4 py-2 rounded-full border border-[#10B981]/30 hover:border-[#10B981] hover:shadow-md transition-all duration-300"
                     >
                       {suggestion}
                     </button>
@@ -394,32 +394,32 @@ export default function ExplorePage() {
             <div className="lg:col-span-5">
               <div ref={dataCardsRef} className="space-y-6">
                 {/* Large ROI Card */}
-                <div className="relative bg-black/60 backdrop-blur-3xl border-2 border-[#00C870]/40 rounded-3xl p-10 shadow-[0_20px_60px_rgba(0,0,0,0.9)] hover:shadow-[0_0_60px_rgba(0,200,112,0.3)] transition-all duration-500 overflow-hidden group">
-                  {/* Emerald Glow Inside */}
-                  <div className="absolute -top-20 -right-20 w-60 h-60 bg-[#00C870]/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+                <div className="relative bg-white border-2 border-[#10B981]/40 rounded-3xl p-10 shadow-md hover:shadow-lg transition-all duration-500 overflow-hidden group">
+                  {/* Subtle Light Gradient Inside */}
+                  <div className="absolute -top-20 -right-20 w-60 h-60 bg-[#10B981]/5 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
 
                   <div className="relative">
                     <div className="flex items-start justify-between mb-6">
-                      <div className="w-16 h-16 bg-gradient-to-br from-[#00C870] to-[#059669] rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(0,200,112,0.6)]">
+                      <div className="w-16 h-16 bg-gradient-to-br from-[#10B981] to-[#059669] rounded-2xl flex items-center justify-center shadow-md">
                         <TrendingUp className="w-8 h-8 text-white" />
                       </div>
-                      <span className="text-xs text-[#E8C676] font-bold tracking-wider border border-[#E8C676]/40 px-3 py-1 rounded-full">LIVE DATA</span>
+                      <span className="text-xs text-[#D4AF37] font-bold tracking-wider border border-[#D4AF37]/40 px-3 py-1 rounded-full">LIVE DATA</span>
                     </div>
-                    <div className="text-7xl font-black text-white mb-3">12.8<span className="text-[#00C870]">%</span></div>
-                    <div className="text-sm text-gray-400 font-semibold uppercase tracking-wide">Average ROI</div>
+                    <div className="text-7xl font-black text-[#0A0A0A] mb-3">12.8<span className="text-[#10B981]">%</span></div>
+                    <div className="text-sm text-gray-600 font-semibold uppercase tracking-wide">Average ROI</div>
                   </div>
                 </div>
 
                 {/* Two Smaller Cards */}
                 <div className="grid grid-cols-2 gap-5">
-                  <div className="bg-black/60 backdrop-blur-xl border border-[#E8C676]/30 rounded-2xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:border-[#E8C676] hover:shadow-[0_0_25px_rgba(232,198,118,0.4)] transition-all duration-300">
-                    <div className="text-4xl font-black text-white mb-2">100<span className="text-[#E8C676]">+</span></div>
-                    <div className="text-xs text-gray-500 uppercase tracking-wider">Projects</div>
+                  <div className="bg-white border border-[#D4AF37]/30 rounded-2xl p-6 shadow-md hover:border-[#D4AF37] hover:shadow-lg transition-all duration-300">
+                    <div className="text-4xl font-black text-[#0A0A0A] mb-2">100<span className="text-[#D4AF37]">+</span></div>
+                    <div className="text-xs text-gray-600 uppercase tracking-wider">Projects</div>
                   </div>
 
-                  <div className="bg-black/60 backdrop-blur-xl border border-[#00C870]/30 rounded-2xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:border-[#00C870] hover:shadow-[0_0_25px_rgba(0,200,112,0.4)] transition-all duration-300">
-                    <div className="text-4xl font-black text-white mb-2">25<span className="text-[#00C870]">+</span></div>
-                    <div className="text-xs text-gray-500 uppercase tracking-wider">Developers</div>
+                  <div className="bg-white border border-[#10B981]/30 rounded-2xl p-6 shadow-md hover:border-[#10B981] hover:shadow-lg transition-all duration-300">
+                    <div className="text-4xl font-black text-[#0A0A0A] mb-2">25<span className="text-[#10B981]">+</span></div>
+                    <div className="text-xs text-gray-600 uppercase tracking-wider">Developers</div>
                   </div>
                 </div>
               </div>
@@ -429,21 +429,21 @@ export default function ExplorePage() {
       </section>
 
       {/* FEATURED PROJECTS - MASONRY LAYOUT */}
-      <section ref={projectsRef} className="relative py-20 lg:py-28 bg-gradient-to-b from-black via-[#0A0A0A] to-black overflow-hidden">
-        {/* Background Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#00C870]/5 rounded-full blur-[150px]"></div>
+      <section ref={projectsRef} className="relative py-20 lg:py-28 bg-[#F9FAFB] overflow-hidden">
+        {/* Background Gradient */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#10B981]/3 rounded-full blur-[150px]"></div>
 
         <div className="relative max-w-[1800px] mx-auto px-6 lg:px-16">
           {/* Section Header */}
           <div className="mb-16">
-            <div className="inline-flex items-center gap-2 bg-[#00C870]/10 border border-[#00C870]/30 px-4 py-2 rounded-full mb-6">
-              <Sparkles className="w-4 h-4 text-[#00C870]" />
-              <span className="text-xs font-bold text-[#00C870] uppercase tracking-wide">AI-Curated</span>
+            <div className="inline-flex items-center gap-2 bg-[#10B981]/10 border border-[#10B981]/30 px-4 py-2 rounded-full mb-6">
+              <Sparkles className="w-4 h-4 text-[#10B981]" />
+              <span className="text-xs font-bold text-[#10B981] uppercase tracking-wide">AI-Curated</span>
             </div>
-            <h2 className="section-title text-5xl lg:text-6xl font-black text-white mb-4 leading-tight">
-              Featured <span className="bg-gradient-to-r from-[#E8C676] to-[#00C870] bg-clip-text text-transparent">Projects</span>
+            <h2 className="section-title text-5xl lg:text-6xl font-black text-[#0A0A0A] mb-4 leading-tight">
+              Featured <span className="bg-gradient-to-r from-[#D4AF37] to-[#10B981] bg-clip-text text-transparent">Projects</span>
             </h2>
-            <p className="text-xl text-gray-400 max-w-2xl">Premium off-plan developments with exceptional ROI potential</p>
+            <p className="text-xl text-gray-600 max-w-2xl">Premium off-plan developments with exceptional ROI potential</p>
           </div>
 
           {/* MASONRY GRID */}
@@ -454,10 +454,10 @@ export default function ExplorePage() {
               onMouseEnter={handleCardHover}
               onMouseLeave={handleCardLeave}
             >
-              <Link href={`/projects/${projects[0].id}`} className="block h-full relative bg-black rounded-3xl overflow-hidden border border-[#E8C676]/20 hover:border-[#E8C676]/60 transition-all duration-500 shadow-[0_20px_60px_rgba(0,0,0,0.8)] hover:shadow-[0_0_60px_rgba(232,198,118,0.3)] hover:-translate-y-1">
+              <Link href={`/projects/${projects[0].id}`} className="block h-full relative bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#D4AF37]/60 transition-all duration-500 shadow-md hover:shadow-lg hover:-translate-y-1">
                 {/* Image */}
                 <div className="relative h-full min-h-[600px] overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent z-10"></div>
                   <img
                     src={projects[0].image}
                     alt={projects[0].name}
@@ -466,33 +466,33 @@ export default function ExplorePage() {
                   />
 
                   {/* ROI Badge */}
-                  <div className="absolute top-6 left-6 bg-gradient-to-r from-[#E8C676] to-[#D4AF37] text-black px-4 py-2 rounded-full text-sm font-bold shadow-lg z-20">
+                  <div className="absolute top-6 left-6 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] text-white px-4 py-2 rounded-full text-sm font-bold shadow-md z-20">
                     {projects[0].roi} ROI
                   </div>
 
                   {/* Content Overlay */}
                   <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
-                    <h3 className="text-4xl font-black text-white mb-3 group-hover:text-[#E8C676] transition-colors">{projects[0].name}</h3>
-                    <p className="text-lg text-gray-300 mb-4">{projects[0].developer}</p>
+                    <h3 className="text-4xl font-black text-[#0A0A0A] mb-3 group-hover:text-[#D4AF37] transition-colors">{projects[0].name}</h3>
+                    <p className="text-lg text-gray-600 mb-4">{projects[0].developer}</p>
 
                     <div className="flex flex-wrap items-center gap-4 mb-6">
-                      <div className="flex items-center gap-2 text-sm text-gray-300">
-                        <MapPin className="w-4 h-4 text-[#E8C676]" />
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <MapPin className="w-4 h-4 text-[#D4AF37]" />
                         {projects[0].location}
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-300">
-                        <Calendar className="w-4 h-4 text-[#E8C676]" />
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Calendar className="w-4 h-4 text-[#D4AF37]" />
                         {projects[0].completion}
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-300">
-                        <CreditCard className="w-4 h-4 text-[#E8C676]" />
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <CreditCard className="w-4 h-4 text-[#D4AF37]" />
                         {projects[0].payment}
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <div className="text-3xl font-black text-[#00C870]">AED {projects[0].price}</div>
-                      <div className="flex items-center gap-2 text-[#E8C676] font-bold">
+                      <div className="text-3xl font-black text-[#10B981]">AED {projects[0].price}</div>
+                      <div className="flex items-center gap-2 text-[#D4AF37] font-bold">
                         View Details
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                       </div>
@@ -508,9 +508,9 @@ export default function ExplorePage() {
               onMouseEnter={handleCardHover}
               onMouseLeave={handleCardLeave}
             >
-              <Link href={`/projects/${projects[1].id}`} className="block h-full relative bg-black rounded-3xl overflow-hidden border border-[#00C870]/20 hover:border-[#00C870]/60 transition-all duration-500 shadow-[0_20px_60px_rgba(0,0,0,0.8)] hover:shadow-[0_0_60px_rgba(0,200,112,0.3)] hover:-translate-y-1">
+              <Link href={`/projects/${projects[1].id}`} className="block h-full relative bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#10B981]/60 transition-all duration-500 shadow-md hover:shadow-lg hover:-translate-y-1">
                 <div className="relative h-full min-h-[300px] overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent z-10"></div>
                   <img
                     src={projects[1].image}
                     alt={projects[1].name}
@@ -518,14 +518,14 @@ export default function ExplorePage() {
                     suppressHydrationWarning
                   />
 
-                  <div className="absolute top-4 left-4 bg-gradient-to-r from-[#E8C676] to-[#D4AF37] text-black px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+                  <div className="absolute top-4 left-4 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] text-white px-3 py-1 rounded-full text-xs font-bold shadow-md z-20">
                     {projects[1].roi} ROI
                   </div>
 
                   <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
-                    <h3 className="text-2xl font-black text-white mb-2 group-hover:text-[#00C870] transition-colors">{projects[1].name}</h3>
-                    <p className="text-sm text-gray-300 mb-3">{projects[1].developer}</p>
-                    <div className="text-xl font-black text-[#00C870]">AED {projects[1].price}</div>
+                    <h3 className="text-2xl font-black text-[#0A0A0A] mb-2 group-hover:text-[#10B981] transition-colors">{projects[1].name}</h3>
+                    <p className="text-sm text-gray-600 mb-3">{projects[1].developer}</p>
+                    <div className="text-xl font-black text-[#10B981]">AED {projects[1].price}</div>
                   </div>
                 </div>
               </Link>
@@ -537,9 +537,9 @@ export default function ExplorePage() {
               onMouseEnter={handleCardHover}
               onMouseLeave={handleCardLeave}
             >
-              <Link href={`/projects/${projects[2].id}`} className="block h-full relative bg-black rounded-3xl overflow-hidden border border-[#E8C676]/20 hover:border-[#E8C676]/60 transition-all duration-500 shadow-[0_20px_60px_rgba(0,0,0,0.8)] hover:shadow-[0_0_60px_rgba(232,198,118,0.3)] hover:-translate-y-1">
+              <Link href={`/projects/${projects[2].id}`} className="block h-full relative bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#D4AF37]/60 transition-all duration-500 shadow-md hover:shadow-lg hover:-translate-y-1">
                 <div className="relative h-full min-h-[290px] overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent z-10"></div>
                   <img
                     src={projects[2].image}
                     alt={projects[2].name}
@@ -547,13 +547,13 @@ export default function ExplorePage() {
                     suppressHydrationWarning
                   />
 
-                  <div className="absolute top-4 left-4 bg-gradient-to-r from-[#E8C676] to-[#D4AF37] text-black px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+                  <div className="absolute top-4 left-4 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] text-white px-3 py-1 rounded-full text-xs font-bold shadow-md z-20">
                     {projects[2].roi} ROI
                   </div>
 
                   <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
-                    <h3 className="text-lg font-black text-white mb-1 group-hover:text-[#E8C676] transition-colors line-clamp-1">{projects[2].name}</h3>
-                    <div className="text-lg font-black text-[#00C870]">AED {projects[2].price}</div>
+                    <h3 className="text-lg font-black text-[#0A0A0A] mb-1 group-hover:text-[#D4AF37] transition-colors line-clamp-1">{projects[2].name}</h3>
+                    <div className="text-lg font-black text-[#10B981]">AED {projects[2].price}</div>
                   </div>
                 </div>
               </Link>
@@ -565,9 +565,9 @@ export default function ExplorePage() {
               onMouseEnter={handleCardHover}
               onMouseLeave={handleCardLeave}
             >
-              <Link href={`/projects/${projects[3].id}`} className="block h-full relative bg-black rounded-3xl overflow-hidden border border-[#00C870]/20 hover:border-[#00C870]/60 transition-all duration-500 shadow-[0_20px_60px_rgba(0,0,0,0.8)] hover:shadow-[0_0_60px_rgba(0,200,112,0.3)] hover:-translate-y-1">
+              <Link href={`/projects/${projects[3].id}`} className="block h-full relative bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#10B981]/60 transition-all duration-500 shadow-md hover:shadow-lg hover:-translate-y-1">
                 <div className="relative h-full min-h-[290px] overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent z-10"></div>
                   <img
                     src={projects[3].image}
                     alt={projects[3].name}
@@ -575,13 +575,13 @@ export default function ExplorePage() {
                     suppressHydrationWarning
                   />
 
-                  <div className="absolute top-4 left-4 bg-gradient-to-r from-[#E8C676] to-[#D4AF37] text-black px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+                  <div className="absolute top-4 left-4 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] text-white px-3 py-1 rounded-full text-xs font-bold shadow-md z-20">
                     {projects[3].roi} ROI
                   </div>
 
                   <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
-                    <h3 className="text-lg font-black text-white mb-1 group-hover:text-[#00C870] transition-colors line-clamp-1">{projects[3].name}</h3>
-                    <div className="text-lg font-black text-[#00C870]">AED {projects[3].price}</div>
+                    <h3 className="text-lg font-black text-[#0A0A0A] mb-1 group-hover:text-[#10B981] transition-colors line-clamp-1">{projects[3].name}</h3>
+                    <div className="text-lg font-black text-[#10B981]">AED {projects[3].price}</div>
                   </div>
                 </div>
               </Link>
@@ -591,22 +591,22 @@ export default function ExplorePage() {
       </section>
 
       {/* TOP DEVELOPERS - ULTRA PREMIUM */}
-      <section ref={developersRef} className="relative py-24 lg:py-32 bg-black overflow-hidden">
-        {/* Cinematic Background Lighting */}
-        <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-[#E8C676]/3 rounded-full blur-[150px]"></div>
-        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-[#00C870]/3 rounded-full blur-[120px]"></div>
+      <section ref={developersRef} className="relative py-24 lg:py-32 bg-white overflow-hidden">
+        {/* Subtle Light Gradients */}
+        <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-[#D4AF37]/3 rounded-full blur-[150px]"></div>
+        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-[#10B981]/3 rounded-full blur-[120px]"></div>
 
         <div className="relative max-w-[1800px] mx-auto px-6 lg:px-16">
           {/* Section Header */}
           <div className="mb-20">
-            <div className="inline-flex items-center gap-2 bg-[#E8C676]/10 border border-[#E8C676]/30 px-5 py-2.5 rounded-full mb-8">
-              <Award className="w-4 h-4 text-[#E8C676]" />
-              <span className="text-xs font-bold text-[#E8C676] uppercase tracking-widest">Verified Elite Partners</span>
+            <div className="inline-flex items-center gap-2 bg-[#D4AF37]/10 border border-[#D4AF37]/30 px-5 py-2.5 rounded-full mb-8">
+              <Award className="w-4 h-4 text-[#D4AF37]" />
+              <span className="text-xs font-bold text-[#D4AF37] uppercase tracking-widest">Verified Elite Partners</span>
             </div>
-            <h2 className="section-title text-5xl lg:text-7xl font-black text-white mb-6 leading-[1.1]">
-              Top <span className="bg-gradient-to-r from-[#E8C676] via-[#D4AF37] to-[#E8C676] bg-clip-text text-transparent">Developers</span>
+            <h2 className="section-title text-5xl lg:text-7xl font-black text-[#0A0A0A] mb-6 leading-[1.1]">
+              Top <span className="bg-gradient-to-r from-[#D4AF37] via-[#B8941F] to-[#D4AF37] bg-clip-text text-transparent">Developers</span>
             </h2>
-            <p className="text-xl lg:text-2xl text-gray-400 max-w-3xl font-light">
+            <p className="text-xl lg:text-2xl text-gray-600 max-w-3xl font-light">
               Partnering with Dubai's most prestigious developers. Proven excellence, unmatched delivery.
             </p>
           </div>
@@ -614,8 +614,7 @@ export default function ExplorePage() {
           {/* HERO DEVELOPER CARD - Full Width */}
           <Link
             href={`/developers/${developers[0].slug}`}
-            className="dev-card block mb-8 group relative overflow-hidden rounded-[2rem] border-2 border-[#E8C676]/40 hover:border-[#E8C676] transition-all duration-500"
-            style={{ boxShadow: '0 0 60px rgba(232, 198, 118, 0.15)' }}
+            className="dev-card block mb-8 group relative overflow-hidden rounded-[2rem] border-2 border-[#D4AF37]/40 hover:border-[#D4AF37] transition-all duration-500 shadow-md hover:shadow-lg"
           >
             {/* Background Image - Real Dubai Landmark */}
             <div className="relative h-[500px] lg:h-[600px]">
@@ -626,62 +625,60 @@ export default function ExplorePage() {
                 suppressHydrationWarning
               />
 
-              {/* Subtle Dark Gradient (25% opacity) */}
-              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30"></div>
+              {/* Light Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/50 to-white/30"></div>
 
-              {/* Emerald Accent Glow - Top Right */}
-              <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#00C870]/10 rounded-full blur-[100px]"></div>
-
-              {/* Gold Shimmer - Bottom Left */}
-              <div className="absolute bottom-0 left-0 w-[500px] h-[300px] bg-[#E8C676]/10 rounded-full blur-[120px]"></div>
+              {/* Subtle Accent Gradients */}
+              <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#10B981]/5 rounded-full blur-[100px]"></div>
+              <div className="absolute bottom-0 left-0 w-[500px] h-[300px] bg-[#D4AF37]/5 rounded-full blur-[120px]"></div>
 
               {/* Content Overlay */}
               <div className="absolute inset-0 flex flex-col justify-between p-10 lg:p-16">
                 {/* Top Section - Badge */}
                 <div className="flex items-start justify-between">
-                  <div className="inline-flex items-center gap-2.5 bg-gradient-to-r from-[#E8C676] to-[#D4AF37] px-6 py-3 rounded-2xl shadow-[0_0_30px_rgba(232,198,118,0.4)]">
-                    <Star className="w-5 h-5 fill-black text-black" />
-                    <span className="text-sm font-black text-black uppercase tracking-wider">VERIFIED PARTNER</span>
+                  <div className="inline-flex items-center gap-2.5 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] px-6 py-3 rounded-2xl shadow-md">
+                    <Star className="w-5 h-5 fill-white text-white" />
+                    <span className="text-sm font-black text-white uppercase tracking-wider">VERIFIED PARTNER</span>
                   </div>
 
                   {/* Gold Icon Top Right */}
-                  <div className="w-16 h-16 bg-[#E8C676]/20 backdrop-blur-md border border-[#E8C676]/40 rounded-2xl flex items-center justify-center">
-                    <Building2 className="w-8 h-8 text-[#E8C676]" />
+                  <div className="w-16 h-16 bg-white/20 backdrop-blur-md border border-[#D4AF37]/40 rounded-2xl flex items-center justify-center">
+                    <Building2 className="w-8 h-8 text-[#D4AF37]" />
                   </div>
                 </div>
 
                 {/* Bottom Section - Info */}
                 <div>
                   {/* Developer Name */}
-                  <h3 className="text-5xl lg:text-7xl font-black text-white mb-8 tracking-tight leading-none">
+                  <h3 className="text-5xl lg:text-7xl font-black text-[#0A0A0A] mb-8 tracking-tight leading-none">
                     {developers[0].name}
                   </h3>
 
                   {/* Stats Grid */}
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5">
-                      <div className="text-3xl lg:text-4xl font-black text-white mb-2">{developers[0].projects}</div>
-                      <div className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Total Projects</div>
+                    <div className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-2xl p-5 shadow-md">
+                      <div className="text-3xl lg:text-4xl font-black text-[#0A0A0A] mb-2">{developers[0].projects}</div>
+                      <div className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Total Projects</div>
                     </div>
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5">
-                      <div className="text-3xl lg:text-4xl font-black text-[#E8C676] mb-2">{developers[0].roi}</div>
-                      <div className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Average ROI</div>
+                    <div className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-2xl p-5 shadow-md">
+                      <div className="text-3xl lg:text-4xl font-black text-[#D4AF37] mb-2">{developers[0].roi}</div>
+                      <div className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Average ROI</div>
                     </div>
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5">
-                      <div className="flex items-center gap-2 text-3xl lg:text-4xl font-black text-white mb-2">
-                        <Star className="w-7 h-7 fill-[#E8C676] text-[#E8C676]" />
+                    <div className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-2xl p-5 shadow-md">
+                      <div className="flex items-center gap-2 text-3xl lg:text-4xl font-black text-[#0A0A0A] mb-2">
+                        <Star className="w-7 h-7 fill-[#D4AF37] text-[#D4AF37]" />
                         <span>{developers[0].rating}</span>
                       </div>
-                      <div className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Rating</div>
+                      <div className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Rating</div>
                     </div>
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5">
-                      <div className="text-3xl lg:text-4xl font-black text-[#00C870] mb-2">{developers[0].onTime}%</div>
-                      <div className="text-sm font-semibold text-gray-400 uppercase tracking-wide">On-Time Delivery</div>
+                    <div className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-2xl p-5 shadow-md">
+                      <div className="text-3xl lg:text-4xl font-black text-[#10B981] mb-2">{developers[0].onTime}%</div>
+                      <div className="text-sm font-semibold text-gray-600 uppercase tracking-wide">On-Time Delivery</div>
                     </div>
                   </div>
 
                   {/* CTA Link */}
-                  <div className="inline-flex items-center gap-3 text-[#E8C676] font-bold text-lg group-hover:gap-5 transition-all">
+                  <div className="inline-flex items-center gap-3 text-[#D4AF37] font-bold text-lg group-hover:gap-5 transition-all">
                     <span>Explore Developer</span>
                     <ArrowRight className="w-6 h-6" />
                   </div>
@@ -696,8 +693,7 @@ export default function ExplorePage() {
               <Link
                 key={dev.slug}
                 href={`/developers/${dev.slug}`}
-                className="dev-card group relative overflow-hidden rounded-3xl border border-white/10 hover:border-[#00C870]/60 transition-all duration-500 bg-black"
-                style={{ boxShadow: '0 4px 40px rgba(0, 0, 0, 0.5)' }}
+                className="dev-card group relative overflow-hidden rounded-3xl border border-gray-200 hover:border-[#10B981]/60 transition-all duration-500 bg-white shadow-md hover:shadow-lg"
               >
                 {/* Background Image - High Quality */}
                 <div className="relative h-80">
@@ -708,41 +704,41 @@ export default function ExplorePage() {
                     suppressHydrationWarning
                   />
 
-                  {/* Very Light Overlay (20-25% opacity) - Keep Image Visible */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                  {/* Light Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-white/20 to-transparent"></div>
 
-                  {/* Emerald Glow on Hover */}
-                  <div className="absolute inset-0 bg-[#00C870]/0 group-hover:bg-[#00C870]/10 transition-all duration-500"></div>
+                  {/* Subtle Hover Effect */}
+                  <div className="absolute inset-0 bg-[#10B981]/0 group-hover:bg-[#10B981]/5 transition-all duration-500"></div>
 
                   {/* Gold Icon - Top Left */}
-                  <div className="absolute top-4 left-4 w-12 h-12 bg-[#E8C676]/20 backdrop-blur-md border border-[#E8C676]/40 rounded-xl flex items-center justify-center">
-                    <Building2 className="w-6 h-6 text-[#E8C676]" />
+                  <div className="absolute top-4 left-4 w-12 h-12 bg-white/80 backdrop-blur-md border border-[#D4AF37]/40 rounded-xl flex items-center justify-center shadow-md">
+                    <Building2 className="w-6 h-6 text-[#D4AF37]" />
                   </div>
 
                   {/* Content - Bottom Overlay */}
                   <div className="absolute bottom-0 left-0 right-0 p-6">
                     {/* Developer Name */}
-                    <h3 className="text-2xl font-black text-white mb-4 leading-tight">
+                    <h3 className="text-2xl font-black text-[#0A0A0A] mb-4 leading-tight">
                       {dev.name}
                     </h3>
 
                     {/* Stats */}
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <div className="text-2xl font-black text-[#00C870] mb-0.5">{dev.projects}</div>
-                        <div className="text-xs font-semibold text-gray-400 uppercase">Projects</div>
+                        <div className="text-2xl font-black text-[#10B981] mb-0.5">{dev.projects}</div>
+                        <div className="text-xs font-semibold text-gray-600 uppercase">Projects</div>
                       </div>
                       <div>
-                        <div className="text-2xl font-black text-[#E8C676] mb-0.5">{dev.roi}</div>
-                        <div className="text-xs font-semibold text-gray-400 uppercase">Avg ROI</div>
+                        <div className="text-2xl font-black text-[#D4AF37] mb-0.5">{dev.roi}</div>
+                        <div className="text-xs font-semibold text-gray-600 uppercase">Avg ROI</div>
                       </div>
                     </div>
 
                     {/* Divider */}
-                    <div className="h-px bg-gradient-to-r from-[#E8C676]/50 via-[#E8C676]/20 to-transparent mb-3"></div>
+                    <div className="h-px bg-gradient-to-r from-[#D4AF37]/50 via-[#D4AF37]/20 to-transparent mb-3"></div>
 
                     {/* View Link */}
-                    <div className="flex items-center gap-2 text-sm font-bold text-white/70 group-hover:text-[#E8C676] transition-colors">
+                    <div className="flex items-center gap-2 text-sm font-bold text-gray-600 group-hover:text-[#D4AF37] transition-colors">
                       <span>View Portfolio</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>
@@ -755,15 +751,15 @@ export default function ExplorePage() {
       </section>
 
       {/* LATEST LAUNCHES - Horizontal Scroll */}
-      <section ref={launchesRef} className="relative py-20 lg:py-28 bg-gradient-to-b from-black via-[#0A0A0A] to-black overflow-hidden">
+      <section ref={launchesRef} className="relative py-20 lg:py-28 bg-[#F9FAFB] overflow-hidden">
         <div className="relative max-w-[1800px] mx-auto px-6 lg:px-16">
           <div className="mb-12">
-            <div className="inline-flex items-center gap-2 bg-[#00C870]/10 border border-[#00C870]/30 px-4 py-2 rounded-full mb-6">
-              <Sparkles className="w-4 h-4 text-[#00C870]" />
-              <span className="text-xs font-bold text-[#00C870] uppercase tracking-wide">New This Month</span>
+            <div className="inline-flex items-center gap-2 bg-[#10B981]/10 border border-[#10B981]/30 px-4 py-2 rounded-full mb-6">
+              <Sparkles className="w-4 h-4 text-[#10B981]" />
+              <span className="text-xs font-bold text-[#10B981] uppercase tracking-wide">New This Month</span>
             </div>
-            <h2 className="section-title text-5xl lg:text-6xl font-black text-white mb-4 leading-tight">
-              Latest <span className="bg-gradient-to-r from-[#00C870] to-[#E8C676] bg-clip-text text-transparent">Launches</span>
+            <h2 className="section-title text-5xl lg:text-6xl font-black text-[#0A0A0A] mb-4 leading-tight">
+              Latest <span className="bg-gradient-to-r from-[#10B981] to-[#D4AF37] bg-clip-text text-transparent">Launches</span>
             </h2>
           </div>
 
@@ -774,9 +770,9 @@ export default function ExplorePage() {
                 href="/projects"
                 className="flex-none w-[400px] group"
               >
-                <div className="relative bg-black rounded-3xl overflow-hidden border border-[#00C870]/20 hover:border-[#00C870]/60 transition-all duration-500 shadow-[0_20px_60px_rgba(0,0,0,0.8)] hover:shadow-[0_0_60px_rgba(0,200,112,0.3)] hover:-translate-y-1">
+                <div className="relative bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#10B981]/60 transition-all duration-500 shadow-md hover:shadow-lg hover:-translate-y-1">
                   <div className="relative h-64 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent z-10"></div>
                     <img
                       src={launch.image}
                       alt={launch.name}
@@ -784,14 +780,14 @@ export default function ExplorePage() {
                       suppressHydrationWarning
                     />
 
-                    <div className="absolute top-4 left-4 bg-[#00C870] text-black px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+                    <div className="absolute top-4 left-4 bg-[#10B981] text-white px-3 py-1 rounded-full text-xs font-bold shadow-md z-20">
                       {launch.badge}
                     </div>
 
                     <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
-                      <h3 className="text-2xl font-black text-white mb-2 group-hover:text-[#00C870] transition-colors">{launch.name}</h3>
-                      <p className="text-sm text-gray-300 mb-3">{launch.developer} · {launch.location}</p>
-                      <div className="text-2xl font-black text-[#E8C676]">AED {launch.price}</div>
+                      <h3 className="text-2xl font-black text-[#0A0A0A] mb-2 group-hover:text-[#10B981] transition-colors">{launch.name}</h3>
+                      <p className="text-sm text-gray-600 mb-3">{launch.developer} · {launch.location}</p>
+                      <div className="text-2xl font-black text-[#D4AF37]">AED {launch.price}</div>
                     </div>
                   </div>
                 </div>
@@ -802,9 +798,9 @@ export default function ExplorePage() {
       </section>
 
       {/* WHY INVEST */}
-      <section className="relative py-20 lg:py-28 bg-black overflow-hidden">
+      <section className="relative py-20 lg:py-28 bg-white overflow-hidden">
         {/* Dubai Silhouette Background */}
-        <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0 opacity-3">
           <img
             src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1920&h=400&fit=crop"
             alt="Dubai Skyline"
@@ -813,28 +809,28 @@ export default function ExplorePage() {
           />
         </div>
 
-        {/* Emerald Glows */}
-        <div className="absolute top-20 left-[10%] w-[500px] h-[500px] bg-[#00C870]/5 rounded-full blur-[120px]"></div>
+        {/* Subtle Light Gradients */}
+        <div className="absolute top-20 left-[10%] w-[500px] h-[500px] bg-[#10B981]/3 rounded-full blur-[120px]"></div>
 
         <div className="relative max-w-[1600px] mx-auto px-6 lg:px-16">
           <div className="text-center mb-16">
-            <h2 className="section-title text-5xl lg:text-6xl font-black text-white mb-4 leading-tight">
-              Why <span className="bg-gradient-to-r from-[#E8C676] to-[#00C870] bg-clip-text text-transparent">Invest</span>
+            <h2 className="section-title text-5xl lg:text-6xl font-black text-[#0A0A0A] mb-4 leading-tight">
+              Why <span className="bg-gradient-to-r from-[#D4AF37] to-[#10B981] bg-clip-text text-transparent">Invest</span>
             </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">Unlock exclusive benefits with off-plan investments</p>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Unlock exclusive benefits with off-plan investments</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {benefits.map((benefit, idx) => (
               <div
                 key={idx}
-                className="bg-black/60 backdrop-blur-xl border border-[#00C870]/20 rounded-3xl p-8 hover:border-[#00C870]/60 transition-all duration-300 group"
+                className="bg-white border border-gray-200 rounded-3xl p-8 hover:border-[#10B981]/60 hover:shadow-lg transition-all duration-300 group"
               >
-                <div className="w-16 h-16 bg-[#00C870]/10 rounded-2xl flex items-center justify-center text-[#00C870] mb-6 group-hover:scale-110 transition-transform">
+                <div className="w-16 h-16 bg-[#10B981]/10 rounded-2xl flex items-center justify-center text-[#10B981] mb-6 group-hover:scale-110 transition-transform">
                   {benefit.icon}
                 </div>
-                <h3 className="text-2xl font-bold text-[#E8C676] mb-3">{benefit.title}</h3>
-                <p className="text-gray-300 leading-relaxed">{benefit.description}</p>
+                <h3 className="text-2xl font-bold text-[#D4AF37] mb-3">{benefit.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
               </div>
             ))}
           </div>

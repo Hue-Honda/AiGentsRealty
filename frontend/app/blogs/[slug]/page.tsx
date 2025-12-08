@@ -122,12 +122,7 @@ export default async function BlogPostPage({
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
-      {/* BACKGROUND */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#00C775]/5 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#F3C440]/5 rounded-full blur-[120px]" />
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-amber-50 relative overflow-hidden">
 
       {/* JSON-LD */}
       <BreadcrumbJsonLd items={breadcrumbs} />
@@ -139,28 +134,28 @@ export default async function BlogPostPage({
           <div className="max-w-4xl mx-auto">
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8 flex-wrap">
-              <Link href="/" className="hover:text-white transition-colors">
+              <Link href="/" className="hover:text-[#10B981] transition-colors">
                 Home
               </Link>
               <ChevronRight className="w-4 h-4" />
-              <Link href="/blogs" className="hover:text-white transition-colors">
+              <Link href="/blogs" className="hover:text-[#10B981] transition-colors">
                 Blog
               </Link>
               <ChevronRight className="w-4 h-4" />
               <Link
                 href={`/blogs?category=${post.category.slug}`}
-                className="hover:text-white transition-colors"
+                className="hover:text-[#10B981] transition-colors"
               >
                 {post.category.name}
               </Link>
               <ChevronRight className="w-4 h-4" />
-              <span className="text-gray-400 truncate max-w-[200px]">{post.title}</span>
+              <span className="text-gray-600 truncate max-w-[200px]">{post.title}</span>
             </nav>
 
             {/* Back Button */}
             <Link
               href="/blogs"
-              className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-8"
+              className="inline-flex items-center gap-2 text-gray-600 hover:text-[#10B981] transition-colors mb-8"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Blog
@@ -169,10 +164,10 @@ export default async function BlogPostPage({
             {/* Category */}
             <div className="mb-4">
               <span
-                className={`px-4 py-2 rounded-full text-sm font-bold ${
+                className={`px-4 py-2 rounded-full text-sm font-bold shadow-sm ${
                   post.category.color === 'emerald'
-                    ? 'bg-[#00C775]/10 text-[#00C775] border border-[#00C775]/30'
-                    : 'bg-[#F3C440]/10 text-[#F3C440] border border-[#F3C440]/30'
+                    ? 'bg-emerald-100 text-[#10B981] border border-[#10B981]'
+                    : 'bg-amber-50 text-[#D4AF37] border border-[#D4AF37]'
                 }`}
               >
                 {post.category.name}
@@ -180,20 +175,20 @@ export default async function BlogPostPage({
             </div>
 
             {/* Title */}
-            <h1 className="text-4xl lg:text-5xl font-black text-white mb-6 leading-tight">
+            <h1 className="text-4xl lg:text-5xl font-black text-[#0A0A0A] mb-6 leading-tight">
               {post.title}
             </h1>
 
             {/* Meta */}
-            <div className="flex flex-wrap items-center gap-6 text-sm text-gray-400 mb-8">
+            <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 mb-8">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00C775] to-[#00A060] flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#10B981] to-[#059669] flex items-center justify-center shadow-md">
                   <span className="text-white font-bold text-sm">
                     {post.author.name.charAt(0)}
                   </span>
                 </div>
                 <div>
-                  <p className="text-white font-semibold">{post.author.name}</p>
+                  <p className="text-[#0A0A0A] font-semibold">{post.author.name}</p>
                   <p className="text-xs text-gray-500">{post.author.role}</p>
                 </div>
               </div>
@@ -232,14 +227,14 @@ export default async function BlogPostPage({
                 <BlogPostContent content={post.content} />
 
                 {/* Tags */}
-                <div className="mt-12 pt-8 border-t border-white/10">
+                <div className="mt-12 pt-8 border-t border-gray-200">
                   <div className="flex items-center gap-3 flex-wrap">
                     <Tag className="w-4 h-4 text-gray-500" />
                     {post.tags.map((tag) => (
                       <Link
                         key={tag}
                         href={`/blogs?search=${tag}`}
-                        className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 text-gray-400 hover:bg-[#00C775]/10 hover:text-[#00C775] border border-white/10 hover:border-[#00C775]/30 transition-all"
+                        className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-50 text-gray-600 hover:bg-emerald-50 hover:text-[#10B981] border border-gray-200 hover:border-[#10B981] transition-all"
                       >
                         #{tag}
                       </Link>
@@ -248,18 +243,18 @@ export default async function BlogPostPage({
                 </div>
 
                 {/* Share */}
-                <div className="mt-8 pt-8 border-t border-white/10">
+                <div className="mt-8 pt-8 border-t border-gray-200">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Share2 className="w-4 h-4 text-gray-500" />
-                      <span className="text-sm text-gray-400">Share this article:</span>
+                      <span className="text-sm text-gray-600">Share this article:</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <a
                         href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`${siteUrl}/blogs/${post.slug}`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#1DA1F2]/20 hover:text-[#1DA1F2] transition-all"
+                        className="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-[#1DA1F2] hover:text-white transition-all"
                       >
                         <Twitter className="w-4 h-4" />
                       </a>
@@ -267,7 +262,7 @@ export default async function BlogPostPage({
                         href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(`${siteUrl}/blogs/${post.slug}`)}&title=${encodeURIComponent(post.title)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#0077B5]/20 hover:text-[#0077B5] transition-all"
+                        className="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-[#0077B5] hover:text-white transition-all"
                       >
                         <Linkedin className="w-4 h-4" />
                       </a>
@@ -275,7 +270,7 @@ export default async function BlogPostPage({
                         href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`${siteUrl}/blogs/${post.slug}`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#1877F2]/20 hover:text-[#1877F2] transition-all"
+                        className="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-[#1877F2] hover:text-white transition-all"
                       >
                         <Facebook className="w-4 h-4" />
                       </a>
@@ -293,12 +288,12 @@ export default async function BlogPostPage({
           <section className="px-6 lg:px-16 pb-20">
             <div className="max-w-[1600px] mx-auto">
               <div className="flex items-center justify-between mb-8">
-                <h2 className="text-3xl font-black text-white">
-                  Related <span className="text-[#00C775]">Articles</span>
+                <h2 className="text-3xl font-black text-[#0A0A0A]">
+                  Related <span className="text-[#10B981]">Articles</span>
                 </h2>
                 <Link
                   href="/blogs"
-                  className="flex items-center gap-2 text-[#F3C440] font-bold hover:gap-3 transition-all"
+                  className="flex items-center gap-2 text-[#D4AF37] font-bold hover:gap-3 transition-all"
                 >
                   View All
                   <ArrowRight className="w-4 h-4" />
@@ -310,7 +305,7 @@ export default async function BlogPostPage({
                   <Link
                     key={relatedPost.slug}
                     href={`/blogs/${relatedPost.slug}`}
-                    className="group block overflow-hidden rounded-3xl border border-white/10 hover:border-[#00C775]/60 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_80px_rgba(0,199,117,0.2)]"
+                    className="group block overflow-hidden rounded-3xl bg-white border border-gray-200 shadow-md hover:border-[#10B981] transition-all duration-500 hover:-translate-y-2 hover:shadow-lg"
                   >
                     <div className="relative h-48 overflow-hidden">
                       <img
@@ -321,21 +316,21 @@ export default async function BlogPostPage({
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                       <div className="absolute bottom-4 left-4">
                         <span
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold bg-white shadow-md ${
                             relatedPost.category.color === 'emerald'
-                              ? 'bg-[#00C775]/20 text-[#00C775] border border-[#00C775]/30'
-                              : 'bg-[#F3C440]/20 text-[#F3C440] border border-[#F3C440]/30'
+                              ? 'text-[#10B981] border border-[#10B981]'
+                              : 'text-[#D4AF37] border border-[#D4AF37]'
                           }`}
                         >
                           {relatedPost.category.name}
                         </span>
                       </div>
                     </div>
-                    <div className="bg-[#0D0D0D]/80 backdrop-blur-xl p-6">
-                      <h3 className="text-lg font-bold text-white mb-2 group-hover:text-[#00C775] transition-colors line-clamp-2">
+                    <div className="p-6">
+                      <h3 className="text-lg font-bold text-[#0A0A0A] mb-2 group-hover:text-[#10B981] transition-colors line-clamp-2">
                         {relatedPost.title}
                       </h3>
-                      <p className="text-sm text-gray-400 line-clamp-2 mb-4">
+                      <p className="text-sm text-gray-600 line-clamp-2 mb-4">
                         {relatedPost.excerpt}
                       </p>
                       <div className="flex items-center gap-4 text-xs text-gray-500">
@@ -362,19 +357,19 @@ export default async function BlogPostPage({
         {/* CTA */}
         <section className="px-6 lg:px-16 pb-20">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-gradient-to-br from-[#0D0D0D] to-[#00C775]/10 border border-[#00C775]/20 rounded-3xl p-8 lg:p-12 text-center">
-              <div className="w-20 h-20 bg-[#00C775]/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Sparkles className="w-10 h-10 text-[#00C775]" />
+            <div className="bg-gradient-to-br from-emerald-50 to-white border border-[#10B981] rounded-3xl p-8 lg:p-12 text-center shadow-lg">
+              <div className="w-20 h-20 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Sparkles className="w-10 h-10 text-[#10B981]" />
               </div>
-              <h2 className="text-3xl font-black text-white mb-4">
+              <h2 className="text-3xl font-black text-[#0A0A0A] mb-4">
                 Have Questions About This Topic?
               </h2>
-              <p className="text-lg text-gray-400 mb-8 max-w-xl mx-auto">
+              <p className="text-lg text-gray-600 mb-8 max-w-xl mx-auto">
                 Ask Genie AI for personalized advice based on your investment goals and budget
               </p>
               <Link
                 href="/genie"
-                className="inline-flex items-center gap-3 bg-[#00C775] text-black px-8 py-4 rounded-full font-bold text-lg hover:shadow-[0_0_30px_rgba(0,199,117,0.4)] transition-all hover:-translate-y-1"
+                className="inline-flex items-center gap-3 bg-[#10B981] text-white px-8 py-4 rounded-full font-bold text-lg hover:shadow-lg transition-all hover:-translate-y-1"
               >
                 <Sparkles className="w-5 h-5" />
                 Chat with Genie AI

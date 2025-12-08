@@ -48,14 +48,9 @@ const priceRanges = [
 
 export default function BrowseByPrice() {
   return (
-    <main className="min-h-screen bg-[#0A0A0A]">
+    <main className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-[#1A1A1A] to-[#0A0A0A] py-20">
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-[20%] w-[400px] h-[400px] bg-[#10B981]/10 rounded-full blur-[120px]"></div>
-          <div className="absolute bottom-10 right-[15%] w-[500px] h-[500px] bg-[#D4AF37]/10 rounded-full blur-[140px]"></div>
-        </div>
-
+      <section className="relative bg-gradient-to-b from-gray-50 to-white py-20">
         <div className="relative max-w-[1600px] mx-auto px-6 lg:px-16">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#10B981]/10 border border-[#10B981]/30 rounded-full mb-6">
@@ -63,7 +58,7 @@ export default function BrowseByPrice() {
               <span className="text-sm font-semibold text-[#10B981]">Browse by Budget</span>
             </div>
 
-            <h1 className="text-5xl lg:text-7xl font-black text-white mb-6 leading-tight">
+            <h1 className="text-5xl lg:text-7xl font-black text-[#0A0A0A] mb-6 leading-tight">
               Find Properties by
               <br />
               <span className="bg-gradient-to-r from-[#D4AF37] to-[#B8941E] bg-clip-text text-transparent">
@@ -71,7 +66,7 @@ export default function BrowseByPrice() {
               </span>
             </h1>
 
-            <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Discover off-plan projects that match your investment budget. From affordable entry-level properties to ultra-luxury developments.
             </p>
           </div>
@@ -86,7 +81,7 @@ export default function BrowseByPrice() {
               <Link
                 key={range.slug}
                 href={`/projects?price=${range.slug}`}
-                className="group relative bg-[#1A1A1A] rounded-3xl overflow-hidden border border-white/5 hover:border-[#10B981]/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_80px_rgba(16,185,129,0.2)]"
+                className="group relative bg-white rounded-3xl overflow-hidden border border-gray-200 shadow-md hover:shadow-lg hover:border-[#10B981]/50 transition-all duration-500 hover:-translate-y-2"
               >
                 {/* Gradient Background */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${range.gradient} opacity-50 group-hover:opacity-100 transition-opacity duration-500`}></div>
@@ -97,11 +92,11 @@ export default function BrowseByPrice() {
                     <span className={`${range.badgeColor} px-4 py-2 rounded-full text-xs font-bold text-white`}>
                       {range.badge}
                     </span>
-                    <span className="text-sm font-semibold text-gray-400">{range.count}</span>
+                    <span className="text-sm font-semibold text-gray-600">{range.count}</span>
                   </div>
 
                   {/* Title */}
-                  <h2 className="text-4xl lg:text-5xl font-black text-white mb-4 group-hover:text-[#10B981] transition-colors">
+                  <h2 className="text-4xl lg:text-5xl font-black text-[#0A0A0A] mb-4 group-hover:text-[#10B981] transition-colors">
                     {range.title}
                   </h2>
 
@@ -112,7 +107,7 @@ export default function BrowseByPrice() {
                   </div>
 
                   {/* Description */}
-                  <p className="text-gray-400 text-lg mb-8 leading-relaxed">
+                  <p className="text-gray-600 text-lg mb-8 leading-relaxed">
                     {range.description}
                   </p>
 
@@ -136,22 +131,22 @@ export default function BrowseByPrice() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-6 lg:px-16 bg-gradient-to-b from-[#0A0A0A] to-[#1A1A1A]">
+      <section className="py-20 px-6 lg:px-16 bg-gradient-to-br from-emerald-50 via-white to-amber-50">
         <div className="max-w-[1600px] mx-auto text-center">
-          <h2 className="text-4xl font-black text-white mb-4">
+          <h2 className="text-4xl font-black text-[#0A0A0A] mb-4">
             Can't Find What You're Looking For?
           </h2>
-          <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Use our advanced filters or chat with our AI assistant to find your perfect property
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
               href="/projects"
-              className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8941E] text-black rounded-xl font-bold hover:shadow-[0_0_40px_rgba(212,175,55,0.6)] transition-all duration-300"
+              className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8941E] text-black rounded-xl font-bold hover:shadow-xl transition-all duration-300"
             >
               Advanced Search
             </Link>
-            <button className="px-8 py-4 bg-[#0A0A0A]/80 backdrop-blur-xl border-2 border-[#10B981]/40 text-white rounded-xl font-bold hover:bg-[#10B981]/10 hover:border-[#10B981]/60 transition-all duration-300 flex items-center gap-2">
+            <button className="px-8 py-4 bg-white border-2 border-[#10B981]/40 text-[#0A0A0A] rounded-xl font-bold hover:bg-[#10B981]/10 hover:border-[#10B981]/60 transition-all duration-300 flex items-center gap-2 shadow-md">
               <Sparkles className="w-5 h-5" />
               Ask AI Assistant
             </button>

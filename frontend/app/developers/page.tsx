@@ -123,14 +123,14 @@ export default function DevelopersPage() {
   const filteredDevelopers = getFilteredDevelopers();
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A]">
+    <div className="min-h-screen bg-white">
       {/* Page Header */}
-      <div className="bg-gradient-to-br from-[#D4AF37] via-[#B8941E] to-[#10B981] border-b border-[#D4AF37]/20">
+      <div className="bg-gradient-to-br from-[#D4AF37] via-[#E8C676] to-[#10B981] border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <h1 className="text-4xl font-bold text-white mb-3">
             Dubai Developers
           </h1>
-          <p className="text-white/90 text-lg">
+          <p className="text-white text-lg">
             Discover verified developers with proven track records
           </p>
         </div>
@@ -143,8 +143,8 @@ export default function DevelopersPage() {
             onClick={() => setActiveFilter('all')}
             className={`group inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold whitespace-nowrap transition-all ${
               activeFilter === 'all'
-                ? 'bg-gradient-to-r from-[#F3C440] to-[#E8C676] text-black shadow-[0_0_20px_rgba(243,196,64,0.4)]'
-                : 'bg-black/40 backdrop-blur-xl border border-[#00C775]/30 text-white/70 hover:text-[#F3C440] hover:border-[#F3C440]/60'
+                ? 'bg-gradient-to-r from-[#D4AF37] to-[#E8C676] text-white shadow-md'
+                : 'bg-white border border-gray-200 text-gray-600 hover:text-[#D4AF37] hover:border-[#D4AF37]/60 shadow-sm'
             }`}
           >
             <Building2 className="w-4 h-4" />
@@ -154,8 +154,8 @@ export default function DevelopersPage() {
             onClick={() => setActiveFilter('top-rated')}
             className={`group inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold whitespace-nowrap transition-all ${
               activeFilter === 'top-rated'
-                ? 'bg-gradient-to-r from-[#F3C440] to-[#E8C676] text-black shadow-[0_0_20px_rgba(243,196,64,0.4)]'
-                : 'bg-black/40 backdrop-blur-xl border border-[#00C775]/30 text-white/70 hover:text-[#F3C440] hover:border-[#F3C440]/60'
+                ? 'bg-gradient-to-r from-[#D4AF37] to-[#E8C676] text-white shadow-md'
+                : 'bg-white border border-gray-200 text-gray-600 hover:text-[#D4AF37] hover:border-[#D4AF37]/60 shadow-sm'
             }`}
           >
             <Star className="w-4 h-4" />
@@ -165,8 +165,8 @@ export default function DevelopersPage() {
             onClick={() => setActiveFilter('most-projects')}
             className={`group inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold whitespace-nowrap transition-all ${
               activeFilter === 'most-projects'
-                ? 'bg-gradient-to-r from-[#F3C440] to-[#E8C676] text-black shadow-[0_0_20px_rgba(243,196,64,0.4)]'
-                : 'bg-black/40 backdrop-blur-xl border border-[#00C775]/30 text-white/70 hover:text-[#F3C440] hover:border-[#F3C440]/60'
+                ? 'bg-gradient-to-r from-[#D4AF37] to-[#E8C676] text-white shadow-md'
+                : 'bg-white border border-gray-200 text-gray-600 hover:text-[#D4AF37] hover:border-[#D4AF37]/60 shadow-sm'
             }`}
           >
             <Building2 className="w-4 h-4" />
@@ -176,8 +176,8 @@ export default function DevelopersPage() {
             onClick={() => setActiveFilter('best-roi')}
             className={`group inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold whitespace-nowrap transition-all ${
               activeFilter === 'best-roi'
-                ? 'bg-gradient-to-r from-[#F3C440] to-[#E8C676] text-black shadow-[0_0_20px_rgba(243,196,64,0.4)]'
-                : 'bg-black/40 backdrop-blur-xl border border-[#00C775]/30 text-white/70 hover:text-[#F3C440] hover:border-[#F3C440]/60'
+                ? 'bg-gradient-to-r from-[#D4AF37] to-[#E8C676] text-white shadow-md'
+                : 'bg-white border border-gray-200 text-gray-600 hover:text-[#D4AF37] hover:border-[#D4AF37]/60 shadow-sm'
             }`}
           >
             <TrendingUp className="w-4 h-4" />
@@ -191,7 +191,7 @@ export default function DevelopersPage() {
             <Link
               key={developer.id}
               href={`/developers/${developer.slug}`}
-              className="group relative block overflow-hidden rounded-2xl border border-[#00C775]/20 hover:border-[#F3C440]/60 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_100px_rgba(0,199,117,0.3)]"
+              className="group relative block overflow-hidden rounded-2xl border border-gray-200 hover:border-[#D4AF37]/60 transition-all duration-500 hover:-translate-y-2 shadow-md hover:shadow-xl"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               {/* Full-Width Background Image */}
@@ -210,19 +210,8 @@ export default function DevelopersPage() {
                   suppressHydrationWarning
                 />
 
-                {/* Dark Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/70 to-black/95"></div>
-
-                {/* Emerald Glow Border */}
-                <div className="absolute inset-0 border-2 border-[#00C775]/0 group-hover:border-[#00C775]/40 rounded-2xl transition-all duration-500"></div>
-
-                {/* AI Circuit Pattern Overlay (subtle) */}
-                <div className="absolute inset-0 opacity-5 pointer-events-none">
-                  <div className="absolute inset-0" style={{
-                    backgroundImage: `linear-gradient(#00C775 1px, transparent 1px), linear-gradient(90deg, #00C775 1px, transparent 1px)`,
-                    backgroundSize: '40px 40px'
-                  }}></div>
-                </div>
+                {/* Light Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-white/50 to-white/95"></div>
 
                 {/* TOP SECTION */}
                 <div className="absolute top-0 left-0 right-0 p-6 z-10">
@@ -230,29 +219,28 @@ export default function DevelopersPage() {
                     {/* Left: Logo + Name + Rating */}
                     <div className="flex items-start gap-3">
                       {/* Developer Logo/Icon */}
-                      <div className="w-14 h-14 bg-gradient-to-br from-[#F3C440] to-[#E8C676] rounded-xl flex items-center justify-center text-2xl border-2 border-white/20 shadow-lg">
+                      <div className="w-14 h-14 bg-gradient-to-br from-[#D4AF37] to-[#E8C676] rounded-xl flex items-center justify-center text-2xl border-2 border-white shadow-md">
                         {developer.logo}
                       </div>
 
                       <div>
-                        <h3 className="text-2xl font-black text-white mb-1 leading-tight">
+                        <h3 className="text-2xl font-black text-[#0A0A0A] mb-1 leading-tight">
                           {developer.name}
                         </h3>
                         {/* Rating */}
                         <div className="flex items-center gap-1">
-                          <Star className="w-5 h-5 fill-[#F3C440] text-[#F3C440]" />
-                          <span className="text-lg font-bold text-white">{developer.rating}</span>
+                          <Star className="w-5 h-5 fill-[#D4AF37] text-[#D4AF37]" />
+                          <span className="text-lg font-bold text-[#0A0A0A]">{developer.rating}</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Right: AI Verified Badge */}
                     <div className="relative">
-                      <div className="absolute inset-0 bg-[#00C775] rounded-xl blur-lg opacity-60 animate-pulse"></div>
-                      <div className="relative bg-black/80 backdrop-blur-xl border border-[#00C775]/60 rounded-xl px-3 py-1.5">
+                      <div className="bg-white/90 backdrop-blur-xl border border-[#10B981]/60 rounded-xl px-3 py-1.5 shadow-md">
                         <div className="flex items-center gap-1.5">
-                          <CheckCircle className="w-4 h-4 text-[#00C775]" />
-                          <span className="text-xs font-bold text-white">AI Verified</span>
+                          <CheckCircle className="w-4 h-4 text-[#10B981]" />
+                          <span className="text-xs font-bold text-[#0A0A0A]">AI Verified</span>
                         </div>
                       </div>
                     </div>
@@ -262,7 +250,7 @@ export default function DevelopersPage() {
                 {/* MIDDLE SECTION */}
                 <div className="absolute top-32 left-0 right-0 px-6 z-10">
                   {/* Elegant Description */}
-                  <p className="text-white/80 text-sm leading-relaxed line-clamp-2">
+                  <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">
                     {developer.description}
                   </p>
                 </div>
@@ -271,39 +259,39 @@ export default function DevelopersPage() {
                 <div className="absolute bottom-24 left-0 right-0 px-6 z-10">
                   <div className="grid grid-cols-2 gap-3">
                     {/* Active Projects */}
-                    <div className="bg-black/60 backdrop-blur-xl border border-[#00C775]/30 rounded-xl p-3">
+                    <div className="bg-white/90 backdrop-blur-xl border border-gray-200 rounded-xl p-3 shadow-md">
                       <div className="flex items-center gap-2 mb-1">
-                        <Building2 className="w-4 h-4 text-[#00C775]" style={{filter: 'drop-shadow(0 0 4px #00C775)'}} />
-                        <span className="text-xs text-white/60 uppercase tracking-wide">Active</span>
+                        <Building2 className="w-4 h-4 text-[#10B981]" />
+                        <span className="text-xs text-gray-600 uppercase tracking-wide">Active</span>
                       </div>
-                      <div className="text-2xl font-black text-[#00C775]">{developer.activeProjects}</div>
+                      <div className="text-2xl font-black text-[#10B981]">{developer.activeProjects}</div>
                     </div>
 
                     {/* Avg ROI */}
-                    <div className="bg-black/60 backdrop-blur-xl border border-[#F3C440]/30 rounded-xl p-3">
+                    <div className="bg-white/90 backdrop-blur-xl border border-gray-200 rounded-xl p-3 shadow-md">
                       <div className="flex items-center gap-2 mb-1">
-                        <TrendingUp className="w-4 h-4 text-[#F3C440]" style={{filter: 'drop-shadow(0 0 4px #F3C440)'}} />
-                        <span className="text-xs text-white/60 uppercase tracking-wide">ROI</span>
+                        <TrendingUp className="w-4 h-4 text-[#D4AF37]" />
+                        <span className="text-xs text-gray-600 uppercase tracking-wide">ROI</span>
                       </div>
-                      <div className="text-2xl font-black text-[#F3C440]">{developer.avgROI}%</div>
+                      <div className="text-2xl font-black text-[#D4AF37]">{developer.avgROI}%</div>
                     </div>
 
                     {/* On-Time Delivery */}
-                    <div className="bg-black/60 backdrop-blur-xl border border-[#00C775]/30 rounded-xl p-3">
+                    <div className="bg-white/90 backdrop-blur-xl border border-gray-200 rounded-xl p-3 shadow-md">
                       <div className="flex items-center gap-2 mb-1">
-                        <CheckCircle className="w-4 h-4 text-[#00C775]" style={{filter: 'drop-shadow(0 0 4px #00C775)'}} />
-                        <span className="text-xs text-white/60 uppercase tracking-wide">On-Time</span>
+                        <CheckCircle className="w-4 h-4 text-[#10B981]" />
+                        <span className="text-xs text-gray-600 uppercase tracking-wide">On-Time</span>
                       </div>
-                      <div className="text-2xl font-black text-[#00C775]">{developer.onTimeDelivery}%</div>
+                      <div className="text-2xl font-black text-[#10B981]">{developer.onTimeDelivery}%</div>
                     </div>
 
                     {/* Customer Satisfaction */}
-                    <div className="bg-black/60 backdrop-blur-xl border border-[#F3C440]/30 rounded-xl p-3">
+                    <div className="bg-white/90 backdrop-blur-xl border border-gray-200 rounded-xl p-3 shadow-md">
                       <div className="flex items-center gap-2 mb-1">
-                        <Star className="w-4 h-4 text-[#F3C440]" style={{filter: 'drop-shadow(0 0 4px #F3C440)'}} />
-                        <span className="text-xs text-white/60 uppercase tracking-wide">Rating</span>
+                        <Star className="w-4 h-4 text-[#D4AF37]" />
+                        <span className="text-xs text-gray-600 uppercase tracking-wide">Rating</span>
                       </div>
-                      <div className="text-2xl font-black text-[#F3C440]">{developer.customerSatisfaction}</div>
+                      <div className="text-2xl font-black text-[#D4AF37]">{developer.customerSatisfaction}</div>
                     </div>
                   </div>
                 </div>
@@ -312,12 +300,11 @@ export default function DevelopersPage() {
                 <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
                   <div className="flex items-center justify-between">
                     {/* Established Year */}
-                    <span className="text-sm text-white/50 font-semibold">Est. {developer.established}</span>
+                    <span className="text-sm text-gray-600 font-semibold">Est. {developer.established}</span>
 
-                    {/* Gold CTA with Glow */}
+                    {/* Gold CTA */}
                     <div className="relative group/cta">
-                      <div className="absolute inset-0 bg-[#F3C440] rounded-xl blur-md opacity-0 group-hover/cta:opacity-60 transition-opacity"></div>
-                      <div className="relative flex items-center gap-2 text-[#F3C440] font-bold group-hover/cta:gap-3 transition-all">
+                      <div className="relative flex items-center gap-2 text-[#D4AF37] font-bold group-hover/cta:gap-3 transition-all">
                         <span>View Projects</span>
                         <svg className="w-5 h-5 transition-transform group-hover/cta:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />

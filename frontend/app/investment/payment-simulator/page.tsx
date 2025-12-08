@@ -70,20 +70,11 @@ export default function PaymentSimulatorPage() {
   let cumulativeAmount = 0;
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
-      {/* AI PARTICLE GLOW BACKGROUND */}
+    <div className="min-h-screen bg-white text-[#0A0A0A] relative overflow-hidden">
+      {/* SUBTLE LIGHT GRADIENT BACKGROUND */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#00C775]/5 rounded-full blur-[150px] animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#F3C440]/5 rounded-full blur-[120px] animate-pulse" style={{animationDelay: '1s'}}></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#00C775]/3 rounded-full blur-[200px]"></div>
-      </div>
-
-      {/* NEURAL GRID OVERLAY */}
-      <div className="fixed inset-0 pointer-events-none opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `linear-gradient(#00C775 1px, transparent 1px), linear-gradient(90deg, #00C775 1px, transparent 1px)`,
-          backgroundSize: '80px 80px'
-        }}></div>
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-emerald-50/80 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-amber-50/60 to-transparent rounded-full blur-3xl"></div>
       </div>
 
       <div className="relative z-10">
@@ -91,26 +82,26 @@ export default function PaymentSimulatorPage() {
         <section className="relative pt-32 pb-16 px-6 lg:px-16">
           <div className="max-w-[1400px] mx-auto">
             <div className="mb-8">
-              <Link href="/investment" className="inline-flex items-center gap-2 text-gray-400 hover:text-[#00C775] transition-colors group">
+              <Link href="/investment" className="inline-flex items-center gap-2 text-gray-600 hover:text-[#10B981] transition-colors group">
                 <ArrowRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition-transform" />
                 <span>Back to Investment Hub</span>
               </Link>
             </div>
 
-            <div className="inline-flex items-center gap-2 bg-[#F3C440]/10 border border-[#F3C440]/30 rounded-full px-5 py-1.5 mb-4">
-              <Calendar className="w-3.5 h-3.5 text-[#F3C440]" />
-              <span className="text-xs font-bold text-[#F3C440] tracking-wide">PAYMENT PLANNER</span>
+            <div className="inline-flex items-center gap-2 bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-full px-5 py-1.5 mb-4">
+              <Calendar className="w-3.5 h-3.5 text-[#D4AF37]" />
+              <span className="text-xs font-bold text-[#D4AF37] tracking-wide">PAYMENT PLANNER</span>
             </div>
 
-            <h1 className="text-6xl lg:text-8xl font-black text-white mb-6 leading-[1.05] tracking-tight">
+            <h1 className="text-6xl lg:text-8xl font-black text-[#0A0A0A] mb-6 leading-[1.05] tracking-tight">
               Payment Plan
               <br />
-              <span className="bg-gradient-to-r from-[#F3C440] via-[#FFD700] to-[#F3C440] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#D4AF37] via-[#F4D03F] to-[#D4AF37] bg-clip-text text-transparent">
                 Simulator
               </span>
             </h1>
 
-            <p className="text-xl text-gray-400 max-w-3xl">
+            <p className="text-xl text-gray-600 max-w-3xl">
               Visualize payment schedules and milestone timelines for different off-plan payment structures
             </p>
           </div>
@@ -121,14 +112,14 @@ export default function PaymentSimulatorPage() {
           <div className="max-w-[1400px] mx-auto">
 
             {/* INPUT SECTION */}
-            <div className="bg-[#0D0D0D]/80 backdrop-blur-xl border border-[#00C775]/20 rounded-3xl p-8 mb-8">
+            <div className="bg-white border border-gray-200 shadow-md rounded-3xl p-8 mb-8">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
                 {/* Property Price */}
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <label className="text-sm font-bold text-gray-400">Property Price</label>
-                    <div className="text-3xl font-black text-[#00C775]">
+                    <label className="text-sm font-bold text-gray-600">Property Price</label>
+                    <div className="text-3xl font-black text-[#10B981]">
                       AED {propertyPrice.toLocaleString()}
                     </div>
                   </div>
@@ -139,7 +130,7 @@ export default function PaymentSimulatorPage() {
                     step="100000"
                     value={propertyPrice}
                     onChange={(e) => setPropertyPrice(Number(e.target.value))}
-                    className="w-full h-2 bg-[#00C775]/20 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-[#00C775] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-[0_0_20px_rgba(0,199,117,0.6)]"
+                    className="w-full h-2 bg-emerald-100 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-[#10B981] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md"
                   />
                   <div className="flex justify-between mt-2">
                     <span className="text-xs text-gray-500">500K</span>
@@ -149,7 +140,7 @@ export default function PaymentSimulatorPage() {
 
                 {/* Payment Plan Selection */}
                 <div>
-                  <label className="block text-sm font-bold text-gray-400 mb-3">Payment Plan Type</label>
+                  <label className="block text-sm font-bold text-gray-600 mb-3">Payment Plan Type</label>
                   <div className="grid grid-cols-2 gap-3">
                     {Object.entries(paymentPlans).map(([key, plan]) => (
                       <button
@@ -157,8 +148,8 @@ export default function PaymentSimulatorPage() {
                         onClick={() => setPaymentPlan(key)}
                         className={`p-4 rounded-2xl border-2 transition-all font-bold ${
                           paymentPlan === key
-                            ? 'bg-[#F3C440]/20 border-[#F3C440] text-[#F3C440]'
-                            : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/30'
+                            ? 'bg-[#D4AF37]/10 border-[#D4AF37] text-[#D4AF37]'
+                            : 'bg-gray-50 border-gray-200 text-gray-600 hover:border-gray-300'
                         }`}
                       >
                         <div className="text-lg mb-1">{plan.name}</div>
@@ -171,10 +162,10 @@ export default function PaymentSimulatorPage() {
             </div>
 
             {/* TIMELINE VISUALIZATION */}
-            <div className="bg-[#0D0D0D]/80 backdrop-blur-xl border border-[#00C775]/20 rounded-3xl p-8 mb-8">
+            <div className="bg-white border border-gray-200 shadow-md rounded-3xl p-8 mb-8">
               <div className="flex items-center gap-3 mb-8">
-                <Clock className="w-8 h-8 text-[#00C775]" />
-                <h2 className="text-3xl font-black text-white">Payment Timeline</h2>
+                <Clock className="w-8 h-8 text-[#10B981]" />
+                <h2 className="text-3xl font-black text-[#0A0A0A]">Payment Timeline</h2>
               </div>
 
               <div className="space-y-4">
@@ -188,8 +179,8 @@ export default function PaymentSimulatorPage() {
                       key={index}
                       className={`relative group transition-all duration-300 hover:-translate-y-1 ${
                         isHandover
-                          ? 'bg-gradient-to-r from-[#F3C440]/20 via-[#0D0D0D]/80 to-[#0D0D0D]/80 border-2 border-[#F3C440]/60'
-                          : 'bg-white/5 border border-white/10 hover:border-[#00C775]/60'
+                          ? 'bg-gradient-to-r from-[#D4AF37]/10 via-white to-white border-2 border-[#D4AF37]/60 shadow-md'
+                          : 'bg-white border border-gray-200 shadow-sm hover:border-[#10B981]/60 hover:shadow-md'
                       } rounded-2xl p-6`}
                     >
                       <div className="flex flex-col md:flex-row md:items-center gap-4">
@@ -198,21 +189,21 @@ export default function PaymentSimulatorPage() {
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
                             <div className={`w-10 h-10 rounded-full ${
-                              isHandover ? 'bg-[#F3C440]/30' : 'bg-[#00C775]/20'
+                              isHandover ? 'bg-[#D4AF37]/20' : 'bg-emerald-100'
                             } flex items-center justify-center`}>
                               {isHandover ? (
-                                <Key className="w-5 h-5 text-[#F3C440]" />
+                                <Key className="w-5 h-5 text-[#D4AF37]" />
                               ) : (
-                                <CheckCircle className="w-5 h-5 text-[#00C775]" />
+                                <CheckCircle className="w-5 h-5 text-[#10B981]" />
                               )}
                             </div>
                             <div>
                               <h3 className={`text-xl font-black ${
-                                isHandover ? 'text-[#F3C440]' : 'text-white'
+                                isHandover ? 'text-[#D4AF37]' : 'text-[#0A0A0A]'
                               }`}>
                                 {milestone.stage}
                               </h3>
-                              <p className="text-sm text-gray-400">{milestone.timing}</p>
+                              <p className="text-sm text-gray-600">{milestone.timing}</p>
                             </div>
                           </div>
                         </div>
@@ -220,24 +211,24 @@ export default function PaymentSimulatorPage() {
                         {/* Payment Details */}
                         <div className="flex items-center gap-8">
                           <div>
-                            <p className="text-xs text-gray-400 mb-1">Percentage</p>
+                            <p className="text-xs text-gray-600 mb-1">Percentage</p>
                             <p className={`text-2xl font-black ${
-                              isHandover ? 'text-[#F3C440]' : 'text-[#00C775]'
+                              isHandover ? 'text-[#D4AF37]' : 'text-[#10B981]'
                             }`}>
                               {milestone.percentage}%
                             </p>
                           </div>
 
                           <div>
-                            <p className="text-xs text-gray-400 mb-1">Amount</p>
-                            <p className="text-2xl font-black text-white">
+                            <p className="text-xs text-gray-600 mb-1">Amount</p>
+                            <p className="text-2xl font-black text-[#0A0A0A]">
                               AED {amount.toLocaleString()}
                             </p>
                           </div>
 
                           <div>
-                            <p className="text-xs text-gray-400 mb-1">Cumulative</p>
-                            <p className="text-2xl font-black text-gray-300">
+                            <p className="text-xs text-gray-600 mb-1">Cumulative</p>
+                            <p className="text-2xl font-black text-gray-700">
                               AED {Math.round(cumulativeAmount).toLocaleString()}
                             </p>
                           </div>
@@ -245,12 +236,12 @@ export default function PaymentSimulatorPage() {
                       </div>
 
                       {/* Progress Bar */}
-                      <div className="mt-4 w-full h-2 bg-white/5 rounded-full overflow-hidden">
+                      <div className="mt-4 w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                         <div
                           className={`h-full ${
                             isHandover
-                              ? 'bg-gradient-to-r from-[#F3C440] to-[#D4A936]'
-                              : 'bg-gradient-to-r from-[#00C775] to-[#00A85D]'
+                              ? 'bg-gradient-to-r from-[#D4AF37] to-[#C19B2F]'
+                              : 'bg-gradient-to-r from-[#10B981] to-[#059669]'
                           } rounded-full transition-all duration-500`}
                           style={{ width: `${(cumulativeAmount / propertyPrice) * 100}%` }}
                         ></div>
@@ -262,21 +253,21 @@ export default function PaymentSimulatorPage() {
             </div>
 
             {/* BREAKDOWN TABLE */}
-            <div className="bg-[#0D0D0D]/80 backdrop-blur-xl border border-white/10 rounded-3xl p-8">
+            <div className="bg-white border border-gray-200 shadow-md rounded-3xl p-8">
               <div className="flex items-center gap-3 mb-8">
-                <BarChart3 className="w-8 h-8 text-[#F3C440]" />
-                <h2 className="text-3xl font-black text-white">Payment Breakdown</h2>
+                <BarChart3 className="w-8 h-8 text-[#D4AF37]" />
+                <h2 className="text-3xl font-black text-[#0A0A0A]">Payment Breakdown</h2>
               </div>
 
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-white/10">
-                      <th className="text-left py-4 px-4 text-gray-400 font-bold text-sm">Stage</th>
-                      <th className="text-left py-4 px-4 text-gray-400 font-bold text-sm">Timeline</th>
-                      <th className="text-right py-4 px-4 text-gray-400 font-bold text-sm">Percentage</th>
-                      <th className="text-right py-4 px-4 text-gray-400 font-bold text-sm">Amount (AED)</th>
-                      <th className="text-right py-4 px-4 text-gray-400 font-bold text-sm">Total Paid</th>
+                    <tr className="border-b border-gray-200">
+                      <th className="text-left py-4 px-4 text-gray-600 font-bold text-sm">Stage</th>
+                      <th className="text-left py-4 px-4 text-gray-600 font-bold text-sm">Timeline</th>
+                      <th className="text-right py-4 px-4 text-gray-600 font-bold text-sm">Percentage</th>
+                      <th className="text-right py-4 px-4 text-gray-600 font-bold text-sm">Amount (AED)</th>
+                      <th className="text-right py-4 px-4 text-gray-600 font-bold text-sm">Total Paid</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -290,27 +281,27 @@ export default function PaymentSimulatorPage() {
                         return (
                           <tr
                             key={index}
-                            className={`border-b border-white/5 ${
-                              isHandover ? 'bg-[#F3C440]/5' : ''
+                            className={`border-b border-gray-100 ${
+                              isHandover ? 'bg-[#D4AF37]/5' : ''
                             }`}
                           >
                             <td className="py-4 px-4">
                               <span className={`font-bold ${
-                                isHandover ? 'text-[#F3C440]' : 'text-white'
+                                isHandover ? 'text-[#D4AF37]' : 'text-[#0A0A0A]'
                               }`}>
                                 {milestone.stage}
                               </span>
                             </td>
-                            <td className="py-4 px-4 text-gray-400">{milestone.timing}</td>
+                            <td className="py-4 px-4 text-gray-600">{milestone.timing}</td>
                             <td className={`py-4 px-4 text-right font-bold ${
-                              isHandover ? 'text-[#F3C440]' : 'text-[#00C775]'
+                              isHandover ? 'text-[#D4AF37]' : 'text-[#10B981]'
                             }`}>
                               {milestone.percentage}%
                             </td>
-                            <td className="py-4 px-4 text-right font-bold text-white">
+                            <td className="py-4 px-4 text-right font-bold text-[#0A0A0A]">
                               {amount.toLocaleString()}
                             </td>
-                            <td className="py-4 px-4 text-right font-bold text-gray-300">
+                            <td className="py-4 px-4 text-right font-bold text-gray-700">
                               {Math.round(runningTotal).toLocaleString()}
                             </td>
                           </tr>
@@ -319,14 +310,14 @@ export default function PaymentSimulatorPage() {
                     })()}
                   </tbody>
                   <tfoot>
-                    <tr className="border-t-2 border-[#00C775]/30 bg-[#00C775]/5">
-                      <td colSpan={3} className="py-4 px-4 font-black text-white text-lg">
+                    <tr className="border-t-2 border-emerald-200 bg-emerald-50">
+                      <td colSpan={3} className="py-4 px-4 font-black text-[#0A0A0A] text-lg">
                         Total
                       </td>
-                      <td className="py-4 px-4 text-right font-black text-[#00C775] text-lg">
+                      <td className="py-4 px-4 text-right font-black text-[#10B981] text-lg">
                         {propertyPrice.toLocaleString()}
                       </td>
-                      <td className="py-4 px-4 text-right font-black text-[#00C775] text-lg">
+                      <td className="py-4 px-4 text-right font-black text-[#10B981] text-lg">
                         {propertyPrice.toLocaleString()}
                       </td>
                     </tr>
@@ -336,20 +327,20 @@ export default function PaymentSimulatorPage() {
             </div>
 
             {/* CTA */}
-            <div className="mt-12 bg-gradient-to-br from-[#0D0D0D] via-[#0D0D0D] to-[#00C775]/5 backdrop-blur-xl border border-[#00C775]/20 rounded-3xl p-12 text-center">
-              <h2 className="text-4xl font-black text-white mb-4">
+            <div className="mt-12 bg-gradient-to-br from-emerald-50 via-white to-amber-50/30 border border-gray-200 shadow-lg rounded-3xl p-12 text-center">
+              <h2 className="text-4xl font-black text-[#0A0A0A] mb-4">
                 Calculate Your Returns
               </h2>
-              <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
+              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
                 Use our ROI calculator to estimate potential profits on your investment
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <Link href="/investment/roi-calculator" className="bg-gradient-to-r from-[#00C775] to-[#00A85D] px-10 py-5 rounded-full font-bold text-white text-lg shadow-[0_0_40px_rgba(0,199,117,0.4)] hover:shadow-[0_0_60px_rgba(0,199,117,0.6)] transition-all hover:-translate-y-1 inline-flex items-center gap-3">
+                <Link href="/investment/roi-calculator" className="bg-gradient-to-r from-[#10B981] to-[#059669] px-10 py-5 rounded-full font-bold text-white text-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 inline-flex items-center gap-3">
                   <DollarSign className="w-6 h-6" />
                   <span>ROI Calculator</span>
                   <ArrowRight className="w-6 h-6" />
                 </Link>
-                <Link href="/projects" className="bg-gradient-to-r from-[#F3C440] to-[#D4A936] px-10 py-5 rounded-full font-bold text-black text-lg shadow-[0_0_40px_rgba(243,196,64,0.4)] hover:shadow-[0_0_60px_rgba(243,196,64,0.6)] transition-all hover:-translate-y-1">
+                <Link href="/projects" className="bg-gradient-to-r from-[#D4AF37] to-[#C19B2F] px-10 py-5 rounded-full font-bold text-white text-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
                   Browse Properties
                 </Link>
               </div>

@@ -252,40 +252,25 @@ export default function DevelopersPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
-      {/* AI PARTICLE GLOW BACKGROUND */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#00C775]/5 rounded-full blur-[150px] animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#F3C440]/5 rounded-full blur-[120px] animate-pulse" style={{animationDelay: '1s'}}></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#00C775]/3 rounded-full blur-[200px]"></div>
-      </div>
-
-      {/* NEURAL GRID OVERLAY */}
-      <div className="fixed inset-0 pointer-events-none opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `linear-gradient(#00C775 1px, transparent 1px), linear-gradient(90deg, #00C775 1px, transparent 1px)`,
-          backgroundSize: '80px 80px'
-        }}></div>
-      </div>
-
+    <div className="min-h-screen bg-white text-[#0A0A0A] relative overflow-hidden">
       <div className="relative z-10">
         {/* HERO SECTION */}
         <section className="relative pt-32 pb-16 px-6 lg:px-16">
           <div className="max-w-[1600px] mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-[#00C775]/10 border border-[#00C775]/30 rounded-full px-6 py-2 mb-6">
-              <Sparkles className="w-4 h-4 text-[#00C775]" />
-              <span className="text-sm font-bold text-[#00C775]">DEVELOPER INTELLIGENCE</span>
+            <div className="inline-flex items-center gap-2 bg-[#10B981]/10 border border-[#10B981]/30 rounded-full px-6 py-2 mb-6">
+              <Sparkles className="w-4 h-4 text-[#10B981]" />
+              <span className="text-sm font-bold text-[#10B981]">DEVELOPER INTELLIGENCE</span>
             </div>
 
-            <h1 className="text-6xl lg:text-8xl font-black text-white mb-6 leading-[1.05] tracking-tight">
+            <h1 className="text-6xl lg:text-8xl font-black text-[#0A0A0A] mb-6 leading-[1.05] tracking-tight">
               Developer News
               <br />
-              <span className="bg-gradient-to-r from-[#F3C440] via-[#FFD700] to-[#F3C440] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#D4AF37] via-[#FFD700] to-[#D4AF37] bg-clip-text text-transparent">
                 & Updates
               </span>
             </h1>
 
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Stay informed with the latest from Dubai's top property developers
             </p>
           </div>
@@ -295,10 +280,10 @@ export default function DevelopersPage() {
         <section className="px-6 lg:px-16 pb-16">
           <div className="max-w-[1600px] mx-auto">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-4xl lg:text-5xl font-black text-white">
-                Latest <span className="text-[#00C775]">Updates</span>
+              <h2 className="text-4xl lg:text-5xl font-black text-[#0A0A0A]">
+                Latest <span className="text-[#10B981]">Updates</span>
               </h2>
-              <Link href="/insights/news" className="flex items-center gap-2 text-[#F3C440] font-bold hover:gap-3 transition-all">
+              <Link href="/insights/news" className="flex items-center gap-2 text-[#D4AF37] font-bold hover:gap-3 transition-all">
                 <span>View All News</span>
                 <ChevronRight className="w-5 h-5" />
               </Link>
@@ -308,7 +293,7 @@ export default function DevelopersPage() {
               {latestUpdates.map((update) => (
                 <div
                   key={update.id}
-                  className="group relative block overflow-hidden rounded-3xl border border-white/10 hover:border-[#00C775]/60 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_80px_rgba(0,199,117,0.3)] cursor-pointer"
+                  className="group relative block overflow-hidden rounded-3xl bg-white border border-gray-200 hover:border-[#10B981]/60 transition-all duration-500 hover:-translate-y-2 shadow-md hover:shadow-lg cursor-pointer"
                 >
                   <div className="flex flex-col md:flex-row">
                     {/* Image */}
@@ -321,33 +306,33 @@ export default function DevelopersPage() {
 
                       {/* Badge */}
                       <div className="absolute top-4 left-4 z-20">
-                        <div className="bg-[#F3C440] text-black px-3 py-1.5 rounded-lg text-xs font-bold">
+                        <div className="bg-[#D4AF37] text-white px-3 py-1.5 rounded-lg text-xs font-bold">
                           {update.badge}
                         </div>
                       </div>
                     </div>
 
                     {/* Content */}
-                    <div className="flex-1 bg-[#0D0D0D]/80 backdrop-blur-xl p-6">
+                    <div className="flex-1 bg-white p-6">
                       <div className="flex items-center gap-3 mb-3">
-                        <Building2 className="w-4 h-4 text-[#00C775]" />
-                        <span className="text-xs font-bold text-[#00C775] uppercase">{update.developer}</span>
-                        <span className="text-xs text-gray-500">•</span>
-                        <span className="text-xs text-gray-500">{update.category}</span>
+                        <Building2 className="w-4 h-4 text-[#10B981]" />
+                        <span className="text-xs font-bold text-[#10B981] uppercase">{update.developer}</span>
+                        <span className="text-xs text-gray-400">•</span>
+                        <span className="text-xs text-gray-600">{update.category}</span>
                       </div>
 
-                      <h3 className="text-xl font-black text-white mb-3 leading-tight group-hover:text-[#00C775] transition-colors line-clamp-2">
+                      <h3 className="text-xl font-black text-[#0A0A0A] mb-3 leading-tight group-hover:text-[#10B981] transition-colors line-clamp-2">
                         {update.title}
                       </h3>
 
-                      <p className="text-sm text-gray-400 mb-4 line-clamp-2">{update.excerpt}</p>
+                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">{update.excerpt}</p>
 
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <div className="flex items-center gap-2 text-xs text-gray-600">
                           <Calendar className="w-3.5 h-3.5" />
                           {new Date(update.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                         </div>
-                        <div className="flex items-center gap-2 text-[#F3C440] font-bold text-sm group-hover:gap-3 transition-all">
+                        <div className="flex items-center gap-2 text-[#D4AF37] font-bold text-sm group-hover:gap-3 transition-all">
                           <span>Read More</span>
                           <ArrowRight className="w-4 h-4" />
                         </div>
@@ -364,9 +349,9 @@ export default function DevelopersPage() {
         <section className="px-6 lg:px-16 pb-16">
           <div className="max-w-[1600px] mx-auto">
             <div className="flex items-center gap-3 mb-8">
-              <Rocket className="w-8 h-8 text-[#F3C440]" />
-              <h2 className="text-4xl lg:text-5xl font-black text-white">
-                Upcoming <span className="text-[#F3C440]">Launches</span>
+              <Rocket className="w-8 h-8 text-[#D4AF37]" />
+              <h2 className="text-4xl lg:text-5xl font-black text-[#0A0A0A]">
+                Upcoming <span className="text-[#D4AF37]">Launches</span>
               </h2>
             </div>
 
@@ -374,7 +359,7 @@ export default function DevelopersPage() {
               {newLaunches.map((launch, index) => (
                 <div
                   key={index}
-                  className="group relative block overflow-hidden rounded-3xl border border-[#F3C440]/20 hover:border-[#F3C440]/60 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_80px_rgba(243,196,64,0.3)]"
+                  className="group relative block overflow-hidden rounded-3xl bg-white border border-gray-200 hover:border-[#D4AF37]/60 transition-all duration-500 hover:-translate-y-2 shadow-md hover:shadow-lg"
                 >
                   <div className="relative h-64 overflow-hidden">
                     <img
@@ -387,15 +372,15 @@ export default function DevelopersPage() {
 
                     {/* Launch Date */}
                     <div className="absolute top-4 right-4 z-20">
-                      <div className="bg-[#F3C440] text-black px-3 py-2 rounded-xl text-center">
+                      <div className="bg-[#D4AF37] text-white px-3 py-2 rounded-xl text-center">
                         <div className="text-xs font-bold">{launch.launchDate}</div>
                       </div>
                     </div>
 
                     {/* Content */}
                     <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
-                      <div className="text-xs font-bold text-[#00C775] uppercase mb-2">{launch.developer}</div>
-                      <h3 className="text-2xl font-black text-white mb-2 group-hover:text-[#F3C440] transition-colors">
+                      <div className="text-xs font-bold text-[#10B981] uppercase mb-2">{launch.developer}</div>
+                      <h3 className="text-2xl font-black text-white mb-2 group-hover:text-[#D4AF37] transition-colors">
                         {launch.project}
                       </h3>
                       <div className="flex items-center gap-2 mb-3 text-sm text-gray-300">
@@ -403,8 +388,8 @@ export default function DevelopersPage() {
                         <span>{launch.location}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <div className="text-lg font-black text-[#00C775]">{launch.priceFrom}</div>
-                        <div className="text-sm text-gray-400">{launch.units} units</div>
+                        <div className="text-lg font-black text-[#10B981]">{launch.priceFrom}</div>
+                        <div className="text-sm text-gray-300">{launch.units} units</div>
                       </div>
                     </div>
                   </div>
@@ -417,33 +402,33 @@ export default function DevelopersPage() {
         {/* CONSTRUCTION PROGRESS */}
         <section className="px-6 lg:px-16 pb-16">
           <div className="max-w-[1600px] mx-auto">
-            <div className="bg-gradient-to-br from-[#0D0D0D] via-[#0D0D0D] to-[#00C775]/5 backdrop-blur-xl border border-[#00C775]/20 rounded-3xl p-10">
+            <div className="bg-white border border-gray-200 rounded-3xl p-10 shadow-md">
               <div className="flex items-center gap-3 mb-8">
-                <Clock className="w-8 h-8 text-[#00C775]" />
-                <h2 className="text-3xl font-black text-white">Construction Progress Updates</h2>
+                <Clock className="w-8 h-8 text-[#10B981]" />
+                <h2 className="text-3xl font-black text-[#0A0A0A]">Construction Progress Updates</h2>
               </div>
 
               <div className="space-y-6">
                 {progressUpdates.map((project, index) => (
                   <div
                     key={index}
-                    className="bg-[#0D0D0D]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-[#00C775]/60 transition-all"
+                    className="bg-white border border-gray-200 rounded-2xl p-6 hover:border-[#10B981]/60 transition-all shadow-md"
                   >
                     <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-xl font-black text-white">{project.project}</h3>
+                          <h3 className="text-xl font-black text-[#0A0A0A]">{project.project}</h3>
                           <span className={`text-xs font-bold px-3 py-1 rounded-full ${
                             project.status === 'Ahead of Schedule'
-                              ? 'bg-[#00C775]/10 text-[#00C775]'
+                              ? 'bg-[#10B981]/10 text-[#10B981]'
                               : project.status === 'Near Completion'
-                              ? 'bg-[#F3C440]/10 text-[#F3C440]'
-                              : 'bg-white/10 text-white'
+                              ? 'bg-[#D4AF37]/10 text-[#D4AF37]'
+                              : 'bg-gray-100 text-gray-600'
                           }`}>
                             {project.status}
                           </span>
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-gray-400">
+                        <div className="flex items-center gap-4 text-sm text-gray-600">
                           <span className="flex items-center gap-1.5">
                             <Building2 className="w-3.5 h-3.5" />
                             {project.developer}
@@ -457,12 +442,12 @@ export default function DevelopersPage() {
                         {/* Progress Bar */}
                         <div className="flex-1 lg:w-48">
                           <div className="flex items-center justify-between mb-2">
-                            <span className="text-xs text-gray-500 uppercase">Progress</span>
-                            <span className="text-sm font-black text-[#00C775]">{project.completion}%</span>
+                            <span className="text-xs text-gray-600 uppercase">Progress</span>
+                            <span className="text-sm font-black text-[#10B981]">{project.completion}%</span>
                           </div>
-                          <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                             <div
-                              className="h-full bg-gradient-to-r from-[#00C775] to-[#00A85D] rounded-full transition-all"
+                              className="h-full bg-gradient-to-r from-[#10B981] to-[#059669] rounded-full transition-all"
                               style={{ width: `${project.completion}%` }}
                             ></div>
                           </div>
@@ -470,8 +455,8 @@ export default function DevelopersPage() {
 
                         {/* Handover */}
                         <div className="text-right">
-                          <div className="text-xs text-gray-500 uppercase mb-1">Handover</div>
-                          <div className="text-sm font-bold text-white">{project.expectedHandover}</div>
+                          <div className="text-xs text-gray-600 uppercase mb-1">Handover</div>
+                          <div className="text-sm font-bold text-[#0A0A0A]">{project.expectedHandover}</div>
                         </div>
                       </div>
                     </div>
@@ -486,53 +471,53 @@ export default function DevelopersPage() {
         <section className="px-6 lg:px-16 pb-16">
           <div className="max-w-[1600px] mx-auto">
             <div className="flex items-center gap-3 mb-8">
-              <Trophy className="w-8 h-8 text-[#F3C440]" />
-              <h2 className="text-4xl lg:text-5xl font-black text-white">
-                Developer <span className="text-[#F3C440]">Rankings</span>
+              <Trophy className="w-8 h-8 text-[#D4AF37]" />
+              <h2 className="text-4xl lg:text-5xl font-black text-[#0A0A0A]">
+                Developer <span className="text-[#D4AF37]">Rankings</span>
               </h2>
             </div>
 
-            <div className="bg-[#0D0D0D]/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+            <div className="bg-white border border-gray-200 rounded-3xl overflow-hidden shadow-md">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-white/5">
-                    <tr className="border-b border-white/10">
-                      <th className="text-left py-4 px-6 text-sm font-bold text-gray-400 uppercase tracking-wider">Rank</th>
-                      <th className="text-left py-4 px-6 text-sm font-bold text-gray-400 uppercase tracking-wider">Developer</th>
-                      <th className="text-center py-4 px-6 text-sm font-bold text-gray-400 uppercase tracking-wider">Score</th>
-                      <th className="text-center py-4 px-6 text-sm font-bold text-gray-400 uppercase tracking-wider">On-Time %</th>
-                      <th className="text-center py-4 px-6 text-sm font-bold text-gray-400 uppercase tracking-wider">Rating</th>
-                      <th className="text-center py-4 px-6 text-sm font-bold text-gray-400 uppercase tracking-wider">Projects</th>
+                  <thead className="bg-gray-50">
+                    <tr className="border-b border-gray-200">
+                      <th className="text-left py-4 px-6 text-sm font-bold text-gray-600 uppercase tracking-wider">Rank</th>
+                      <th className="text-left py-4 px-6 text-sm font-bold text-gray-600 uppercase tracking-wider">Developer</th>
+                      <th className="text-center py-4 px-6 text-sm font-bold text-gray-600 uppercase tracking-wider">Score</th>
+                      <th className="text-center py-4 px-6 text-sm font-bold text-gray-600 uppercase tracking-wider">On-Time %</th>
+                      <th className="text-center py-4 px-6 text-sm font-bold text-gray-600 uppercase tracking-wider">Rating</th>
+                      <th className="text-center py-4 px-6 text-sm font-bold text-gray-600 uppercase tracking-wider">Projects</th>
                     </tr>
                   </thead>
                   <tbody>
                     {developerRankings.map((dev) => (
-                      <tr key={dev.rank} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                      <tr key={dev.rank} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
                         <td className="py-4 px-6">
                           <div className="flex items-center gap-3">
                             <span className="text-2xl">{dev.logo}</span>
-                            <span className="text-2xl font-black text-[#F3C440]">#{dev.rank}</span>
+                            <span className="text-2xl font-black text-[#D4AF37]">#{dev.rank}</span>
                           </div>
                         </td>
                         <td className="py-4 px-6">
-                          <Link href={`/developers/${dev.name.toLowerCase().replace(/\s+/g, '-')}`} className="font-bold text-white hover:text-[#00C775] transition-colors">
+                          <Link href={`/developers/${dev.name.toLowerCase().replace(/\s+/g, '-')}`} className="font-bold text-[#0A0A0A] hover:text-[#10B981] transition-colors">
                             {dev.name}
                           </Link>
                         </td>
                         <td className="py-4 px-6 text-center">
-                          <span className="text-2xl font-black text-[#00C775]">{dev.score}</span>
+                          <span className="text-2xl font-black text-[#10B981]">{dev.score}</span>
                         </td>
                         <td className="py-4 px-6 text-center">
-                          <span className="text-lg font-bold text-white">{dev.onTimeDelivery}%</span>
+                          <span className="text-lg font-bold text-[#0A0A0A]">{dev.onTimeDelivery}%</span>
                         </td>
                         <td className="py-4 px-6 text-center">
                           <div className="flex items-center justify-center gap-1">
-                            <Star className="w-4 h-4 fill-[#F3C440] text-[#F3C440]" />
-                            <span className="text-lg font-bold text-white">{dev.satisfaction}</span>
+                            <Star className="w-4 h-4 fill-[#D4AF37] text-[#D4AF37]" />
+                            <span className="text-lg font-bold text-[#0A0A0A]">{dev.satisfaction}</span>
                           </div>
                         </td>
                         <td className="py-4 px-6 text-center">
-                          <span className="text-lg font-bold text-gray-400">{dev.activeProjects}</span>
+                          <span className="text-lg font-bold text-gray-600">{dev.activeProjects}</span>
                         </td>
                       </tr>
                     ))}
@@ -546,30 +531,30 @@ export default function DevelopersPage() {
         {/* PARTNERSHIPS */}
         <section className="px-6 lg:px-16 pb-20">
           <div className="max-w-[1600px] mx-auto">
-            <div className="bg-gradient-to-br from-[#0D0D0D] via-[#0D0D0D] to-[#F3C440]/5 backdrop-blur-xl border border-[#F3C440]/20 rounded-3xl p-10">
+            <div className="bg-white border border-gray-200 rounded-3xl p-10 shadow-md">
               <div className="flex items-center gap-3 mb-8">
-                <Users className="w-8 h-8 text-[#F3C440]" />
-                <h2 className="text-3xl font-black text-white">Strategic Partnerships</h2>
+                <Users className="w-8 h-8 text-[#D4AF37]" />
+                <h2 className="text-3xl font-black text-[#0A0A0A]">Strategic Partnerships</h2>
               </div>
 
               <div className="space-y-4">
                 {partnerships.map((partnership, index) => (
                   <div
                     key={index}
-                    className="bg-[#0D0D0D]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-[#F3C440]/60 transition-all hover:-translate-y-1 cursor-pointer group"
+                    className="bg-white border border-gray-200 rounded-2xl p-6 hover:border-[#D4AF37]/60 transition-all hover:-translate-y-1 cursor-pointer group shadow-md"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
-                        <h3 className="text-xl font-black text-white mb-2 group-hover:text-[#F3C440] transition-colors">
+                        <h3 className="text-xl font-black text-[#0A0A0A] mb-2 group-hover:text-[#D4AF37] transition-colors">
                           {partnership.title}
                         </h3>
-                        <p className="text-sm text-gray-400">{partnership.description}</p>
+                        <p className="text-sm text-gray-600">{partnership.description}</p>
                       </div>
                       <div className="flex items-center gap-3">
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-gray-600">
                           {new Date(partnership.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                         </div>
-                        <ArrowRight className="w-5 h-5 text-[#F3C440] group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="w-5 h-5 text-[#D4AF37] group-hover:translate-x-1 transition-transform" />
                       </div>
                     </div>
                   </div>

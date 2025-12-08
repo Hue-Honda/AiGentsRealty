@@ -3,10 +3,12 @@ import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import ConditionalFooter from "@/components/ConditionalFooter";
 import FloatingAIChat from "@/components/FloatingAIChat";
+import FloatingCTA from "@/components/FloatingCTA";
 import AIButtonHandler from "@/components/AIButtonHandler";
 import { OrganizationJsonLd } from "@/components/seo/JsonLd";
+import { NavDataProvider } from "@/contexts/NavDataContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -214,12 +216,15 @@ export default function RootLayout({
         <OrganizationJsonLd />
       </head>
       <body className={`${inter.variable} font-sans antialiased`} suppressHydrationWarning>
-        <Navbar />
-        {children}
-        <Footer />
-        <AIButtonHandler />
-        {/* <FloatingAIChat /> */}
-        <Analytics />
+        <NavDataProvider>
+          <Navbar />
+          {children}
+          <ConditionalFooter />
+          <FloatingCTA />
+          <AIButtonHandler />
+          {/* <FloatingAIChat /> */}
+          <Analytics />
+        </NavDataProvider>
       </body>
     </html>
   );

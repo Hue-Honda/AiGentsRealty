@@ -102,20 +102,11 @@ export default function WhyDubaiPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
-      {/* AI PARTICLE GLOW BACKGROUND */}
+    <div className="min-h-screen bg-white text-[#0A0A0A] relative overflow-hidden">
+      {/* SUBTLE LIGHT GRADIENT BACKGROUND */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#00C775]/5 rounded-full blur-[150px] animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#F3C440]/5 rounded-full blur-[120px] animate-pulse" style={{animationDelay: '1s'}}></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#00C775]/3 rounded-full blur-[200px]"></div>
-      </div>
-
-      {/* NEURAL GRID OVERLAY */}
-      <div className="fixed inset-0 pointer-events-none opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `linear-gradient(#00C775 1px, transparent 1px), linear-gradient(90deg, #00C775 1px, transparent 1px)`,
-          backgroundSize: '80px 80px'
-        }}></div>
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-emerald-50 to-transparent opacity-40"></div>
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-amber-50 to-transparent opacity-40"></div>
       </div>
 
       <div className="relative z-10">
@@ -123,26 +114,26 @@ export default function WhyDubaiPage() {
         <section className="relative pt-32 pb-16 px-6 lg:px-16">
           <div className="max-w-[1400px] mx-auto">
             <div className="mb-8">
-              <Link href="/investment" className="inline-flex items-center gap-2 text-gray-400 hover:text-[#00C775] transition-colors group">
+              <Link href="/investment" className="inline-flex items-center gap-2 text-gray-600 hover:text-[#10B981] transition-colors group">
                 <ArrowRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition-transform" />
                 <span>Back to Investment Hub</span>
               </Link>
             </div>
 
-            <div className="inline-flex items-center gap-2 bg-[#F3C440]/10 border border-[#F3C440]/30 rounded-full px-5 py-1.5 mb-4">
-              <MapPin className="w-3.5 h-3.5 text-[#F3C440]" />
-              <span className="text-xs font-bold text-[#F3C440] tracking-wide">MARKET INSIGHTS</span>
+            <div className="inline-flex items-center gap-2 bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-full px-5 py-1.5 mb-4">
+              <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
+              <span className="text-xs font-bold text-[#D4AF37] tracking-wide">MARKET INSIGHTS</span>
             </div>
 
-            <h1 className="text-6xl lg:text-8xl font-black text-white mb-6 leading-[1.05] tracking-tight">
+            <h1 className="text-6xl lg:text-8xl font-black text-[#0A0A0A] mb-6 leading-[1.05] tracking-tight">
               Why Invest in
               <br />
-              <span className="bg-gradient-to-r from-[#F3C440] via-[#FFD700] to-[#F3C440] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#D4AF37] via-[#F4D03F] to-[#D4AF37] bg-clip-text text-transparent">
                 Dubai Off-Plan?
               </span>
             </h1>
 
-            <p className="text-xl text-gray-400 max-w-3xl">
+            <p className="text-xl text-gray-600 max-w-3xl">
               Discover why Dubai's off-plan property market offers unmatched opportunities for investors worldwide
             </p>
           </div>
@@ -159,21 +150,21 @@ export default function WhyDubaiPage() {
                 return (
                   <div
                     key={index}
-                    className={`bg-gradient-to-br ${isEmerald ? 'from-[#00C775]/10' : 'from-[#F3C440]/10'} via-[#0D0D0D]/80 to-[#0D0D0D]/80 backdrop-blur-xl border ${isEmerald ? 'border-[#00C775]/40' : 'border-[#F3C440]/40'} rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300`}
+                    className={`bg-white border ${isEmerald ? 'border-[#10B981]/30' : 'border-[#D4AF37]/30'} shadow-md rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 hover:shadow-lg`}
                   >
-                    <div className={`w-14 h-14 rounded-2xl ${isEmerald ? 'bg-[#00C775]/20' : 'bg-[#F3C440]/20'} flex items-center justify-center mb-6`}>
-                      <Icon className={`w-7 h-7 ${isEmerald ? 'text-[#00C775]' : 'text-[#F3C440]'}`} />
+                    <div className={`w-14 h-14 rounded-2xl ${isEmerald ? 'bg-[#10B981]/10' : 'bg-[#D4AF37]/10'} flex items-center justify-center mb-6`}>
+                      <Icon className={`w-7 h-7 ${isEmerald ? 'text-[#10B981]' : 'text-[#D4AF37]'}`} />
                     </div>
 
-                    <div className={`text-5xl font-black mb-3 ${isEmerald ? 'text-[#00C775]' : 'text-[#F3C440]'}`}>
+                    <div className={`text-5xl font-black mb-3 ${isEmerald ? 'text-[#10B981]' : 'text-[#D4AF37]'}`}>
                       {stat.value}
                     </div>
 
-                    <h3 className="text-xl font-black text-white mb-2">
+                    <h3 className="text-xl font-black text-[#0A0A0A] mb-2">
                       {stat.label}
                     </h3>
 
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-gray-600">
                       {stat.description}
                     </p>
                   </div>
@@ -187,8 +178,8 @@ export default function WhyDubaiPage() {
         <section className="px-6 lg:px-16 pb-12">
           <div className="max-w-[1400px] mx-auto">
             <div className="flex items-center gap-3 mb-8">
-              <Sparkles className="w-8 h-8 text-[#00C775]" />
-              <h2 className="text-4xl font-black text-white">Market Advantages</h2>
+              <Sparkles className="w-8 h-8 text-[#10B981]" />
+              <h2 className="text-4xl font-black text-[#0A0A0A]">Market Advantages</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -198,24 +189,24 @@ export default function WhyDubaiPage() {
                 return (
                   <div
                     key={index}
-                    className="bg-[#0D0D0D]/80 backdrop-blur-xl border border-white/10 hover:border-[#00C775]/60 rounded-3xl p-8 transition-all duration-300 hover:-translate-y-1"
+                    className="bg-white border border-gray-200 hover:border-[#10B981]/40 shadow-md rounded-3xl p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                   >
-                    <div className="w-14 h-14 rounded-2xl bg-[#00C775]/20 flex items-center justify-center mb-6">
-                      <Icon className="w-7 h-7 text-[#00C775]" />
+                    <div className="w-14 h-14 rounded-2xl bg-[#10B981]/10 flex items-center justify-center mb-6">
+                      <Icon className="w-7 h-7 text-[#10B981]" />
                     </div>
 
-                    <h3 className="text-2xl font-black text-white mb-3">
+                    <h3 className="text-2xl font-black text-[#0A0A0A] mb-3">
                       {advantage.title}
                     </h3>
 
-                    <p className="text-gray-400 mb-6">
+                    <p className="text-gray-600 mb-6">
                       {advantage.description}
                     </p>
 
                     <ul className="space-y-2">
                       {advantage.features.map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-center gap-2 text-sm text-gray-300">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#00C775]"></div>
+                        <li key={featureIndex} className="flex items-center gap-2 text-sm text-gray-600">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#10B981]"></div>
                           <span>{feature}</span>
                         </li>
                       ))}
@@ -231,8 +222,8 @@ export default function WhyDubaiPage() {
         <section className="px-6 lg:px-16 pb-12">
           <div className="max-w-[1400px] mx-auto">
             <div className="flex items-center gap-3 mb-8">
-              <TrendingUp className="w-8 h-8 text-[#F3C440]" />
-              <h2 className="text-4xl font-black text-white">Market Highlights</h2>
+              <TrendingUp className="w-8 h-8 text-[#D4AF37]" />
+              <h2 className="text-4xl font-black text-[#0A0A0A]">Market Highlights</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -242,17 +233,17 @@ export default function WhyDubaiPage() {
                 return (
                   <div
                     key={index}
-                    className="bg-[#0D0D0D]/80 backdrop-blur-xl border border-white/10 hover:border-[#00C775]/40 rounded-3xl p-6 transition-all duration-300"
+                    className="bg-white border border-gray-200 hover:border-[#10B981]/30 shadow-md rounded-3xl p-6 transition-all duration-300 hover:shadow-lg"
                   >
-                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">
+                    <h3 className="text-sm font-bold text-gray-600 uppercase tracking-wider mb-3">
                       {highlight.title}
                     </h3>
 
-                    <div className={`text-4xl font-black mb-3 ${isEmerald ? 'text-[#00C775]' : 'text-[#F3C440]'}`}>
+                    <div className={`text-4xl font-black mb-3 ${isEmerald ? 'text-[#10B981]' : 'text-[#D4AF37]'}`}>
                       {highlight.value}
                     </div>
 
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-gray-600">
                       {highlight.description}
                     </p>
                   </div>
@@ -265,57 +256,57 @@ export default function WhyDubaiPage() {
         {/* COMPARISON SECTION */}
         <section className="px-6 lg:px-16 pb-12">
           <div className="max-w-[1400px] mx-auto">
-            <div className="bg-[#0D0D0D]/80 backdrop-blur-xl border border-[#00C775]/20 rounded-3xl p-12">
-              <h2 className="text-4xl font-black text-white mb-8 text-center">
+            <div className="bg-white border border-gray-200 shadow-lg rounded-3xl p-12">
+              <h2 className="text-4xl font-black text-[#0A0A0A] mb-8 text-center">
                 Dubai vs. Global Markets
               </h2>
 
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-white/10">
-                      <th className="text-left py-4 px-4 text-gray-400 font-bold">Factor</th>
-                      <th className="text-left py-4 px-4 text-[#00C775] font-bold">Dubai</th>
-                      <th className="text-left py-4 px-4 text-gray-400 font-bold">London</th>
-                      <th className="text-left py-4 px-4 text-gray-400 font-bold">New York</th>
-                      <th className="text-left py-4 px-4 text-gray-400 font-bold">Singapore</th>
+                    <tr className="border-b-2 border-gray-200">
+                      <th className="text-left py-4 px-4 text-gray-600 font-bold">Factor</th>
+                      <th className="text-left py-4 px-4 text-[#10B981] font-bold">Dubai</th>
+                      <th className="text-left py-4 px-4 text-gray-600 font-bold">London</th>
+                      <th className="text-left py-4 px-4 text-gray-600 font-bold">New York</th>
+                      <th className="text-left py-4 px-4 text-gray-600 font-bold">Singapore</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b border-white/5">
-                      <td className="py-4 px-4 text-gray-300">Property Tax</td>
-                      <td className="py-4 px-4 font-bold text-[#00C775]">0%</td>
-                      <td className="py-4 px-4 text-gray-400">Up to 2%</td>
-                      <td className="py-4 px-4 text-gray-400">1-2%</td>
-                      <td className="py-4 px-4 text-gray-400">Up to 16%</td>
+                    <tr className="border-b border-gray-100">
+                      <td className="py-4 px-4 text-gray-600">Property Tax</td>
+                      <td className="py-4 px-4 font-bold text-[#10B981]">0%</td>
+                      <td className="py-4 px-4 text-gray-600">Up to 2%</td>
+                      <td className="py-4 px-4 text-gray-600">1-2%</td>
+                      <td className="py-4 px-4 text-gray-600">Up to 16%</td>
                     </tr>
-                    <tr className="border-b border-white/5">
-                      <td className="py-4 px-4 text-gray-300">Income Tax</td>
-                      <td className="py-4 px-4 font-bold text-[#00C775]">0%</td>
-                      <td className="py-4 px-4 text-gray-400">20-45%</td>
-                      <td className="py-4 px-4 text-gray-400">22-37%</td>
-                      <td className="py-4 px-4 text-gray-400">Up to 22%</td>
+                    <tr className="border-b border-gray-100">
+                      <td className="py-4 px-4 text-gray-600">Income Tax</td>
+                      <td className="py-4 px-4 font-bold text-[#10B981]">0%</td>
+                      <td className="py-4 px-4 text-gray-600">20-45%</td>
+                      <td className="py-4 px-4 text-gray-600">22-37%</td>
+                      <td className="py-4 px-4 text-gray-600">Up to 22%</td>
                     </tr>
-                    <tr className="border-b border-white/5">
-                      <td className="py-4 px-4 text-gray-300">Rental Yield</td>
-                      <td className="py-4 px-4 font-bold text-[#00C775]">7-12%</td>
-                      <td className="py-4 px-4 text-gray-400">3-5%</td>
-                      <td className="py-4 px-4 text-gray-400">3-6%</td>
-                      <td className="py-4 px-4 text-gray-400">3-4%</td>
+                    <tr className="border-b border-gray-100">
+                      <td className="py-4 px-4 text-gray-600">Rental Yield</td>
+                      <td className="py-4 px-4 font-bold text-[#10B981]">7-12%</td>
+                      <td className="py-4 px-4 text-gray-600">3-5%</td>
+                      <td className="py-4 px-4 text-gray-600">3-6%</td>
+                      <td className="py-4 px-4 text-gray-600">3-4%</td>
                     </tr>
-                    <tr className="border-b border-white/5">
-                      <td className="py-4 px-4 text-gray-300">Capital Gains Tax</td>
-                      <td className="py-4 px-4 font-bold text-[#00C775]">0%</td>
-                      <td className="py-4 px-4 text-gray-400">10-28%</td>
-                      <td className="py-4 px-4 text-gray-400">15-20%</td>
-                      <td className="py-4 px-4 text-gray-400">Up to 20%</td>
+                    <tr className="border-b border-gray-100">
+                      <td className="py-4 px-4 text-gray-600">Capital Gains Tax</td>
+                      <td className="py-4 px-4 font-bold text-[#10B981]">0%</td>
+                      <td className="py-4 px-4 text-gray-600">10-28%</td>
+                      <td className="py-4 px-4 text-gray-600">15-20%</td>
+                      <td className="py-4 px-4 text-gray-600">Up to 20%</td>
                     </tr>
                     <tr>
-                      <td className="py-4 px-4 text-gray-300">Foreign Ownership</td>
-                      <td className="py-4 px-4 font-bold text-[#00C775]">100% Freehold</td>
-                      <td className="py-4 px-4 text-gray-400">Yes</td>
-                      <td className="py-4 px-4 text-gray-400">Yes</td>
-                      <td className="py-4 px-4 text-gray-400">Restricted</td>
+                      <td className="py-4 px-4 text-gray-600">Foreign Ownership</td>
+                      <td className="py-4 px-4 font-bold text-[#10B981]">100% Freehold</td>
+                      <td className="py-4 px-4 text-gray-600">Yes</td>
+                      <td className="py-4 px-4 text-gray-600">Yes</td>
+                      <td className="py-4 px-4 text-gray-600">Restricted</td>
                     </tr>
                   </tbody>
                 </table>
@@ -327,21 +318,21 @@ export default function WhyDubaiPage() {
         {/* CTA SECTION */}
         <section className="px-6 lg:px-16 pb-20">
           <div className="max-w-[1400px] mx-auto">
-            <div className="bg-gradient-to-br from-[#0D0D0D] via-[#0D0D0D] to-[#00C775]/5 backdrop-blur-xl border border-[#00C775]/20 rounded-3xl p-12 text-center">
-              <h2 className="text-4xl lg:text-5xl font-black text-white mb-4">
+            <div className="bg-gradient-to-br from-emerald-50 via-white to-amber-50 border border-gray-200 shadow-lg rounded-3xl p-12 text-center">
+              <h2 className="text-4xl lg:text-5xl font-black text-[#0A0A0A] mb-4">
                 Start Your Dubai Investment Journey
               </h2>
-              <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
+              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
                 Explore our curated off-plan properties and calculate your potential returns
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <Link href="/projects" className="bg-gradient-to-r from-[#00C775] to-[#00A85D] px-8 py-4 rounded-full font-bold text-white shadow-[0_0_30px_rgba(0,199,117,0.4)] hover:shadow-[0_0_50px_rgba(0,199,117,0.6)] transition-all hover:-translate-y-1">
+                <Link href="/projects" className="bg-gradient-to-r from-[#10B981] to-[#059669] px-8 py-4 rounded-full font-bold text-white shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
                   Browse Properties
                 </Link>
-                <Link href="/investment/roi-calculator" className="bg-gradient-to-r from-[#F3C440] to-[#D4A936] px-8 py-4 rounded-full font-bold text-black shadow-[0_0_30px_rgba(243,196,64,0.4)] hover:shadow-[0_0_50px_rgba(243,196,64,0.6)] transition-all hover:-translate-y-1">
+                <Link href="/investment/roi-calculator" className="bg-gradient-to-r from-[#D4AF37] to-[#C19B2E] px-8 py-4 rounded-full font-bold text-white shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
                   Calculate ROI
                 </Link>
-                <Link href="/investment/first-time" className="bg-[#0D0D0D] border-2 border-[#00C775] px-8 py-4 rounded-full font-bold text-white hover:bg-[#00C775]/10 transition-all hover:-translate-y-1">
+                <Link href="/investment/first-time" className="bg-white border-2 border-[#10B981] px-8 py-4 rounded-full font-bold text-[#10B981] hover:bg-[#10B981]/5 transition-all hover:-translate-y-1">
                   First-Time Guide
                 </Link>
               </div>

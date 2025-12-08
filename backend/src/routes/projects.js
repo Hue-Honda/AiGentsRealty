@@ -3,6 +3,51 @@ import { query } from '../config/database.js';
 
 const router = express.Router();
 
+// GET /api/projects/search - Search projects by name
+router.get('/search', async (req, res) => {
+  try {
+    const { q } = req.query;
+
+    if (!q || q.length < 2) {
+      return res.json({
+        success: true,
+        data: []
+      });
+    }
+
+    const result = await query(
+      `SELECT
+        p.*,
+        d.name as developer_name,
+        d.logo as developer_logo,
+        a.name as area_name,
+        a.slug as area_slug
+       FROM projects p
+       LEFT JOIN developers d ON p.developer_id = d.id
+       LEFT JOIN areas a ON p.area_id = a.id
+       WHERE LOWER(p.name) LIKE LOWER($1)
+          OR LOWER(d.name) LIKE LOWER($1)
+          OR LOWER(a.name) LIKE LOWER($1)
+       ORDER BY
+         CASE WHEN LOWER(p.name) LIKE LOWER($2) THEN 0 ELSE 1 END,
+         p.name ASC
+       LIMIT 8`,
+      [`%${q}%`, `${q}%`]
+    );
+
+    res.json({
+      success: true,
+      data: result.rows
+    });
+  } catch (error) {
+    console.error('Error searching projects:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to search projects'
+    });
+  }
+});
+
 // GET /api/projects/suggestions - Get AI property suggestions
 router.get('/suggestions', async (req, res) => {
   try {
@@ -59,6 +104,47 @@ router.get('/featured', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to fetch featured projects'
+    });
+  }
+});
+
+// GET /api/projects/slug/:slug - Get single project by slug
+router.get('/slug/:slug', async (req, res) => {
+  try {
+    const { slug } = req.params;
+
+    const result = await query(
+      `SELECT
+        p.*,
+        d.name as developer_name,
+        d.logo as developer_logo,
+        d.slug as developer_slug,
+        a.name as area_name,
+        a.slug as area_slug,
+        a.description as area_description
+       FROM projects p
+       LEFT JOIN developers d ON p.developer_id = d.id
+       LEFT JOIN areas a ON p.area_id = a.id
+       WHERE p.slug = $1`,
+      [slug]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'Project not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Error fetching project by slug:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch project'
     });
   }
 });

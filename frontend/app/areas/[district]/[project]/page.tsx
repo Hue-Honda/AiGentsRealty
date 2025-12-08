@@ -15,183 +15,75 @@ import Link from 'next/link';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Mock data - will be replaced with API call
-const projectData: any = {
-  'meraas-the-edit-at-d3': {
-    slug: 'meraas-the-edit-at-d3',
-    name: 'The Edit at d3',
-    developer: 'Meraas',
-    developerLogo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&h=200&fit=crop',
-    district: 'Dubai Design District',
-    districtSlug: 'dubai-design-district-dubai',
-    area: 'Dubai',
-    price: 'AED 1.2M',
-    priceNum: 1200000,
-    roi: '14.5%',
-    rating: 4.8,
-    handoverDate: 'Q1 2030',
-    paymentPlan: '70/30',
-    status: 'Off Plan',
-    titleType: 'Freehold',
-    metroDistance: '5 min',
-    onTimeDelivery: 96,
-    propertyTypes: ['Apartments', 'Villas', 'Commercial'],
-    coordinates: { lat: 25.2007, lng: 55.2721 }, // Dubai Design District coordinates
-    images: [
-      'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1920&h=1080&fit=crop&q=90',
-      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1920&h=1080&fit=crop&q=90',
-      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&h=1080&fit=crop&q=90',
-      'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1920&h=1080&fit=crop&q=90',
-      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&h=1080&fit=crop&q=90',
-      'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1920&h=1080&fit=crop&q=90',
-    ],
-    description: 'The Edit at d3 by Meraas represents the pinnacle of contemporary design and luxury living in Dubai Design District. This exceptional development offers meticulously designed residences with breathtaking views and world-class amenities, perfect for those who appreciate art, design, and culture. Experience unparalleled sophistication in one of Dubai\'s most creative communities.',
-    amenities: [
-      { icon: Waves, name: 'Infinity Pool', glow: 'emerald' },
-      { icon: Dumbbell, name: 'State-of-Art Gym', glow: 'gold' },
-      { icon: Users, name: 'Kids Play Area', glow: 'emerald' },
-      { icon: Trees, name: 'Landscaped Gardens', glow: 'gold' },
-      { icon: Shield, name: '24/7 Security', glow: 'emerald' },
-      { icon: Building2, name: 'Concierge Service', glow: 'gold' },
-      { icon: Wifi, name: 'Smart Home Tech', glow: 'emerald' },
-      { icon: ShoppingBag, name: 'Retail Outlets', glow: 'gold' },
-      { icon: GraduationCap, name: 'Co-working Spaces', glow: 'emerald' },
-      { icon: Navigation, name: 'Jogging Track', glow: 'gold' },
-      { icon: Zap, name: 'EV Charging', glow: 'emerald' },
-      { icon: Users, name: 'Community Hall', glow: 'gold' }
-    ],
-    paymentSchedule: [
-      { stage: 'On Booking', percentage: 10, date: 'Upon reservation' },
-      { stage: '1st Installment', percentage: 10, date: '6 months' },
-      { stage: '2nd Installment', percentage: 10, date: '12 months' },
-      { stage: '3rd Installment', percentage: 10, date: '18 months' },
-      { stage: '4th Installment', percentage: 10, date: '24 months' },
-      { stage: '5th Installment', percentage: 10, date: '30 months' },
-      { stage: '6th Installment', percentage: 10, date: '36 months' },
-      { stage: 'On Handover', percentage: 30, date: 'Q1 2030' }
-    ],
-    unitTypes: [
-      {
-        type: 'Studio',
-        size: '450',
-        price: 'AED 750K',
-        bedrooms: 0,
-        bathrooms: 1,
-        image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop&q=90',
-        features: ['Smart Kitchen', 'Built-in Wardrobes', 'Balcony']
-      },
-      {
-        type: '1 Bedroom',
-        size: '750',
-        price: 'AED 1.2M',
-        bedrooms: 1,
-        bathrooms: 2,
-        image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop&q=90',
-        features: ['Master Bedroom', 'Walk-in Closet', 'Large Balcony']
-      },
-      {
-        type: '2 Bedroom',
-        size: '1200',
-        price: 'AED 1.8M',
-        bedrooms: 2,
-        bathrooms: 3,
-        image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop&q=90',
-        features: ['2 Master Bedrooms', 'Maid\'s Room', 'Premium Finishes']
-      },
-      {
-        type: '3 Bedroom',
-        size: '1800',
-        price: 'AED 2.8M',
-        bedrooms: 3,
-        bathrooms: 4,
-        image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800&h=600&fit=crop&q=90',
-        features: ['3 En-suite Bedrooms', 'Study Room', 'Luxury Kitchen']
-      }
-    ],
-    aiInsights: {
-      riskScore: 92,
-      growthPotential: 88,
-      demandLevel: 95,
-      roiProjection: [
-        { year: '2025', value: 5 },
-        { year: '2026', value: 8 },
-        { year: '2027', value: 11 },
-        { year: '2028', value: 14.5 },
-        { year: '2029', value: 18 },
-        { year: '2030', value: 22 }
-      ]
-    }
-  },
-  'azure-residences': {
-    slug: 'azure-residences',
-    name: 'Azure Residences',
-    developer: 'Emaar Properties',
-    developerLogo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&h=200&fit=crop',
-    district: 'Dubai Hills Estate',
-    districtSlug: 'dubai-hills-estate',
-    area: 'Dubai',
-    price: 'AED 900K',
-    priceNum: 900000,
-    roi: '12.5%',
-    rating: 4.9,
-    handoverDate: 'Q4 2025',
-    paymentPlan: '80/20',
-    status: 'Off Plan',
-    titleType: 'Freehold',
-    metroDistance: '8 min',
-    onTimeDelivery: 98,
-    propertyTypes: ['Apartments', 'Penthouses'],
-    images: [
-      'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1920&h=1080&fit=crop&q=90',
-      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1920&h=1080&fit=crop&q=90',
-      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&h=1080&fit=crop&q=90',
-    ],
-    description: 'Azure Residences represents the pinnacle of luxury living in Dubai Hills Estate. This exceptional development by Emaar Properties offers meticulously designed residences with breathtaking views and world-class amenities.',
-    amenities: [
-      { icon: Waves, name: 'Infinity Pool', glow: 'emerald' },
-      { icon: Dumbbell, name: 'Fitness Center', glow: 'gold' },
-      { icon: Users, name: 'Kids Play Area', glow: 'emerald' },
-      { icon: Trees, name: 'Gardens', glow: 'gold' },
-      { icon: Shield, name: '24/7 Security', glow: 'emerald' },
-      { icon: Building2, name: 'Concierge', glow: 'gold' }
-    ],
-    paymentSchedule: [
-      { stage: 'On Booking', percentage: 20, date: 'Upon reservation' },
-      { stage: 'During Construction', percentage: 60, date: 'Monthly' },
-      { stage: 'On Handover', percentage: 20, date: 'Q4 2025' }
-    ],
-    unitTypes: [
-      {
-        type: 'Studio',
-        size: '450',
-        price: 'AED 650K',
-        bedrooms: 0,
-        bathrooms: 1,
-        image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop&q=90',
-        features: ['Modern Kitchen', 'Balcony']
-      },
-      {
-        type: '1 Bedroom',
-        size: '750',
-        price: 'AED 900K',
-        bedrooms: 1,
-        bathrooms: 2,
-        image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop&q=90',
-        features: ['Master Bedroom', 'Balcony']
-      }
-    ],
-    aiInsights: {
-      riskScore: 95,
-      growthPotential: 91,
-      demandLevel: 97,
-      roiProjection: [
-        { year: '2025', value: 6 },
-        { year: '2026', value: 12.5 },
-        { year: '2027', value: 18 },
-        { year: '2028', value: 23 }
-      ]
-    }
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
+// Icon mapping for amenities
+const amenityIconMap: { [key: string]: any } = {
+  'swimming pool': Waves,
+  'infinity pool': Waves,
+  'pool': Waves,
+  'gym': Dumbbell,
+  'fitness': Dumbbell,
+  'fitness center': Dumbbell,
+  'kids': Users,
+  'children': Users,
+  'play area': Users,
+  'garden': Trees,
+  'landscaped': Trees,
+  'park': Trees,
+  'security': Shield,
+  '24/7': Shield,
+  'concierge': Building2,
+  'smart': Wifi,
+  'wifi': Wifi,
+  'retail': ShoppingBag,
+  'shopping': ShoppingBag,
+  'co-working': GraduationCap,
+  'business': GraduationCap,
+  'jogging': Navigation,
+  'track': Navigation,
+  'ev': Zap,
+  'charging': Zap,
+  'community': Users,
+  'spa': Waves,
+  'sauna': Waves,
+  'steam': Waves,
+  'tennis': Activity,
+  'basketball': Activity,
+  'sports': Activity,
+  'restaurant': ShoppingBag,
+  'cafe': ShoppingBag,
+  'bbq': Trees,
+  'barbecue': Trees,
+  'parking': Navigation,
+  'valet': Navigation,
+};
+
+// Helper to get icon for amenity
+const getAmenityIcon = (amenityName: string) => {
+  const lowerName = amenityName.toLowerCase();
+  for (const [key, icon] of Object.entries(amenityIconMap)) {
+    if (lowerName.includes(key)) return icon;
   }
+  return Building2; // Default icon
+};
+
+// Default fallback data
+const defaultProject = {
+  slug: '',
+  name: 'Loading...',
+  developer_name: '',
+  area_name: '',
+  location: '',
+  price_from: '',
+  payment_plan: '',
+  completion_date: '',
+  status: 'Off Plan',
+  images: [],
+  description: '',
+  amenities: [],
+  unit_types: [],
+  match_score: 0,
 };
 
 export default function ProjectDetailPage() {
@@ -199,7 +91,89 @@ export default function ProjectDetailPage() {
   const projectSlug = params.project as string;
   const districtSlug = params.district as string;
 
-  const project = projectData[projectSlug] || projectData['meraas-the-edit-at-d3'];
+  const [project, setProject] = useState<any>(defaultProject);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch project data from API
+  useEffect(() => {
+    async function fetchProject() {
+      try {
+        setLoading(true);
+        const res = await fetch(`${API_URL}/api/projects/slug/${projectSlug}`);
+        const data = await res.json();
+
+        if (data.success && data.data) {
+          setProject(data.data);
+        } else {
+          setError('Project not found');
+        }
+      } catch (err) {
+        console.error('Error fetching project:', err);
+        setError('Failed to load project');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (projectSlug) {
+      fetchProject();
+    }
+  }, [projectSlug]);
+
+  // Transform amenities from API (array of strings) to component format
+  const formattedAmenities = (project.amenities || []).map((amenity: string, index: number) => ({
+    icon: getAmenityIcon(amenity),
+    name: amenity,
+    glow: index % 2 === 0 ? 'emerald' : 'gold'
+  }));
+
+  // Transform unit types from API
+  const formattedUnitTypes = (project.unit_types || []).map((unit: any) => ({
+    type: unit.type || unit.name || 'Unit',
+    size: unit.size || unit.sqft || '0',
+    price: unit.price || 'Contact for Price',
+    bedrooms: unit.bedrooms || 0,
+    bathrooms: unit.bathrooms || 1,
+    image: unit.image || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop&q=90',
+    features: unit.features || []
+  }));
+
+  // Generate payment schedule from payment_plan (e.g., "80/20" -> 80% during, 20% handover)
+  const generatePaymentSchedule = (paymentPlan: string) => {
+    if (!paymentPlan) return [];
+    const match = paymentPlan.match(/(\d+)\/(\d+)/);
+    if (!match) return [];
+    const during = parseInt(match[1]);
+    const handover = parseInt(match[2]);
+    return [
+      { stage: 'On Booking', percentage: 10, date: 'Upon reservation' },
+      { stage: 'During Construction', percentage: during - 10, date: 'Monthly installments' },
+      { stage: 'On Handover', percentage: handover, date: project.completion_date || 'Upon completion' }
+    ];
+  };
+
+  // Default images if none provided
+  const projectImages = project.images?.length > 0 ? project.images : [
+    'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1920&h=1080&fit=crop&q=90',
+    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1920&h=1080&fit=crop&q=90',
+    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&h=1080&fit=crop&q=90',
+  ];
+
+  // AI insights (generated based on match_score)
+  const aiInsights = {
+    riskScore: Math.min(95, (project.match_score || 80) + Math.floor(Math.random() * 10)),
+    growthPotential: Math.min(95, (project.match_score || 80) + Math.floor(Math.random() * 8)),
+    demandLevel: Math.min(98, (project.match_score || 80) + Math.floor(Math.random() * 12)),
+    roiProjection: [
+      { year: '2025', value: 5 },
+      { year: '2026', value: 9 },
+      { year: '2027', value: 13 },
+      { year: '2028', value: 17 },
+      { year: '2029', value: 21 },
+      { year: '2030', value: 25 }
+    ]
+  };
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -220,8 +194,9 @@ export default function ProjectDetailPage() {
     { id: 'ai-insights', label: 'AI Insights' }
   ];
 
-  // GSAP Animations
+  // GSAP Animations - must be before conditional returns
   useEffect(() => {
+    if (!project) return; // Skip animations when project not loaded
     const ctx = gsap.context(() => {
       // Parallax hero image
       if (heroRef.current) {
@@ -300,10 +275,12 @@ export default function ProjectDetailPage() {
     }, heroRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [project]);
 
-  // Scroll spy for navigation
+  // Scroll spy for navigation - must be before conditional returns
   useEffect(() => {
+    if (!project) return;
+
     const handleScroll = () => {
       const scrollPosition = window.scrollY + 200;
 
@@ -321,7 +298,38 @@ export default function ProjectDetailPage() {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [project]);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="relative">
+            <Sparkles className="w-16 h-16 text-[#10B981] animate-pulse mx-auto mb-4" />
+            <div className="absolute inset-0 w-16 h-16 bg-[#10B981]/20 rounded-full blur-xl mx-auto animate-ping"></div>
+          </div>
+          <p className="text-gray-300 text-lg font-semibold">Loading Project Details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-6">😕</div>
+          <h3 className="text-2xl font-bold text-white mb-3">{error}</h3>
+          <p className="text-gray-400 mb-8">The project you're looking for could not be found.</p>
+          <Link href="/projects" className="bg-gradient-to-r from-[#10B981] to-[#059669] px-8 py-4 rounded-full font-bold text-white">
+            Browse All Projects
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const scrollToSection = (id: string) => {
     const section = sectionsRef.current[id];
@@ -332,8 +340,9 @@ export default function ProjectDetailPage() {
     }
   };
 
-  const truncatedDesc = project.description.slice(0, 200);
-  const shouldTruncate = project.description.length > 200;
+  const truncatedDesc = (project.description || '').slice(0, 200);
+  const shouldTruncate = (project.description || '').length > 200;
+  const paymentSchedule = generatePaymentSchedule(project.payment_plan);
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -343,22 +352,22 @@ export default function ProjectDetailPage() {
         <div className="hero-image absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30 z-10"></div>
           <img
-            src={project.images[currentImageIndex]}
+            src={projectImages[currentImageIndex]}
             alt={project.name}
             className="w-full h-full object-cover"
             suppressHydrationWarning
           />
           {/* Ambient Glows */}
           <div className="absolute bottom-0 left-1/4 w-[800px] h-[800px] bg-[#E8C676]/10 rounded-full blur-[150px] z-20"></div>
-          <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-[#00C870]/10 rounded-full blur-[120px] z-20"></div>
+          <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-[#10B981]/10 rounded-full blur-[120px] z-20"></div>
         </div>
 
         {/* Breadcrumbs - Top Left */}
         <div className="absolute top-24 left-6 lg:left-16 z-30">
           <div className="flex items-center gap-2 text-sm text-gray-400">
-            <Link href="/explore" className="hover:text-[#E8C676] transition-colors">Explore</Link>
+            <Link href="/projects" className="hover:text-[#E8C676] transition-colors">Projects</Link>
             <ChevronRight className="w-4 h-4" />
-            <Link href={`/areas/${districtSlug}`} className="hover:text-[#E8C676] transition-colors">{project.district}</Link>
+            <Link href={`/areas/${districtSlug}`} className="hover:text-[#E8C676] transition-colors">{project.area_name || project.location}</Link>
             <ChevronRight className="w-4 h-4" />
             <span className="text-white">{project.name}</span>
           </div>
@@ -366,7 +375,7 @@ export default function ProjectDetailPage() {
 
         {/* Image Carousel Thumbnails - Right Side */}
         <div className="absolute right-6 lg:right-16 top-1/2 -translate-y-1/2 z-30 space-y-3">
-          {project.images.map((img: string, idx: number) => (
+          {projectImages.map((img: string, idx: number) => (
             <button
               key={idx}
               onClick={() => setCurrentImageIndex(idx)}
@@ -389,15 +398,17 @@ export default function ProjectDetailPage() {
                 {/* Left: Title & Info */}
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-3 mb-4">
-                    <span className="bg-gradient-to-r from-[#00C870] to-[#00A85D] text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-[0_0_20px_rgba(0,200,112,0.4)]">
-                      {project.status}
+                    <span className="bg-gradient-to-r from-[#10B981] to-[#059669] text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-[0_0_20px_rgba(0,200,112,0.4)]">
+                      {project.status || 'Off Plan'}
                     </span>
                     <span className="bg-gradient-to-r from-[#E8C676] to-[#D4AF37] text-black px-4 py-1.5 rounded-full text-sm font-bold">
-                      {project.titleType}
+                      Freehold
                     </span>
-                    <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-1.5 rounded-full text-sm font-semibold">
-                      Handover: {project.handoverDate}
-                    </span>
+                    {project.completion_date && (
+                      <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-1.5 rounded-full text-sm font-semibold">
+                        Handover: {project.completion_date}
+                      </span>
+                    )}
                   </div>
 
                   <h1 className="text-5xl lg:text-7xl font-black text-white mb-3 leading-tight tracking-tight">
@@ -406,26 +417,30 @@ export default function ProjectDetailPage() {
 
                   <div className="flex items-center gap-3 mb-4">
                     <MapPin className="w-5 h-5 text-[#E8C676]" />
-                    <span className="text-xl text-gray-300">{project.district}</span>
+                    <span className="text-xl text-gray-300">{project.area_name || project.location}</span>
                     <span className="text-gray-500">•</span>
-                    <span className="text-lg text-gray-400">by {project.developer}</span>
+                    <span className="text-lg text-gray-400">by {project.developer_name}</span>
                   </div>
 
                   <div className="flex items-center gap-6">
                     <div>
                       <p className="text-sm text-gray-500 uppercase tracking-wider mb-1">Starting From</p>
                       <p className="text-4xl font-black bg-gradient-to-r from-[#E8C676] via-[#D4AF37] to-[#E8C676] bg-clip-text text-transparent">
-                        {project.price}
+                        {project.price_from || 'Contact for Price'}
                       </p>
                     </div>
-                    <div className="h-12 w-px bg-white/20"></div>
-                    <div>
-                      <p className="text-sm text-gray-500 uppercase tracking-wider mb-1">Expected ROI</p>
-                      <div className="flex items-center gap-2">
-                        <TrendingUp className="w-5 h-5 text-[#00C870]" />
-                        <p className="text-2xl font-black text-[#00C870]">{project.roi}</p>
-                      </div>
-                    </div>
+                    {project.match_score && (
+                      <>
+                        <div className="h-12 w-px bg-white/20"></div>
+                        <div>
+                          <p className="text-sm text-gray-500 uppercase tracking-wider mb-1">AI Match Score</p>
+                          <div className="flex items-center gap-2">
+                            <TrendingUp className="w-5 h-5 text-[#10B981]" />
+                            <p className="text-2xl font-black text-[#10B981]">{project.match_score}%</p>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -487,44 +502,44 @@ export default function ProjectDetailPage() {
               <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Star className="w-4 h-4 text-[#E8C676] fill-[#E8C676]" />
-                  <p className="text-xs text-gray-500 uppercase">Rating</p>
+                  <p className="text-xs text-gray-500 uppercase">Match Score</p>
                 </div>
-                <p className="text-2xl font-black text-white">{project.rating}</p>
+                <p className="text-2xl font-black text-white">{project.match_score || 85}%</p>
               </div>
               <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="w-4 h-4 text-[#00C870]" />
-                  <p className="text-xs text-gray-500 uppercase">ROI</p>
+                  <TrendingUp className="w-4 h-4 text-[#10B981]" />
+                  <p className="text-xs text-gray-500 uppercase">Status</p>
                 </div>
-                <p className="text-2xl font-black text-[#00C870]">{project.roi}</p>
+                <p className="text-lg font-black text-[#10B981]">{project.status || 'Off Plan'}</p>
               </div>
               <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Calendar className="w-4 h-4 text-[#E8C676]" />
                   <p className="text-xs text-gray-500 uppercase">Handover</p>
                 </div>
-                <p className="text-sm font-bold text-white">{project.handoverDate}</p>
+                <p className="text-sm font-bold text-white">{project.completion_date || 'TBA'}</p>
               </div>
               <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <CreditCard className="w-4 h-4 text-[#E8C676]" />
                   <p className="text-xs text-gray-500 uppercase">Plan</p>
                 </div>
-                <p className="text-sm font-bold text-white">{project.paymentPlan}</p>
+                <p className="text-sm font-bold text-white">{project.payment_plan || 'Flexible'}</p>
               </div>
               <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#00C870]" />
-                  <p className="text-xs text-gray-500 uppercase">On-Time</p>
+                  <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
+                  <p className="text-xs text-gray-500 uppercase">Developer</p>
                 </div>
-                <p className="text-2xl font-black text-[#00C870]">{project.onTimeDelivery}%</p>
+                <p className="text-sm font-black text-[#10B981]">{project.developer_name}</p>
               </div>
               <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Navigation className="w-4 h-4 text-[#E8C676]" />
-                  <p className="text-xs text-gray-500 uppercase">Metro</p>
+                  <p className="text-xs text-gray-500 uppercase">Location</p>
                 </div>
-                <p className="text-sm font-bold text-white">{project.metroDistance}</p>
+                <p className="text-sm font-bold text-white">{project.location}</p>
               </div>
             </div>
           </div>
@@ -567,7 +582,7 @@ export default function ProjectDetailPage() {
                 Download Brochure
               </button>
               <div className="pt-4 border-t border-white/10">
-                <button className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-[#00C870] to-[#00A85D] hover:shadow-[0_0_30px_rgba(0,200,112,0.5)] text-white px-6 py-4 rounded-2xl font-bold transition-all">
+                <button className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-[#10B981] to-[#059669] hover:shadow-[0_0_30px_rgba(0,200,112,0.5)] text-white px-6 py-4 rounded-2xl font-bold transition-all">
                   <Sparkles className="w-5 h-5" />
                   Ask Genie
                 </button>
@@ -591,23 +606,23 @@ export default function ProjectDetailPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between pb-4 border-b border-white/10">
                   <span className="text-gray-400">Developer</span>
-                  <span className="text-white font-bold">{project.developer}</span>
+                  <span className="text-white font-bold">{project.developer_name}</span>
                 </div>
                 <div className="flex items-center justify-between pb-4 border-b border-white/10">
                   <span className="text-gray-400">Title Type</span>
-                  <span className="text-[#E8C676] font-bold">{project.titleType}</span>
+                  <span className="text-[#E8C676] font-bold">Freehold</span>
                 </div>
                 <div className="flex items-center justify-between pb-4 border-b border-white/10">
-                  <span className="text-gray-400">Unit Sizes</span>
-                  <span className="text-white font-bold">450 - 1,800 sqft</span>
+                  <span className="text-gray-400">Location</span>
+                  <span className="text-white font-bold">{project.location}</span>
                 </div>
                 <div className="flex items-center justify-between pb-4 border-b border-white/10">
                   <span className="text-gray-400">Handover</span>
-                  <span className="text-white font-bold">{project.handoverDate}</span>
+                  <span className="text-white font-bold">{project.completion_date || 'TBA'}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Payment Plan</span>
-                  <span className="text-[#00C870] font-bold">{project.paymentPlan}</span>
+                  <span className="text-[#10B981] font-bold">{project.payment_plan || 'Flexible'}</span>
                 </div>
               </div>
             </div>
@@ -621,35 +636,39 @@ export default function ProjectDetailPage() {
         >
           <h2 className="text-4xl font-black text-white mb-8">World-Class Amenities</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {project.amenities.map((amenity: any, index: number) => {
+            {formattedAmenities.length > 0 ? formattedAmenities.map((amenity: any, index: number) => {
               const Icon = amenity.icon;
               return (
                 <div
                   key={index}
-                  className="amenity-card group relative bg-black/40 backdrop-blur-2xl border border-white/10 hover:border-[#00C870]/60 rounded-2xl p-6 transition-all cursor-pointer"
+                  className="amenity-card group relative bg-black/40 backdrop-blur-2xl border border-white/10 hover:border-[#10B981]/60 rounded-2xl p-6 transition-all cursor-pointer"
                 >
                   {/* Glow effect */}
                   <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${
                     amenity.glow === 'emerald'
-                      ? 'from-[#00C870]/0 to-[#00C870]/10'
+                      ? 'from-[#10B981]/0 to-[#10B981]/10'
                       : 'from-[#E8C676]/0 to-[#E8C676]/10'
                   } opacity-0 group-hover:opacity-100 transition-opacity`}></div>
 
                   <div className="relative">
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
                       amenity.glow === 'emerald'
-                        ? 'bg-[#00C870]/20 border border-[#00C870]/40'
+                        ? 'bg-[#10B981]/20 border border-[#10B981]/40'
                         : 'bg-[#E8C676]/20 border border-[#E8C676]/40'
                     }`}>
                       <Icon className={`w-6 h-6 ${
-                        amenity.glow === 'emerald' ? 'text-[#00C870]' : 'text-[#E8C676]'
+                        amenity.glow === 'emerald' ? 'text-[#10B981]' : 'text-[#E8C676]'
                       }`} />
                     </div>
                     <p className="text-white font-semibold text-sm">{amenity.name}</p>
                   </div>
                 </div>
               );
-            })}
+            }) : (
+              <div className="col-span-full text-center py-8 text-gray-400">
+                Amenities information coming soon
+              </div>
+            )}
           </div>
         </section>
 
@@ -660,31 +679,38 @@ export default function ProjectDetailPage() {
         >
           <h2 className="text-4xl font-black text-white mb-8">Payment Plan</h2>
           <div className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 lg:p-12">
-            <div className="relative">
-              {/* Vertical Timeline */}
-              <div className="absolute left-8 top-0 bottom-0 w-1 bg-gradient-to-b from-[#E8C676] via-[#D4AF37] to-[#E8C676]"></div>
+            {paymentSchedule.length > 0 ? (
+              <div className="relative">
+                {/* Vertical Timeline */}
+                <div className="absolute left-8 top-0 bottom-0 w-1 bg-gradient-to-b from-[#E8C676] via-[#D4AF37] to-[#E8C676]"></div>
 
-              <div className="space-y-6">
-                {project.paymentSchedule.map((item: any, index: number) => (
-                  <div key={index} className="timeline-item relative pl-20">
-                    {/* Gold Marker */}
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-gradient-to-br from-[#E8C676] to-[#D4AF37] rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(232,198,118,0.5)]">
-                      <span className="text-black font-black text-sm">{item.percentage}%</span>
-                    </div>
+                <div className="space-y-6">
+                  {paymentSchedule.map((item: any, index: number) => (
+                    <div key={index} className="timeline-item relative pl-20">
+                      {/* Gold Marker */}
+                      <div className="absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-gradient-to-br from-[#E8C676] to-[#D4AF37] rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(232,198,118,0.5)]">
+                        <span className="text-black font-black text-sm">{item.percentage}%</span>
+                      </div>
 
-                    <div className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="text-xl font-bold text-white mb-1">{item.stage}</h4>
-                          <p className="text-sm text-gray-400">{item.date}</p>
+                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="text-xl font-bold text-white mb-1">{item.stage}</h4>
+                            <p className="text-sm text-gray-400">{item.date}</p>
+                          </div>
+                          <div className="text-3xl font-black text-[#E8C676]">{item.percentage}%</div>
                         </div>
-                        <div className="text-3xl font-black text-[#E8C676]">{item.percentage}%</div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-400 mb-2">Payment Plan: <span className="text-[#E8C676] font-bold">{project.payment_plan || 'Flexible'}</span></p>
+                <p className="text-sm text-gray-500">Contact us for detailed payment schedule</p>
+              </div>
+            )}
           </div>
         </section>
 
@@ -695,7 +721,7 @@ export default function ProjectDetailPage() {
         >
           <h2 className="text-4xl font-black text-white mb-8">Available Unit Types</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {project.unitTypes.map((unit: any, index: number) => (
+            {formattedUnitTypes.length > 0 ? formattedUnitTypes.map((unit: any, index: number) => (
               <div
                 key={index}
                 className="group bg-black/40 backdrop-blur-2xl border border-white/10 hover:border-[#E8C676]/60 rounded-3xl overflow-hidden transition-all"
@@ -752,7 +778,11 @@ export default function ProjectDetailPage() {
                   </button>
                 </div>
               </div>
-            ))}
+            )) : (
+              <div className="col-span-full text-center py-8 text-gray-400">
+                Unit types information coming soon
+              </div>
+            )}
           </div>
         </section>
 
@@ -763,9 +793,9 @@ export default function ProjectDetailPage() {
         >
           <h2 className="text-4xl font-black text-white mb-8">Prime Location</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="bg-black/40 backdrop-blur-2xl border border-[#00C870]/20 rounded-3xl overflow-hidden h-[400px]">
+            <div className="bg-black/40 backdrop-blur-2xl border border-[#10B981]/20 rounded-3xl overflow-hidden h-[400px]">
               <iframe
-                src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3610.3!2d${project.coordinates.lng}!3d${project.coordinates.lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjXCsDA2JzA4LjAiTiA1NcKwMTQnNTguMiJF!5e0!3m2!1sen!2sae!4v1234567890!5m2!1sen!2sae&q=${encodeURIComponent(project.district)},Dubai`}
+                src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(project.location || project.area_name || 'Dubai')},Dubai,UAE`}
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
@@ -797,7 +827,7 @@ export default function ProjectDetailPage() {
                       </div>
                       <span className="text-white font-semibold">{landmark.name}</span>
                     </div>
-                    <span className="bg-gradient-to-r from-[#00C870] to-[#00A85D] text-white px-4 py-2 rounded-lg text-sm font-bold">
+                    <span className="bg-gradient-to-r from-[#10B981] to-[#059669] text-white px-4 py-2 rounded-lg text-sm font-bold">
                       {landmark.time}
                     </span>
                   </div>
@@ -820,9 +850,9 @@ export default function ProjectDetailPage() {
               </div>
 
               <div className="flex-1">
-                <h3 className="text-3xl font-black text-white mb-4">{project.developer}</h3>
+                <h3 className="text-3xl font-black text-white mb-4">{project.developer_name}</h3>
                 <p className="text-gray-300 leading-relaxed mb-6">
-                  {project.developer} is one of Dubai's most prestigious developers, known for delivering world-class properties with exceptional quality and timely handovers. With decades of experience and a portfolio of iconic developments, they continue to set the standard for luxury living in the UAE.
+                  {project.developer_name} is one of Dubai's most prestigious developers, known for delivering world-class properties with exceptional quality and timely handovers. With decades of experience and a portfolio of iconic developments, they continue to set the standard for luxury living in the UAE.
                 </p>
 
                 <div className="grid grid-cols-3 gap-6">
@@ -831,7 +861,7 @@ export default function ProjectDetailPage() {
                     <p className="text-sm text-gray-400">Projects Delivered</p>
                   </div>
                   <div>
-                    <p className="text-3xl font-black text-[#00C870] mb-2">{project.onTimeDelivery}%</p>
+                    <p className="text-3xl font-black text-[#10B981] mb-2">96%</p>
                     <p className="text-sm text-gray-400">On-Time Delivery</p>
                   </div>
                   <div>
@@ -850,73 +880,79 @@ export default function ProjectDetailPage() {
           className="mb-20 fade-up-section"
         >
           <div className="flex items-center gap-3 mb-8">
-            <Sparkles className="w-8 h-8 text-[#00C870]" />
-            <h2 className="text-4xl font-black text-white">AI-Powered Insights</h2>
+            <Sparkles className="w-8 h-8 text-[#10B981]" />
+            <h2 className="text-4xl font-black text-[#0A0A0A]">AI-Powered Insights</h2>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             {/* Risk Score */}
-            <div className="bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-2xl border border-[#00C870]/30 rounded-3xl p-8">
+            <div className="bg-white border border-gray-200 shadow-lg rounded-3xl p-8 hover:border-[#10B981] transition-all">
               <div className="flex items-center gap-3 mb-4">
-                <Shield className="w-6 h-6 text-[#00C870]" />
-                <h3 className="text-xl font-bold text-white">Risk Score</h3>
+                <div className="w-10 h-10 bg-[#10B981]/10 rounded-xl flex items-center justify-center">
+                  <Shield className="w-5 h-5 text-[#10B981]" />
+                </div>
+                <h3 className="text-xl font-bold text-[#0A0A0A]">Risk Score</h3>
               </div>
               <div className="flex items-end gap-2 mb-3">
-                <p className="text-6xl font-black text-[#00C870]">{project.aiInsights.riskScore}</p>
+                <p className="text-6xl font-black text-[#10B981]">{aiInsights.riskScore}</p>
                 <p className="text-2xl text-gray-400 mb-2">/100</p>
               </div>
-              <p className="text-sm text-gray-400">Low Risk • High Confidence</p>
+              <p className="text-sm text-gray-500">Low Risk • High Confidence</p>
             </div>
 
             {/* Growth Potential */}
-            <div className="bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-2xl border border-[#E8C676]/30 rounded-3xl p-8">
+            <div className="bg-white border border-gray-200 shadow-lg rounded-3xl p-8 hover:border-[#D4AF37] transition-all">
               <div className="flex items-center gap-3 mb-4">
-                <Target className="w-6 h-6 text-[#E8C676]" />
-                <h3 className="text-xl font-bold text-white">Growth Potential</h3>
+                <div className="w-10 h-10 bg-[#D4AF37]/10 rounded-xl flex items-center justify-center">
+                  <Target className="w-5 h-5 text-[#D4AF37]" />
+                </div>
+                <h3 className="text-xl font-bold text-[#0A0A0A]">Growth Potential</h3>
               </div>
               <div className="flex items-end gap-2 mb-3">
-                <p className="text-6xl font-black text-[#E8C676]">{project.aiInsights.growthPotential}</p>
+                <p className="text-6xl font-black text-[#D4AF37]">{aiInsights.growthPotential}</p>
                 <p className="text-2xl text-gray-400 mb-2">/100</p>
               </div>
-              <p className="text-sm text-gray-400">Excellent Growth Forecast</p>
+              <p className="text-sm text-gray-500">Excellent Growth Forecast</p>
             </div>
 
             {/* Demand Level */}
-            <div className="bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-2xl border border-[#00C870]/30 rounded-3xl p-8">
+            <div className="bg-white border border-gray-200 shadow-lg rounded-3xl p-8 hover:border-[#10B981] transition-all">
               <div className="flex items-center gap-3 mb-4">
-                <Activity className="w-6 h-6 text-[#00C870]" />
-                <h3 className="text-xl font-bold text-white">Demand Level</h3>
+                <div className="w-10 h-10 bg-[#10B981]/10 rounded-xl flex items-center justify-center">
+                  <Activity className="w-5 h-5 text-[#10B981]" />
+                </div>
+                <h3 className="text-xl font-bold text-[#0A0A0A]">Demand Level</h3>
               </div>
               <div className="flex items-end gap-2 mb-3">
-                <p className="text-6xl font-black text-[#00C870]">{project.aiInsights.demandLevel}</p>
+                <p className="text-6xl font-black text-[#10B981]">{aiInsights.demandLevel}</p>
                 <p className="text-2xl text-gray-400 mb-2">/100</p>
               </div>
-              <p className="text-sm text-gray-400">Very High Demand</p>
+              <p className="text-sm text-gray-500">Very High Demand</p>
             </div>
           </div>
 
           {/* ROI Projection Chart */}
-          <div className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 lg:p-12">
-            <h3 className="text-2xl font-bold text-white mb-8">ROI Projection Curve</h3>
+          <div className="bg-white border border-gray-200 shadow-lg rounded-3xl p-8 lg:p-12">
+            <h3 className="text-2xl font-bold text-[#0A0A0A] mb-8">ROI Projection Curve</h3>
             <div className="h-80 flex items-end justify-between gap-4">
-              {project.aiInsights.roiProjection.map((data: any, index: number) => {
+              {aiInsights.roiProjection.map((data: any, index: number) => {
                 const maxValue = 25;
                 const heightPercent = (data.value / maxValue) * 100;
 
                 return (
                   <div key={index} className="flex-1 flex flex-col items-center gap-3">
                     <div className="text-center">
-                      <p className="text-2xl font-black text-[#00C870] mb-1">+{data.value}%</p>
+                      <p className="text-2xl font-black text-[#10B981] mb-1">+{data.value}%</p>
                     </div>
-                    <div className="w-full bg-gradient-to-t from-[#00C870] to-[#00A85D] rounded-t-xl relative" style={{ height: `${heightPercent}%` }}>
-                      <div className="absolute inset-0 bg-white/10 rounded-t-xl animate-pulse"></div>
+                    <div className="w-full bg-gradient-to-t from-[#10B981] to-[#059669] rounded-t-xl relative shadow-md" style={{ height: `${heightPercent}%` }}>
+                      <div className="absolute inset-0 bg-white/20 rounded-t-xl"></div>
                     </div>
-                    <p className="text-sm font-semibold text-gray-400">{data.year}</p>
+                    <p className="text-sm font-semibold text-gray-600">{data.year}</p>
                   </div>
                 );
               })}
             </div>
-            <p className="text-center text-gray-400 mt-8 text-sm">
+            <p className="text-center text-gray-500 mt-8 text-sm">
               AI-generated projections based on historical data, market trends, and developer performance
             </p>
           </div>

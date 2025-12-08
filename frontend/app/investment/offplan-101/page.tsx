@@ -88,20 +88,11 @@ export default function OffPlan101Page() {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
-      {/* AI PARTICLE GLOW BACKGROUND */}
+    <div className="min-h-screen bg-white text-[#0A0A0A] relative overflow-hidden">
+      {/* SUBTLE LIGHT GRADIENT BACKGROUND */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#00C775]/5 rounded-full blur-[150px] animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#F3C440]/5 rounded-full blur-[120px] animate-pulse" style={{animationDelay: '1s'}}></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#00C775]/3 rounded-full blur-[200px]"></div>
-      </div>
-
-      {/* NEURAL GRID OVERLAY */}
-      <div className="fixed inset-0 pointer-events-none opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `linear-gradient(#00C775 1px, transparent 1px), linear-gradient(90deg, #00C775 1px, transparent 1px)`,
-          backgroundSize: '80px 80px'
-        }}></div>
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-emerald-50/50 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-amber-50/50 to-transparent"></div>
       </div>
 
       <div className="relative z-10">
@@ -109,26 +100,26 @@ export default function OffPlan101Page() {
         <section className="relative pt-32 pb-16 px-6 lg:px-16">
           <div className="max-w-[1400px] mx-auto">
             <div className="mb-8">
-              <Link href="/investment" className="inline-flex items-center gap-2 text-gray-400 hover:text-[#00C775] transition-colors group">
+              <Link href="/investment" className="inline-flex items-center gap-2 text-gray-600 hover:text-[#10B981] transition-colors group">
                 <ArrowRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition-transform" />
                 <span>Back to Investment Hub</span>
               </Link>
             </div>
 
-            <div className="inline-flex items-center gap-2 bg-[#00C775]/10 border border-[#00C775]/30 rounded-full px-5 py-1.5 mb-4">
-              <BookOpen className="w-3.5 h-3.5 text-[#00C775]" />
-              <span className="text-xs font-bold text-[#00C775] tracking-wide">BEGINNER'S GUIDE</span>
+            <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-full px-5 py-1.5 mb-4">
+              <BookOpen className="w-3.5 h-3.5 text-[#10B981]" />
+              <span className="text-xs font-bold text-[#10B981] tracking-wide">BEGINNER'S GUIDE</span>
             </div>
 
-            <h1 className="text-6xl lg:text-8xl font-black text-white mb-6 leading-[1.05] tracking-tight">
+            <h1 className="text-6xl lg:text-8xl font-black text-[#0A0A0A] mb-6 leading-[1.05] tracking-tight">
               Off-Plan Investment
               <br />
-              <span className="bg-gradient-to-r from-[#F3C440] via-[#FFD700] to-[#F3C440] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#D4AF37] via-[#E8C547] to-[#D4AF37] bg-clip-text text-transparent">
                 101
               </span>
             </h1>
 
-            <p className="text-xl text-gray-400 max-w-3xl">
+            <p className="text-xl text-gray-600 max-w-3xl">
               Your complete guide to understanding and investing in Dubai's off-plan property market
             </p>
           </div>
@@ -137,17 +128,17 @@ export default function OffPlan101Page() {
         {/* WHAT IS OFF-PLAN SECTION */}
         <section className="px-6 lg:px-16 pb-12">
           <div className="max-w-[1400px] mx-auto">
-            <div className="bg-[#0D0D0D]/80 backdrop-blur-xl border border-[#00C775]/20 rounded-3xl p-12">
+            <div className="bg-white border border-gray-200 shadow-md rounded-3xl p-12">
               <div className="flex items-center gap-3 mb-6">
-                <Sparkles className="w-8 h-8 text-[#00C775]" />
-                <h2 className="text-4xl font-black text-white">What is Off-Plan Property?</h2>
+                <Sparkles className="w-8 h-8 text-[#10B981]" />
+                <h2 className="text-4xl font-black text-[#0A0A0A]">What is Off-Plan Property?</h2>
               </div>
 
-              <p className="text-lg text-gray-300 mb-6 leading-relaxed">
+              <p className="text-lg text-gray-600 mb-6 leading-relaxed">
                 Off-plan properties are real estate units that are purchased before they are built or while they are still under construction. In Dubai, this investment model has become extremely popular due to attractive payment plans, lower prices, and high potential returns.
               </p>
 
-              <p className="text-lg text-gray-300 leading-relaxed">
+              <p className="text-lg text-gray-600 leading-relaxed">
                 Unlike ready properties where you pay the full amount upfront, off-plan investments allow you to pay in installments tied to construction milestones. This makes it accessible for investors with varying budgets and provides the opportunity to benefit from property appreciation during the construction period.
               </p>
             </div>
@@ -158,8 +149,8 @@ export default function OffPlan101Page() {
         <section className="px-6 lg:px-16 pb-12">
           <div className="max-w-[1400px] mx-auto">
             <div className="flex items-center gap-3 mb-8">
-              <TrendingUp className="w-8 h-8 text-[#00C775]" />
-              <h2 className="text-4xl font-black text-white">Key Benefits</h2>
+              <TrendingUp className="w-8 h-8 text-[#10B981]" />
+              <h2 className="text-4xl font-black text-[#0A0A0A]">Key Benefits</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -168,17 +159,17 @@ export default function OffPlan101Page() {
                 return (
                   <div
                     key={index}
-                    className="bg-[#0D0D0D]/80 backdrop-blur-xl border border-[#00C775]/20 hover:border-[#00C775]/60 rounded-3xl p-8 transition-all duration-300 hover:-translate-y-1"
+                    className="bg-white border border-gray-200 hover:border-[#10B981] shadow-md hover:shadow-lg rounded-3xl p-8 transition-all duration-300 hover:-translate-y-1"
                   >
-                    <div className="w-14 h-14 rounded-2xl bg-[#00C775]/20 flex items-center justify-center mb-6">
-                      <Icon className="w-7 h-7 text-[#00C775]" />
+                    <div className="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center mb-6">
+                      <Icon className="w-7 h-7 text-[#10B981]" />
                     </div>
 
-                    <h3 className="text-2xl font-black text-white mb-3">
+                    <h3 className="text-2xl font-black text-[#0A0A0A] mb-3">
                       {benefit.title}
                     </h3>
 
-                    <p className="text-gray-400">
+                    <p className="text-gray-600">
                       {benefit.description}
                     </p>
                   </div>
@@ -192,8 +183,8 @@ export default function OffPlan101Page() {
         <section className="px-6 lg:px-16 pb-12">
           <div className="max-w-[1400px] mx-auto">
             <div className="flex items-center gap-3 mb-8">
-              <Shield className="w-8 h-8 text-[#F3C440]" />
-              <h2 className="text-4xl font-black text-white">Risks & How to Mitigate Them</h2>
+              <Shield className="w-8 h-8 text-[#D4AF37]" />
+              <h2 className="text-4xl font-black text-[#0A0A0A]">Risks & How to Mitigate Them</h2>
             </div>
 
             <div className="space-y-6">
@@ -202,29 +193,29 @@ export default function OffPlan101Page() {
                 return (
                   <div
                     key={index}
-                    className="bg-[#0D0D0D]/80 backdrop-blur-xl border border-[#F3C440]/20 hover:border-[#F3C440]/60 rounded-3xl p-8 transition-all duration-300"
+                    className="bg-white border border-gray-200 hover:border-[#D4AF37] shadow-md hover:shadow-lg rounded-3xl p-8 transition-all duration-300"
                   >
                     <div className="flex flex-col md:flex-row gap-6">
                       <div className="flex-shrink-0">
-                        <div className="w-14 h-14 rounded-2xl bg-[#F3C440]/20 flex items-center justify-center">
-                          <Icon className="w-7 h-7 text-[#F3C440]" />
+                        <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center">
+                          <Icon className="w-7 h-7 text-[#D4AF37]" />
                         </div>
                       </div>
 
                       <div className="flex-1">
-                        <h3 className="text-2xl font-black text-white mb-3">
+                        <h3 className="text-2xl font-black text-[#0A0A0A] mb-3">
                           {risk.title}
                         </h3>
 
-                        <p className="text-gray-400 mb-4">
+                        <p className="text-gray-600 mb-4">
                           {risk.description}
                         </p>
 
-                        <div className="flex items-start gap-3 bg-[#00C775]/10 border border-[#00C775]/30 rounded-xl p-4">
-                          <CheckCircle className="w-5 h-5 text-[#00C775] flex-shrink-0 mt-0.5" />
+                        <div className="flex items-start gap-3 bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                          <CheckCircle className="w-5 h-5 text-[#10B981] flex-shrink-0 mt-0.5" />
                           <div>
-                            <p className="text-sm font-bold text-[#00C775] mb-1">Mitigation Strategy</p>
-                            <p className="text-sm text-gray-300">{risk.mitigation}</p>
+                            <p className="text-sm font-bold text-[#10B981] mb-1">Mitigation Strategy</p>
+                            <p className="text-sm text-gray-600">{risk.mitigation}</p>
                           </div>
                         </div>
                       </div>
@@ -240,20 +231,20 @@ export default function OffPlan101Page() {
         <section className="px-6 lg:px-16 pb-20">
           <div className="max-w-[1400px] mx-auto">
             <div className="flex items-center gap-3 mb-8">
-              <Clock className="w-8 h-8 text-[#00C775]" />
-              <h2 className="text-4xl font-black text-white">The Off-Plan Investment Process</h2>
+              <Clock className="w-8 h-8 text-[#10B981]" />
+              <h2 className="text-4xl font-black text-[#0A0A0A]">The Off-Plan Investment Process</h2>
             </div>
 
             <div className="space-y-6">
               {process.map((item, index) => (
                 <div
                   key={index}
-                  className="group relative bg-[#0D0D0D]/80 backdrop-blur-xl border border-white/10 hover:border-[#00C775]/60 rounded-3xl p-8 transition-all duration-300 hover:-translate-y-1"
+                  className="group relative bg-white border border-gray-200 hover:border-[#10B981] shadow-md hover:shadow-lg rounded-3xl p-8 transition-all duration-300 hover:-translate-y-1"
                 >
                   <div className="flex flex-col md:flex-row gap-6 items-start">
                     <div className="flex-shrink-0">
-                      <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#00C775]/20 to-[#F3C440]/20 border border-[#00C775]/30 flex items-center justify-center">
-                        <span className="text-3xl font-black bg-gradient-to-r from-[#00C775] to-[#F3C440] bg-clip-text text-transparent">
+                      <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-50 to-amber-50 border border-emerald-200 flex items-center justify-center">
+                        <span className="text-3xl font-black bg-gradient-to-r from-[#10B981] to-[#D4AF37] bg-clip-text text-transparent">
                           {item.step}
                         </span>
                       </div>
@@ -261,16 +252,16 @@ export default function OffPlan101Page() {
 
                     <div className="flex-1">
                       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3">
-                        <h3 className="text-2xl font-black text-white group-hover:text-[#00C775] transition-colors">
+                        <h3 className="text-2xl font-black text-[#0A0A0A] group-hover:text-[#10B981] transition-colors">
                           {item.title}
                         </h3>
-                        <div className="inline-flex items-center gap-2 bg-[#F3C440]/10 border border-[#F3C440]/30 rounded-full px-4 py-1.5 mt-2 md:mt-0">
-                          <Clock className="w-4 h-4 text-[#F3C440]" />
-                          <span className="text-sm font-bold text-[#F3C440]">{item.duration}</span>
+                        <div className="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-full px-4 py-1.5 mt-2 md:mt-0">
+                          <Clock className="w-4 h-4 text-[#D4AF37]" />
+                          <span className="text-sm font-bold text-[#D4AF37]">{item.duration}</span>
                         </div>
                       </div>
 
-                      <p className="text-gray-400 text-lg">
+                      <p className="text-gray-600 text-lg">
                         {item.description}
                       </p>
                     </div>
@@ -284,21 +275,21 @@ export default function OffPlan101Page() {
         {/* CTA SECTION */}
         <section className="px-6 lg:px-16 pb-20">
           <div className="max-w-[1400px] mx-auto">
-            <div className="bg-gradient-to-br from-[#0D0D0D] via-[#0D0D0D] to-[#00C775]/5 backdrop-blur-xl border border-[#00C775]/20 rounded-3xl p-12 text-center">
-              <h2 className="text-4xl lg:text-5xl font-black text-white mb-4">
+            <div className="bg-gradient-to-br from-emerald-50 via-white to-amber-50 border border-gray-200 shadow-lg rounded-3xl p-12 text-center">
+              <h2 className="text-4xl lg:text-5xl font-black text-[#0A0A0A] mb-4">
                 Ready to Invest?
               </h2>
-              <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
+              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
                 Use our AI-powered tools to calculate returns and find the perfect off-plan investment
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <Link href="/investment/roi-calculator" className="bg-gradient-to-r from-[#00C775] to-[#00A85D] px-8 py-4 rounded-full font-bold text-white shadow-[0_0_30px_rgba(0,199,117,0.4)] hover:shadow-[0_0_50px_rgba(0,199,117,0.6)] transition-all hover:-translate-y-1">
+                <Link href="/investment/roi-calculator" className="bg-gradient-to-r from-[#10B981] to-[#059669] px-8 py-4 rounded-full font-bold text-white shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
                   ROI Calculator
                 </Link>
-                <Link href="/investment/first-time" className="bg-gradient-to-r from-[#F3C440] to-[#D4A936] px-8 py-4 rounded-full font-bold text-black shadow-[0_0_30px_rgba(243,196,64,0.4)] hover:shadow-[0_0_50px_rgba(243,196,64,0.6)] transition-all hover:-translate-y-1">
+                <Link href="/investment/first-time" className="bg-gradient-to-r from-[#D4AF37] to-[#B8941E] px-8 py-4 rounded-full font-bold text-white shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
                   First-Time Guide
                 </Link>
-                <Link href="/projects" className="bg-[#0D0D0D] border-2 border-[#00C775] px-8 py-4 rounded-full font-bold text-white hover:bg-[#00C775]/10 transition-all hover:-translate-y-1">
+                <Link href="/projects" className="bg-white border-2 border-[#10B981] px-8 py-4 rounded-full font-bold text-[#0A0A0A] hover:bg-emerald-50 transition-all hover:-translate-y-1">
                   Browse Properties
                 </Link>
               </div>

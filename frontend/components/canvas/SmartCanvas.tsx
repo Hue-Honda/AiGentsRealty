@@ -126,35 +126,35 @@ function WelcomeView({ onTryAskingClick }: { onTryAskingClick?: (query: string) 
   return (
     <div className="space-y-4">
       {/* Hero Card */}
-      <div className="relative overflow-hidden rounded-2xl border border-emerald-900/30">
+      <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md">
 
         <div className="relative p-6">
           {/* Genie Icon */}
           <div className="flex items-center gap-4 mb-4">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-emerald-400 rounded-xl blur-lg opacity-50" />
+              <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-emerald-400 rounded-xl blur-lg opacity-30" />
               <div className="relative w-14 h-14 bg-gradient-to-br from-[#D4AF37] via-[#F4D03F] to-[#B8941E] rounded-xl flex items-center justify-center shadow-lg">
-                <Sparkles className="w-7 h-7 text-black" />
+                <Sparkles className="w-7 h-7 text-white" />
               </div>
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">Ask Genie</h3>
-              <p className="text-sm text-gray-400">Your Dubai Property Expert</p>
+              <h3 className="text-lg font-bold text-[#0A0A0A]">Ask Genie</h3>
+              <p className="text-sm text-gray-500">Your Dubai Property Expert</p>
             </div>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-3 p-3 rounded-xl border border-white/5">
+          <div className="grid grid-cols-3 gap-3 p-3 rounded-xl border border-gray-200 bg-[#F9FAFB]">
             <div className="text-center">
-              <p className="text-xl font-bold text-emerald-400">150+</p>
+              <p className="text-xl font-bold text-[#10B981]">150+</p>
               <p className="text-[10px] text-gray-500 uppercase">Projects</p>
             </div>
-            <div className="text-center border-x border-white/5">
-              <p className="text-xl font-bold text-emerald-400">22</p>
+            <div className="text-center border-x border-gray-200">
+              <p className="text-xl font-bold text-[#10B981]">22</p>
               <p className="text-[10px] text-gray-500 uppercase">Areas</p>
             </div>
             <div className="text-center">
-              <p className="text-xl font-bold text-amber-400">8-12%</p>
+              <p className="text-xl font-bold text-[#D4AF37]">8-12%</p>
               <p className="text-[10px] text-gray-500 uppercase">Avg ROI</p>
             </div>
           </div>
@@ -169,17 +169,17 @@ function WelcomeView({ onTryAskingClick }: { onTryAskingClick?: (query: string) 
             <div
               key={idx}
               onClick={() => onTryAskingClick?.(item.text)}
-              className="group flex items-center gap-3 p-3 border border-white/5 rounded-xl
-                hover:border-emerald-500/30 hover:bg-emerald-500/5 transition-all cursor-pointer"
+              className="group flex items-center gap-3 p-3 border border-gray-200 rounded-xl bg-white
+                hover:border-[#10B981] hover:bg-[#10B981]/5 transition-all cursor-pointer shadow-sm hover:shadow-md"
             >
-              <div className="w-8 h-8 bg-emerald-500/10 rounded-lg flex items-center justify-center
-                group-hover:bg-emerald-500/20 transition-colors">
-                <item.icon className="w-4 h-4 text-emerald-400" />
+              <div className="w-8 h-8 bg-[#10B981]/10 rounded-lg flex items-center justify-center
+                group-hover:bg-[#10B981]/20 transition-colors">
+                <item.icon className="w-4 h-4 text-[#10B981]" />
               </div>
-              <span className="text-sm text-gray-300 group-hover:text-white transition-colors">
+              <span className="text-sm text-gray-700 group-hover:text-[#0A0A0A] transition-colors">
                 {item.text}
               </span>
-              <ArrowRight className="w-4 h-4 text-gray-600 ml-auto opacity-0 group-hover:opacity-100
+              <ArrowRight className="w-4 h-4 text-gray-400 ml-auto opacity-0 group-hover:opacity-100
                 transform translate-x-0 group-hover:translate-x-1 transition-all" />
             </div>
           ))}

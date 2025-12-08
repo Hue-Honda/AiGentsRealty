@@ -4,13 +4,14 @@ import ProjectsContent from './ProjectsContent';
 
 function ProjectsLoading() {
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center">
+    <div className="min-h-screen bg-white flex items-center justify-center">
       <div className="text-center">
         <div className="relative">
-          <Sparkles className="w-16 h-16 text-[#00C775] animate-pulse mx-auto mb-4" />
-          <div className="absolute inset-0 w-16 h-16 bg-[#00C775]/20 rounded-full blur-xl mx-auto animate-ping"></div>
+          <div className="w-16 h-16 border-2 border-[#0A0A0A] rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Sparkles className="w-8 h-8 text-[#10B981] animate-pulse" />
+          </div>
         </div>
-        <p className="text-gray-300 text-lg font-semibold">Loading Premium Projects...</p>
+        <p className="text-gray-600 text-lg font-semibold">Loading Premium Projects...</p>
       </div>
     </div>
   );

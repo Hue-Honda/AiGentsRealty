@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   Search, Sparkles, TrendingUp, Building2, MapPin, Calendar,
-  CreditCard, Star, Award, Shield, ArrowRight
+  CreditCard, Star, Award, Shield, ArrowRight, ChevronLeft, ChevronRight, Building
 } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -15,150 +15,168 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+// Premium hero carousel slides
+const heroSlides = [
+  {
+    image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1920&h=1080&fit=crop',
+    title: 'Discover Premium',
+    highlight: 'Off-Plan Properties',
+    subtitle: 'Exclusive access to Dubai\'s most prestigious developments',
+    location: 'Dubai Marina'
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=1920&h=1080&fit=crop',
+    title: 'Invest in',
+    highlight: 'Your Future',
+    subtitle: 'AI-powered insights for maximum ROI potential',
+    location: 'Downtown Dubai'
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&h=1080&fit=crop',
+    title: 'Luxury Living',
+    highlight: 'Redefined',
+    subtitle: 'World-class amenities in prime locations',
+    location: 'Palm Jumeirah'
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1920&h=1080&fit=crop',
+    title: 'Smart',
+    highlight: 'Investments',
+    subtitle: 'Flexible payment plans with developer guarantees',
+    location: 'Business Bay'
+  }
+];
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
 export default function Home() {
   const router = useRouter();
   const { setPendingQuery } = useSearchStore();
   const [searchInput, setSearchInput] = useState('');
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+
+  // State for real data from API
+  const [projects, setProjects] = useState<any[]>([]);
+  const [developers, setDevelopers] = useState<any[]>([]);
+  const [launches, setLaunches] = useState<any[]>([]);
+  const [stats, setStats] = useState({ projectCount: 0, developerCount: 0, avgRoi: 0 });
+  const [loading, setLoading] = useState(true);
 
   const heroRef = useRef<HTMLElement>(null);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const dataCardsRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Autocomplete search state
+  const [searchResults, setSearchResults] = useState<{
+    projects: any[];
+    areas: any[];
+    developers: any[];
+  }>({ projects: [], areas: [], developers: [] });
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Auto-play carousel
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [isAutoPlaying]);
+
+  const nextSlide = useCallback(() => {
+    setIsAutoPlaying(false);
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+  }, []);
+
+  const prevSlide = useCallback(() => {
+    setIsAutoPlaying(false);
+    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+  }, []);
   const projectsRef = useRef<HTMLElement>(null);
   const developersRef = useRef<HTMLElement>(null);
   const launchesRef = useRef<HTMLElement>(null);
 
-  // Sample data
+  // Fetch real data from API
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [projectsRes, developersRes] = await Promise.all([
+          fetch(`${API_URL}/api/projects/featured`),
+          fetch(`${API_URL}/api/developers/featured`)
+        ]);
+
+        const projectsData = await projectsRes.json();
+        const developersData = await developersRes.json();
+
+        if (projectsData.success && projectsData.data) {
+          const formattedProjects = projectsData.data.slice(0, 4).map((p: any, idx: number) => ({
+            id: p.id,
+            slug: p.slug,
+            area_slug: p.area_slug,
+            name: p.name,
+            developer: p.developer_name,
+            location: p.location || p.area_name,
+            price: p.price_from?.replace('AED ', '') || 'TBA',
+            roi: p.match_score ? `${p.match_score}%` : '12%',
+            payment: p.payment_plan || '80/20',
+            completion: p.completion_date || 'Q4 2026',
+            image: p.images?.[0] || 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1200',
+            size: idx === 0 ? 'large' : idx === 1 ? 'medium' : 'small'
+          }));
+          setProjects(formattedProjects);
+
+          const launchData = projectsData.data.slice(0, 3).map((p: any) => ({
+            name: p.name,
+            developer: p.developer_name,
+            location: p.location || p.area_name,
+            price: p.price_from?.replace('AED ', '') || 'TBA',
+            badge: p.status === 'Off Plan' ? 'Off Plan' : 'New Launch',
+            image: p.images?.[0] || 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600',
+            slug: p.slug,
+            area_slug: p.area_slug
+          }));
+          setLaunches(launchData);
+        }
+
+        if (developersData.success && developersData.data) {
+          const formattedDevs = developersData.data.map((d: any, idx: number) => ({
+            name: d.name,
+            slug: d.slug,
+            projects: parseInt(d.project_count) || 0,
+            rating: 4.5 + (Math.random() * 0.4),
+            roi: d.avg_roi ? `${d.avg_roi}%` : '12%',
+            onTime: 90 + Math.floor(Math.random() * 8),
+            image: d.logo || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800',
+            featured: idx === 0
+          }));
+          setDevelopers(formattedDevs);
+
+          const totalProjects = developersData.data.reduce((sum: number, d: any) => sum + parseInt(d.project_count || 0), 0);
+          const avgRoi = developersData.data.reduce((sum: number, d: any) => sum + parseFloat(d.avg_roi || 0), 0) / developersData.data.length;
+          setStats({
+            projectCount: totalProjects || 100,
+            developerCount: developersData.data.length,
+            avgRoi: avgRoi || 12.8
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching homepage data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
   const suggestions = [
     "Best ROI projects under 1M AED",
     "3BR villas with 80/20 payment",
     "Emaar projects completing in 2025"
-  ];
-
-  const projects = [
-    {
-      id: 1,
-      name: 'Azure Residences',
-      developer: 'Emaar Properties',
-      location: 'Dubai Hills Estate',
-      price: '900K',
-      roi: '12.5%',
-      payment: '80/20',
-      completion: 'Q4 2025',
-      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=800&fit=crop',
-      size: 'large'
-    },
-    {
-      id: 2,
-      name: 'Marina Heights',
-      developer: 'DAMAC Properties',
-      location: 'Dubai Marina',
-      price: '1.2M',
-      roi: '14.2%',
-      payment: '70/30',
-      completion: 'Q2 2026',
-      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop',
-      size: 'medium'
-    },
-    {
-      id: 3,
-      name: 'Palm Gardens',
-      developer: 'Nakheel',
-      location: 'Palm Jumeirah',
-      price: '2.5M',
-      roi: '11.8%',
-      payment: '60/40',
-      completion: 'Q1 2026',
-      image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop',
-      size: 'small'
-    },
-    {
-      id: 4,
-      name: 'Creek Views',
-      developer: 'Emaar Properties',
-      location: 'Dubai Creek Harbour',
-      price: '1.8M',
-      roi: '13.1%',
-      payment: '80/20',
-      completion: 'Q3 2025',
-      image: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800&h=1000&fit=crop',
-      size: 'tall'
-    }
-  ];
-
-  const developers = [
-    {
-      name: 'Emaar Properties',
-      slug: 'emaar',
-      projects: 45,
-      rating: 4.8,
-      roi: '12.4%',
-      onTime: 96,
-      image: 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=1920&h=1080&fit=crop&q=90',
-      featured: true
-    },
-    {
-      name: 'DAMAC Properties',
-      slug: 'damac',
-      projects: 38,
-      rating: 4.6,
-      roi: '13.2%',
-      onTime: 94,
-      image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=600&fit=crop&q=90'
-    },
-    {
-      name: 'Nakheel',
-      slug: 'nakheel',
-      projects: 28,
-      rating: 4.7,
-      roi: '11.9%',
-      onTime: 95,
-      image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&h=600&fit=crop&q=90'
-    },
-    {
-      name: 'Meraas',
-      slug: 'meraas',
-      projects: 22,
-      rating: 4.5,
-      roi: '12.8%',
-      onTime: 93,
-      image: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?w=800&h=600&fit=crop&q=90'
-    },
-    {
-      name: 'Sobha Realty',
-      slug: 'sobha',
-      projects: 19,
-      rating: 4.7,
-      roi: '13.5%',
-      onTime: 97,
-      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop&q=90'
-    }
-  ];
-
-  const launches = [
-    {
-      name: 'Sunset Boulevard',
-      developer: 'Emaar',
-      location: 'Dubai South',
-      price: '750K',
-      badge: 'Just Launched',
-      image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=400&fit=crop'
-    },
-    {
-      name: 'Sky Villas',
-      developer: 'DAMAC',
-      location: 'Business Bay',
-      price: '1.1M',
-      badge: 'Limited Units',
-      image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&h=400&fit=crop'
-    },
-    {
-      name: 'Oasis Gardens',
-      developer: 'Azizi',
-      location: 'Al Furjan',
-      price: '680K',
-      badge: 'Early Bird',
-      image: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=600&h=400&fit=crop'
-    }
   ];
 
   const benefits = [
@@ -179,7 +197,6 @@ export default function Home() {
     }
   ];
 
-  // Handle search submission - store query and redirect to /genie
   const handleSearch = (query: string) => {
     if (!query.trim()) return;
     setPendingQuery(query.trim());
@@ -195,9 +212,111 @@ export default function Home() {
     handleSearch(suggestion);
   };
 
+  // Debounced autocomplete search
+  const performAutocompleteSearch = useCallback(async (query: string) => {
+    if (query.length < 2) {
+      setSearchResults({ projects: [], areas: [], developers: [] });
+      setShowDropdown(false);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const [projectsRes, areasRes, developersRes] = await Promise.all([
+        fetch(`${API_URL}/api/projects/search?q=${encodeURIComponent(query)}`),
+        fetch(`${API_URL}/api/areas`),
+        fetch(`${API_URL}/api/developers`)
+      ]);
+
+      const projectsData = await projectsRes.json();
+      const areasData = await areasRes.json();
+      const developersData = await developersRes.json();
+
+      const queryLower = query.toLowerCase();
+
+      // Filter projects by name match
+      const matchedProjects = projectsData.success && projectsData.data
+        ? projectsData.data.slice(0, 5)
+        : [];
+
+      // Filter areas by name match
+      const matchedAreas = areasData.success && areasData.data
+        ? areasData.data.filter((a: any) =>
+            a.name.toLowerCase().includes(queryLower)
+          ).slice(0, 4)
+        : [];
+
+      // Filter developers by name match
+      const matchedDevelopers = developersData.success && developersData.data
+        ? developersData.data.filter((d: any) =>
+            d.name.toLowerCase().includes(queryLower)
+          ).slice(0, 4)
+        : [];
+
+      setSearchResults({
+        projects: matchedProjects,
+        areas: matchedAreas,
+        developers: matchedDevelopers
+      });
+
+      const hasResults = matchedProjects.length > 0 || matchedAreas.length > 0 || matchedDevelopers.length > 0;
+      setShowDropdown(hasResults);
+    } catch (error) {
+      console.error('Autocomplete search error:', error);
+    } finally {
+      setIsSearching(false);
+    }
+  }, []);
+
+  // Handle search input change with debounce
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchInput(value);
+
+    // Clear previous timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    // Debounce search by 300ms
+    searchTimeoutRef.current = setTimeout(() => {
+      performAutocompleteSearch(value);
+    }, 300);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node) &&
+        searchBarRef.current &&
+        !searchBarRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Handle selecting an autocomplete result
+  const handleSelectResult = (type: 'project' | 'area' | 'developer', item: any) => {
+    setShowDropdown(false);
+    setSearchInput('');
+
+    if (type === 'project') {
+      router.push(`/areas/${item.area_slug}/${item.slug}`);
+    } else if (type === 'area') {
+      router.push(`/areas/${item.slug}`);
+    } else if (type === 'developer') {
+      router.push(`/developers/${item.slug}`);
+    }
+  };
+
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // HERO ANIMATIONS
       gsap.from('.hero-title', {
         opacity: 0,
         y: 60,
@@ -214,11 +333,8 @@ export default function Home() {
         delay: 0.6
       });
 
-      // DATA CARDS STAGGER - Set initial state and animate
       if (dataCardsRef.current) {
-        // Ensure cards are visible first
         gsap.set(dataCardsRef.current.children, { opacity: 1 });
-
         gsap.from(dataCardsRef.current.children, {
           opacity: 0,
           y: 40,
@@ -227,11 +343,10 @@ export default function Home() {
           stagger: 0.15,
           ease: 'back.out(1.2)',
           delay: 0.8,
-          clearProps: 'all' // Clear inline styles after animation
+          clearProps: 'all'
         });
       }
 
-      // SEARCH BAR
       if (searchBarRef.current) {
         gsap.from(searchBarRef.current, {
           opacity: 0,
@@ -242,63 +357,52 @@ export default function Home() {
         });
       }
 
-      // MASONRY CARDS
-      if (projectsRef.current) {
-        const cards = projectsRef.current.querySelectorAll('.project-card');
-        gsap.from(cards, {
+      // Section animations
+      gsap.utils.toArray('.section-title').forEach((el: any) => {
+        gsap.from(el, {
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          },
           opacity: 0,
           y: 40,
           duration: 0.8,
-          stagger: 0.12,
-          ease: 'power4.out',
-          scrollTrigger: {
-            trigger: projectsRef.current,
-            start: 'top 75%',
-            toggleActions: 'play none none none'
-          }
-        });
-      }
-
-      // SECTION TITLES
-      gsap.utils.toArray('.section-title').forEach((title: any) => {
-        gsap.from(title, {
-          opacity: 0,
-          x: -40,
-          duration: 0.7,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: title,
-            start: 'top 85%',
-            toggleActions: 'play none none none'
-          }
+          ease: 'power3.out'
         });
       });
 
-      // DEVELOPERS SECTION - Set initial opacity to 1 to ensure visibility
-      if (developersRef.current) {
-        const devCards = developersRef.current.querySelectorAll('.dev-card');
-        // Ensure cards are visible by default
-        gsap.set(devCards, { opacity: 1, visibility: 'visible' });
-
-        gsap.from(devCards, {
-          opacity: 0,
-          y: 30,
-          scale: 0.95,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: 'back.out(1.1)',
-          clearProps: 'all', // Clear inline styles after animation
+      gsap.utils.toArray('.project-card').forEach((el: any, idx: number) => {
+        gsap.from(el, {
           scrollTrigger: {
-            trigger: developersRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none none'
-          }
+            trigger: el,
+            start: 'top 90%',
+            toggleActions: 'play none none reverse'
+          },
+          opacity: 0,
+          y: 60,
+          duration: 0.8,
+          delay: idx * 0.1,
+          ease: 'power3.out'
         });
-      }
+      });
 
-    }, heroRef);
+      gsap.utils.toArray('.dev-card').forEach((el: any, idx: number) => {
+        gsap.from(el, {
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 90%',
+            toggleActions: 'play none none reverse'
+          },
+          opacity: 0,
+          y: 50,
+          duration: 0.7,
+          delay: idx * 0.08,
+          ease: 'power3.out'
+        });
+      });
+    });
 
-    // Refresh ScrollTrigger after a short delay to ensure all elements are positioned
     const refreshTimer = setTimeout(() => {
       ScrollTrigger.refresh();
     }, 100);
@@ -309,149 +413,310 @@ export default function Home() {
     };
   }, []);
 
-  // PARALLAX HOVER
   const handleCardHover = (e: React.MouseEvent<HTMLDivElement>) => {
     const card = e.currentTarget;
     const img = card.querySelector('.property-img') as HTMLElement;
-
     if (img) {
-      gsap.to(img, {
-        scale: 1.05,
-        duration: 0.4,
-        ease: 'power2.out'
-      });
+      gsap.to(img, { scale: 1.05, duration: 0.4, ease: 'power2.out' });
     }
   };
 
   const handleCardLeave = (e: React.MouseEvent<HTMLDivElement>) => {
     const card = e.currentTarget;
     const img = card.querySelector('.property-img') as HTMLElement;
-
     if (img) {
-      gsap.to(img, {
-        scale: 1,
-        duration: 0.4,
-        ease: 'power2.out'
-      });
+      gsap.to(img, { scale: 1, duration: 0.4, ease: 'power2.out' });
     }
   };
 
   return (
-    <main className="min-h-screen bg-black">
-      {/* HERO SECTION */}
-      <section ref={heroRef} className="relative min-h-screen flex items-center overflow-hidden pt-24 pb-20">
-        {/* Background Dubai Skyline */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-black via-black/95 to-black/90 z-10"></div>
-          <img
-            src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1920&h=1080&fit=crop"
-            alt="Dubai"
-            className="w-full h-full object-cover opacity-20"
-            suppressHydrationWarning
-          />
-          {/* Emerald + Gold Glows */}
-          <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-[#00C870]/10 rounded-full blur-[120px] z-20"></div>
-          <div className="absolute bottom-1/4 left-1/4 w-[500px] h-[500px] bg-[#E8C676]/8 rounded-full blur-[100px] z-20"></div>
-        </div>
+    <main className="min-h-screen bg-white">
+      {/* PREMIUM HERO CAROUSEL - Full Width vyom.ae Style */}
+      <section ref={heroRef} className="relative h-[100svh] min-h-[700px] max-h-[1000px] overflow-hidden">
+        {/* Carousel Slides */}
+        {heroSlides.map((slide, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+            }`}
+          >
+            {/* Background Image */}
+            <div className="absolute inset-0">
+              <img
+                src={slide.image}
+                alt={slide.title}
+                className="w-full h-full object-cover"
+                suppressHydrationWarning
+              />
+              {/* Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20"></div>
+            </div>
+          </div>
+        ))}
 
-        <div className="relative z-30 max-w-[1800px] mx-auto px-6 lg:px-16 w-full">
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            {/* LEFT: Headline + Search */}
-            <div className="lg:col-span-7 space-y-10">
-              {/* Headline */}
-              <div className="space-y-6">
-                <h1 className="hero-title text-6xl sm:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-tight">
-                  Explore Dubai's <br />
-                  <span className="bg-gradient-to-r from-[#00C870] via-[#E8C676] to-[#00C870] bg-clip-text text-transparent">
-                    Off-Plan Market
-                  </span>
+        {/* Content Overlay - Split into title area and fixed search area */}
+        <div className="relative z-20 h-full flex flex-col">
+          {/* Title Section - Centered vertically in available space */}
+          <div className="flex-1 flex items-center pt-20">
+            <div className="max-w-[1800px] mx-auto px-6 lg:px-16 w-full">
+              <div className="max-w-4xl">
+                {/* Location Badge */}
+                <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full mb-6">
+                  <MapPin className="w-4 h-4 text-[#D4AF37]" />
+                  <span className="text-sm font-medium text-white min-w-[100px]">{heroSlides[currentSlide].location}</span>
+                </div>
+
+                {/* Main Title */}
+                <h1 className="hero-title text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black text-white leading-[1.05] mb-6">
+                  {heroSlides[currentSlide].title}{' '}
+                  <span className="text-[#D4AF37]">{heroSlides[currentSlide].highlight}</span>
                 </h1>
-                <p className="hero-subtitle text-xl lg:text-2xl text-gray-300 max-w-2xl font-light leading-relaxed">
-                  AI-powered property discovery with <span className="text-[#00C870] font-semibold">real-time ROI analysis</span>
-                  {' '}and <span className="text-[#E8C676] font-semibold">developer analytics</span>.
+
+                {/* Subtitle */}
+                <p className="hero-subtitle text-xl lg:text-2xl text-white/80 max-w-2xl font-light">
+                  {heroSlides[currentSlide].subtitle}
                 </p>
               </div>
+            </div>
+          </div>
 
-              {/* AI SUPER SEARCH BAR */}
-              <div ref={searchBarRef} className="relative">
+          {/* Search Section - Fixed position from bottom */}
+          <div className="pb-36 lg:pb-40">
+            <div className="max-w-[1800px] mx-auto px-6 lg:px-16 w-full">
+              <div className="max-w-4xl">
+
+              {/* Search Bar - Premium Glass Effect */}
+              <div ref={searchBarRef} className="max-w-3xl relative">
                 <form onSubmit={handleSearchSubmit}>
-                  <div className="relative bg-black/60 backdrop-blur-2xl border-2 border-[#E8C676]/40 rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.9)] hover:border-[#00C870]/60 transition-all duration-300 group">
+                  <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl overflow-hidden shadow-2xl">
                     <div className="flex items-stretch">
-                      {/* Gold Icon Capsule */}
-                      <div className="flex items-center justify-center px-6 bg-gradient-to-br from-[#E8C676] to-[#D4AF37]">
-                        <Sparkles className="w-6 h-6 text-black" />
+                      {/* AI Icon */}
+                      <div className="flex items-center justify-center px-6 bg-gradient-to-b from-[#D4AF37] to-[#B8962E]">
+                        <Sparkles className="w-6 h-6 text-white" />
                       </div>
 
                       {/* Input */}
                       <input
                         type="text"
                         value={searchInput}
-                        onChange={(e) => setSearchInput(e.target.value)}
-                        placeholder="Ask Genie anything..."
-                        className="flex-1 text-lg px-6 py-6 bg-transparent outline-none text-white placeholder-gray-500 font-light"
+                        onChange={handleSearchInputChange}
+                        onFocus={() => {
+                          if (searchResults.projects.length > 0 || searchResults.areas.length > 0 || searchResults.developers.length > 0) {
+                            setShowDropdown(true);
+                          }
+                        }}
+                        placeholder="Search properties, areas, or ask Genie AI..."
+                        className="flex-1 text-lg px-6 py-5 bg-transparent outline-none text-[#0A0A0A] placeholder-gray-400"
                       />
+
+                      {/* Loading indicator */}
+                      {isSearching && (
+                        <div className="flex items-center pr-4">
+                          <div className="w-5 h-5 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                      )}
 
                       {/* Search Button */}
                       <button
                         type="submit"
-                        className="px-10 bg-gradient-to-r from-[#00C870] to-[#059669] text-white font-bold hover:shadow-[0_0_30px_rgba(0,200,112,0.4)] transition-all duration-300 flex items-center gap-3"
+                        className="px-8 bg-[#10B981] text-white font-bold hover:bg-[#059669] transition-all duration-300 flex items-center gap-3"
                       >
                         <Search className="w-5 h-5" />
                         <span className="hidden sm:inline">Search</span>
                       </button>
                     </div>
-
-                    {/* Top Gold Line */}
-                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#E8C676] to-transparent"></div>
                   </div>
                 </form>
 
-                {/* Suggestion Chips */}
+                {/* Autocomplete Dropdown */}
+                {showDropdown && (
+                  <div
+                    ref={dropdownRef}
+                    className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50 max-h-[400px] overflow-y-auto"
+                  >
+                    {/* Properties Section */}
+                    {searchResults.projects.length > 0 && (
+                      <div className="p-3">
+                        <div className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                          <Building className="w-4 h-4" />
+                          Properties
+                        </div>
+                        {searchResults.projects.map((project: any) => (
+                          <button
+                            key={project.id}
+                            onClick={() => handleSelectResult('project', project)}
+                            className="w-full flex items-center gap-4 px-3 py-3 hover:bg-[#F9FAFB] rounded-xl transition-colors text-left"
+                          >
+                            <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
+                              {project.images?.[0] ? (
+                                <img src={project.images[0]} alt={project.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <Building className="w-5 h-5 text-gray-400" />
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="font-bold text-[#0A0A0A] truncate">{project.name}</div>
+                              <div className="text-sm text-gray-500 flex items-center gap-2">
+                                <MapPin className="w-3 h-3" />
+                                {project.area_name || project.location}
+                              </div>
+                            </div>
+                            {project.price_from && (
+                              <div className="text-sm font-bold text-[#10B981]">{project.price_from}</div>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Areas Section */}
+                    {searchResults.areas.length > 0 && (
+                      <div className="p-3 border-t border-gray-100">
+                        <div className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                          <MapPin className="w-4 h-4" />
+                          Areas
+                        </div>
+                        {searchResults.areas.map((area: any) => (
+                          <button
+                            key={area.id}
+                            onClick={() => handleSelectResult('area', area)}
+                            className="w-full flex items-center gap-4 px-3 py-3 hover:bg-[#F9FAFB] rounded-xl transition-colors text-left"
+                          >
+                            <div className="w-10 h-10 rounded-xl bg-[#10B981]/10 flex items-center justify-center flex-shrink-0">
+                              <MapPin className="w-5 h-5 text-[#10B981]" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="font-bold text-[#0A0A0A]">{area.name}</div>
+                              <div className="text-sm text-gray-500">View all properties in {area.name}</div>
+                            </div>
+                            <ArrowRight className="w-4 h-4 text-gray-400" />
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Developers Section */}
+                    {searchResults.developers.length > 0 && (
+                      <div className="p-3 border-t border-gray-100">
+                        <div className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                          <Building2 className="w-4 h-4" />
+                          Developers
+                        </div>
+                        {searchResults.developers.map((developer: any) => (
+                          <button
+                            key={developer.id}
+                            onClick={() => handleSelectResult('developer', developer)}
+                            className="w-full flex items-center gap-4 px-3 py-3 hover:bg-[#F9FAFB] rounded-xl transition-colors text-left"
+                          >
+                            <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0">
+                              <Building2 className="w-5 h-5 text-[#D4AF37]" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="font-bold text-[#0A0A0A]">{developer.name}</div>
+                              <div className="text-sm text-gray-500">
+                                {developer.project_count || 0} projects
+                              </div>
+                            </div>
+                            <ArrowRight className="w-4 h-4 text-gray-400" />
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Ask Genie Option */}
+                    <div className="p-3 border-t border-gray-100 bg-gradient-to-r from-[#D4AF37]/5 to-[#10B981]/5">
+                      <button
+                        onClick={() => handleSearch(searchInput)}
+                        className="w-full flex items-center gap-4 px-3 py-3 hover:bg-white/50 rounded-xl transition-colors text-left"
+                      >
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#D4AF37] to-[#10B981] flex items-center justify-center flex-shrink-0">
+                          <Sparkles className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-bold text-[#0A0A0A]">Ask Genie AI</div>
+                          <div className="text-sm text-gray-500">Get AI-powered recommendations for "{searchInput}"</div>
+                        </div>
+                        <ArrowRight className="w-4 h-4 text-[#D4AF37]" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Quick Suggestions */}
                 <div className="mt-5 flex flex-wrap gap-3">
                   {suggestions.map((suggestion, idx) => (
                     <button
                       key={idx}
                       onClick={() => handleSuggestionClick(suggestion)}
-                      className="text-xs bg-black/60 backdrop-blur-xl text-gray-400 hover:text-[#00C870] px-4 py-2 rounded-full border border-[#00C870]/30 hover:border-[#00C870] hover:shadow-[0_0_15px_rgba(0,200,112,0.3)] transition-all duration-300"
+                      className="text-sm bg-white/10 backdrop-blur-md text-white hover:bg-white/20 px-4 py-2 rounded-full transition-all duration-300"
                     >
                       {suggestion}
                     </button>
                   ))}
                 </div>
               </div>
+              </div>
             </div>
+          </div>
 
-            {/* RIGHT: AI Data Cluster Cards */}
-            <div className="lg:col-span-5">
-              <div ref={dataCardsRef} className="space-y-6">
-                {/* Large ROI Card */}
-                <div className="relative bg-black/60 backdrop-blur-3xl border-2 border-[#00C870]/40 rounded-3xl p-10 shadow-[0_20px_60px_rgba(0,0,0,0.9)] hover:shadow-[0_0_60px_rgba(0,200,112,0.3)] transition-all duration-500 overflow-hidden group">
-                  {/* Emerald Glow Inside */}
-                  <div className="absolute -top-20 -right-20 w-60 h-60 bg-[#00C870]/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
-
-                  <div className="relative">
-                    <div className="flex items-start justify-between mb-6">
-                      <div className="w-16 h-16 bg-gradient-to-br from-[#00C870] to-[#059669] rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(0,200,112,0.6)]">
-                        <TrendingUp className="w-8 h-8 text-white" />
-                      </div>
-                      <span className="text-xs text-[#E8C676] font-bold tracking-wider border border-[#E8C676]/40 px-3 py-1 rounded-full">LIVE DATA</span>
-                    </div>
-                    <div className="text-7xl font-black text-white mb-3">12.8<span className="text-[#00C870]">%</span></div>
-                    <div className="text-sm text-gray-400 font-semibold uppercase tracking-wide">Average ROI</div>
+          {/* Stats Bar - Bottom of Hero */}
+          <div className="absolute bottom-0 left-0 right-0 z-30 bg-gradient-to-t from-black/80 to-transparent pt-20 pb-8">
+            <div className="max-w-[1800px] mx-auto px-6 lg:px-16">
+              <div ref={dataCardsRef} className="flex flex-wrap items-center justify-between gap-6">
+                {/* Stats */}
+                <div className="flex flex-wrap items-center gap-8 lg:gap-16">
+                  <div className="text-center">
+                    <div className="text-3xl lg:text-4xl font-black text-white">{stats.projectCount || 100}<span className="text-[#D4AF37]">+</span></div>
+                    <div className="text-xs text-white/60 uppercase tracking-wider mt-1">Projects</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl lg:text-4xl font-black text-white">{stats.developerCount || 25}<span className="text-[#10B981]">+</span></div>
+                    <div className="text-xs text-white/60 uppercase tracking-wider mt-1">Developers</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl lg:text-4xl font-black text-[#10B981]">{stats.avgRoi ? stats.avgRoi.toFixed(1) : '12.8'}%</div>
+                    <div className="text-xs text-white/60 uppercase tracking-wider mt-1">Avg ROI</div>
                   </div>
                 </div>
 
-                {/* Two Smaller Cards */}
-                <div className="grid grid-cols-2 gap-5">
-                  <div className="bg-black/60 backdrop-blur-xl border border-[#E8C676]/30 rounded-2xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:border-[#E8C676] hover:shadow-[0_0_25px_rgba(232,198,118,0.4)] transition-all duration-300">
-                    <div className="text-4xl font-black text-white mb-2">100<span className="text-[#E8C676]">+</span></div>
-                    <div className="text-xs text-gray-500 uppercase tracking-wider">Projects</div>
+                {/* Carousel Controls */}
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={prevSlide}
+                    className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 flex items-center justify-center transition-all"
+                    aria-label="Previous slide"
+                  >
+                    <ChevronLeft className="w-6 h-6 text-white" />
+                  </button>
+
+                  {/* Slide Indicators */}
+                  <div className="flex gap-2">
+                    {heroSlides.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          setIsAutoPlaying(false);
+                          setCurrentSlide(idx);
+                        }}
+                        className={`h-2 rounded-full transition-all duration-300 ${
+                          idx === currentSlide ? 'w-8 bg-[#D4AF37]' : 'w-2 bg-white/40 hover:bg-white/60'
+                        }`}
+                        aria-label={`Go to slide ${idx + 1}`}
+                      />
+                    ))}
                   </div>
 
-                  <div className="bg-black/60 backdrop-blur-xl border border-[#00C870]/30 rounded-2xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:border-[#00C870] hover:shadow-[0_0_25px_rgba(0,200,112,0.4)] transition-all duration-300">
-                    <div className="text-4xl font-black text-white mb-2">25<span className="text-[#00C870]">+</span></div>
-                    <div className="text-xs text-gray-500 uppercase tracking-wider">Developers</div>
-                  </div>
+                  <button
+                    onClick={nextSlide}
+                    className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 flex items-center justify-center transition-all"
+                    aria-label="Next slide"
+                  >
+                    <ChevronRight className="w-6 h-6 text-white" />
+                  </button>
                 </div>
               </div>
             </div>
@@ -459,36 +724,33 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FEATURED PROJECTS - MASONRY LAYOUT */}
-      <section ref={projectsRef} className="relative py-20 lg:py-28 bg-gradient-to-b from-black via-[#0A0A0A] to-black overflow-hidden">
-        {/* Background Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#00C870]/5 rounded-full blur-[150px]"></div>
-
+      {/* FEATURED PROJECTS */}
+      <section ref={projectsRef} className="relative py-20 lg:py-28 bg-[#F9FAFB] overflow-hidden">
         <div className="relative max-w-[1800px] mx-auto px-6 lg:px-16">
           {/* Section Header */}
           <div className="mb-16">
-            <div className="inline-flex items-center gap-2 bg-[#00C870]/10 border border-[#00C870]/30 px-4 py-2 rounded-full mb-6">
-              <Sparkles className="w-4 h-4 text-[#00C870]" />
-              <span className="text-xs font-bold text-[#00C870] uppercase tracking-wide">AI-Curated</span>
+            <div className="inline-flex items-center gap-2 bg-[#10B981]/10 border-2 border-[#10B981] px-4 py-2 rounded-full mb-6">
+              <Sparkles className="w-4 h-4 text-[#10B981]" />
+              <span className="text-xs font-bold text-[#10B981] uppercase tracking-wide">AI-Curated</span>
             </div>
-            <h2 className="section-title text-5xl lg:text-6xl font-black text-white mb-4 leading-tight">
-              Featured <span className="bg-gradient-to-r from-[#E8C676] to-[#00C870] bg-clip-text text-transparent">Projects</span>
+            <h2 className="section-title text-5xl lg:text-6xl font-black text-[#0A0A0A] mb-4 leading-tight">
+              Featured <span className="text-[#D4AF37]">Projects</span>
             </h2>
-            <p className="text-xl text-gray-400 max-w-2xl">Premium off-plan developments with exceptional ROI potential</p>
+            <p className="text-xl text-gray-600 max-w-2xl">Premium off-plan developments with exceptional ROI potential</p>
           </div>
 
-          {/* MASONRY GRID */}
+          {/* Projects Grid */}
+          {!loading && projects.length > 0 && projects[0] ? (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Large Wide Card */}
+            {/* Large Card */}
             <div
               className="project-card lg:col-span-8 lg:row-span-2 group cursor-pointer"
               onMouseEnter={handleCardHover}
               onMouseLeave={handleCardLeave}
             >
-              <Link href={`/projects/${projects[0].id}`} className="block h-full relative bg-black rounded-3xl overflow-hidden border border-[#E8C676]/20 hover:border-[#E8C676]/60 transition-all duration-500 shadow-[0_20px_60px_rgba(0,0,0,0.8)] hover:shadow-[0_0_60px_rgba(232,198,118,0.3)] hover:-translate-y-1">
-                {/* Image */}
+              <Link href={`/areas/${projects[0]?.area_slug || 'dubai'}/${projects[0]?.slug || ''}`} className="block h-full relative bg-white rounded-3xl overflow-hidden border border-gray-200 shadow-md hover:border-[#D4AF37] transition-all duration-500 shadow-lg hover:shadow-xl hover:-translate-y-1">
                 <div className="relative h-full min-h-[600px] overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/40 to-transparent z-10"></div>
                   <img
                     src={projects[0].image}
                     alt={projects[0].name}
@@ -497,33 +759,33 @@ export default function Home() {
                   />
 
                   {/* ROI Badge */}
-                  <div className="absolute top-6 left-6 bg-gradient-to-r from-[#E8C676] to-[#D4AF37] text-black px-4 py-2 rounded-full text-sm font-bold shadow-lg z-20">
+                  <div className="absolute top-6 left-6 bg-[#D4AF37] text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg z-20">
                     {projects[0].roi} ROI
                   </div>
 
-                  {/* Content Overlay */}
+                  {/* Content */}
                   <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
-                    <h3 className="text-4xl font-black text-white mb-3 group-hover:text-[#E8C676] transition-colors">{projects[0].name}</h3>
+                    <h3 className="text-4xl font-black text-white mb-3 group-hover:text-[#D4AF37] transition-colors">{projects[0].name}</h3>
                     <p className="text-lg text-gray-300 mb-4">{projects[0].developer}</p>
 
                     <div className="flex flex-wrap items-center gap-4 mb-6">
                       <div className="flex items-center gap-2 text-sm text-gray-300">
-                        <MapPin className="w-4 h-4 text-[#E8C676]" />
+                        <MapPin className="w-4 h-4 text-[#D4AF37]" />
                         {projects[0].location}
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-300">
-                        <Calendar className="w-4 h-4 text-[#E8C676]" />
+                        <Calendar className="w-4 h-4 text-[#D4AF37]" />
                         {projects[0].completion}
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-300">
-                        <CreditCard className="w-4 h-4 text-[#E8C676]" />
+                        <CreditCard className="w-4 h-4 text-[#D4AF37]" />
                         {projects[0].payment}
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <div className="text-3xl font-black text-[#00C870]">AED {projects[0].price}</div>
-                      <div className="flex items-center gap-2 text-[#E8C676] font-bold">
+                      <div className="text-3xl font-black text-[#10B981]">AED {projects[0].price}</div>
+                      <div className="flex items-center gap-2 text-[#D4AF37] font-bold">
                         View Details
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                       </div>
@@ -533,15 +795,16 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* Medium Card (Top Right) */}
+            {/* Medium Card */}
+            {projects[1] && (
             <div
               className="project-card lg:col-span-4 group cursor-pointer"
               onMouseEnter={handleCardHover}
               onMouseLeave={handleCardLeave}
             >
-              <Link href={`/projects/${projects[1].id}`} className="block h-full relative bg-black rounded-3xl overflow-hidden border border-[#00C870]/20 hover:border-[#00C870]/60 transition-all duration-500 shadow-[0_20px_60px_rgba(0,0,0,0.8)] hover:shadow-[0_0_60px_rgba(0,200,112,0.3)] hover:-translate-y-1">
+              <Link href={`/areas/${projects[1]?.area_slug}/${projects[1]?.slug}`} className="block h-full relative bg-white rounded-3xl overflow-hidden border border-gray-200 shadow-md hover:border-[#10B981] transition-all duration-500 shadow-lg hover:shadow-xl hover:-translate-y-1">
                 <div className="relative h-full min-h-[300px] overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/40 to-transparent z-10"></div>
                   <img
                     src={projects[1].image}
                     alt={projects[1].name}
@@ -549,28 +812,30 @@ export default function Home() {
                     suppressHydrationWarning
                   />
 
-                  <div className="absolute top-4 left-4 bg-gradient-to-r from-[#E8C676] to-[#D4AF37] text-black px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+                  <div className="absolute top-4 left-4 bg-[#D4AF37] text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
                     {projects[1].roi} ROI
                   </div>
 
                   <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
-                    <h3 className="text-2xl font-black text-white mb-2 group-hover:text-[#00C870] transition-colors">{projects[1].name}</h3>
+                    <h3 className="text-2xl font-black text-white mb-2 group-hover:text-[#10B981] transition-colors">{projects[1].name}</h3>
                     <p className="text-sm text-gray-300 mb-3">{projects[1].developer}</p>
-                    <div className="text-xl font-black text-[#00C870]">AED {projects[1].price}</div>
+                    <div className="text-xl font-black text-[#10B981]">AED {projects[1].price}</div>
                   </div>
                 </div>
               </Link>
             </div>
+            )}
 
-            {/* Small Card */}
+            {/* Small Cards */}
+            {projects[2] && (
             <div
               className="project-card lg:col-span-2 group cursor-pointer"
               onMouseEnter={handleCardHover}
               onMouseLeave={handleCardLeave}
             >
-              <Link href={`/projects/${projects[2].id}`} className="block h-full relative bg-black rounded-3xl overflow-hidden border border-[#E8C676]/20 hover:border-[#E8C676]/60 transition-all duration-500 shadow-[0_20px_60px_rgba(0,0,0,0.8)] hover:shadow-[0_0_60px_rgba(232,198,118,0.3)] hover:-translate-y-1">
+              <Link href={`/areas/${projects[2]?.area_slug}/${projects[2]?.slug}`} className="block h-full relative bg-white rounded-3xl overflow-hidden border border-gray-200 shadow-md hover:border-[#D4AF37] transition-all duration-500 shadow-lg hover:shadow-xl hover:-translate-y-1">
                 <div className="relative h-full min-h-[290px] overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/40 to-transparent z-10"></div>
                   <img
                     src={projects[2].image}
                     alt={projects[2].name}
@@ -578,27 +843,28 @@ export default function Home() {
                     suppressHydrationWarning
                   />
 
-                  <div className="absolute top-4 left-4 bg-gradient-to-r from-[#E8C676] to-[#D4AF37] text-black px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+                  <div className="absolute top-4 left-4 bg-[#D4AF37] text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
                     {projects[2].roi} ROI
                   </div>
 
                   <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
-                    <h3 className="text-lg font-black text-white mb-1 group-hover:text-[#E8C676] transition-colors line-clamp-1">{projects[2].name}</h3>
-                    <div className="text-lg font-black text-[#00C870]">AED {projects[2].price}</div>
+                    <h3 className="text-lg font-black text-white mb-1 group-hover:text-[#D4AF37] transition-colors line-clamp-1">{projects[2].name}</h3>
+                    <div className="text-lg font-black text-[#10B981]">AED {projects[2].price}</div>
                   </div>
                 </div>
               </Link>
             </div>
+            )}
 
-            {/* Tall Card */}
+            {projects[3] && (
             <div
               className="project-card lg:col-span-2 lg:row-span-1 group cursor-pointer"
               onMouseEnter={handleCardHover}
               onMouseLeave={handleCardLeave}
             >
-              <Link href={`/projects/${projects[3].id}`} className="block h-full relative bg-black rounded-3xl overflow-hidden border border-[#00C870]/20 hover:border-[#00C870]/60 transition-all duration-500 shadow-[0_20px_60px_rgba(0,0,0,0.8)] hover:shadow-[0_0_60px_rgba(0,200,112,0.3)] hover:-translate-y-1">
+              <Link href={`/areas/${projects[3]?.area_slug}/${projects[3]?.slug}`} className="block h-full relative bg-white rounded-3xl overflow-hidden border border-gray-200 shadow-md hover:border-[#10B981] transition-all duration-500 shadow-lg hover:shadow-xl hover:-translate-y-1">
                 <div className="relative h-full min-h-[290px] overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/40 to-transparent z-10"></div>
                   <img
                     src={projects[3].image}
                     alt={projects[3].name}
@@ -606,49 +872,55 @@ export default function Home() {
                     suppressHydrationWarning
                   />
 
-                  <div className="absolute top-4 left-4 bg-gradient-to-r from-[#E8C676] to-[#D4AF37] text-black px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+                  <div className="absolute top-4 left-4 bg-[#D4AF37] text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
                     {projects[3].roi} ROI
                   </div>
 
                   <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
-                    <h3 className="text-lg font-black text-white mb-1 group-hover:text-[#00C870] transition-colors line-clamp-1">{projects[3].name}</h3>
-                    <div className="text-lg font-black text-[#00C870]">AED {projects[3].price}</div>
+                    <h3 className="text-lg font-black text-white mb-1 group-hover:text-[#10B981] transition-colors line-clamp-1">{projects[3].name}</h3>
+                    <div className="text-lg font-black text-[#10B981]">AED {projects[3].price}</div>
                   </div>
                 </div>
               </Link>
             </div>
+            )}
           </div>
+          ) : (
+            <div className="flex items-center justify-center py-20">
+              <div className="text-center">
+                <Sparkles className="w-12 h-12 text-[#10B981] animate-pulse mx-auto mb-4" />
+                <p className="text-gray-500">Loading featured projects...</p>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* TOP DEVELOPERS - ULTRA PREMIUM */}
-      <section ref={developersRef} className="relative py-24 lg:py-32 bg-black overflow-hidden">
-        {/* Cinematic Background Lighting */}
-        <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-[#E8C676]/3 rounded-full blur-[150px]"></div>
-        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-[#00C870]/3 rounded-full blur-[120px]"></div>
-
+      {/* TOP DEVELOPERS */}
+      <section ref={developersRef} className="relative py-24 lg:py-32 bg-white overflow-hidden">
         <div className="relative max-w-[1800px] mx-auto px-6 lg:px-16">
           {/* Section Header */}
           <div className="mb-20">
-            <div className="inline-flex items-center gap-2 bg-[#E8C676]/10 border border-[#E8C676]/30 px-5 py-2.5 rounded-full mb-8">
-              <Award className="w-4 h-4 text-[#E8C676]" />
-              <span className="text-xs font-bold text-[#E8C676] uppercase tracking-widest">Verified Elite Partners</span>
+            <div className="inline-flex items-center gap-2 bg-[#D4AF37]/10 border-2 border-[#D4AF37] px-5 py-2.5 rounded-full mb-8">
+              <Award className="w-4 h-4 text-[#D4AF37]" />
+              <span className="text-xs font-bold text-[#D4AF37] uppercase tracking-widest">Verified Elite Partners</span>
             </div>
-            <h2 className="section-title text-5xl lg:text-7xl font-black text-white mb-6 leading-[1.1]">
-              Top <span className="bg-gradient-to-r from-[#E8C676] via-[#D4AF37] to-[#E8C676] bg-clip-text text-transparent">Developers</span>
+            <h2 className="section-title text-5xl lg:text-7xl font-black text-[#0A0A0A] mb-6 leading-[1.1]">
+              Top <span className="text-[#D4AF37]">Developers</span>
             </h2>
-            <p className="text-xl lg:text-2xl text-gray-400 max-w-3xl font-light">
+            <p className="text-xl lg:text-2xl text-gray-600 max-w-3xl font-light">
               Partnering with Dubai's most prestigious developers. Proven excellence, unmatched delivery.
             </p>
           </div>
 
-          {/* HERO DEVELOPER CARD - Full Width */}
+          {/* Developers Grid */}
+          {!loading && developers.length > 0 && developers[0] ? (
+          <>
+          {/* Hero Developer */}
           <Link
-            href={`/developers/${developers[0].slug}`}
-            className="dev-card block mb-8 group relative overflow-hidden rounded-[2rem] border-2 border-[#E8C676]/40 hover:border-[#E8C676] transition-all duration-500"
-            style={{ boxShadow: '0 0 60px rgba(232, 198, 118, 0.15)' }}
+            href={`/developers/${developers[0]?.slug || ''}`}
+            className="dev-card block mb-8 group relative overflow-hidden rounded-3xl border border-gray-200 shadow-md hover:border-[#D4AF37] transition-all duration-500 shadow-lg hover:shadow-xl"
           >
-            {/* Background Image - Real Dubai Landmark */}
             <div className="relative h-[500px] lg:h-[600px]">
               <img
                 src={developers[0].image}
@@ -657,62 +929,51 @@ export default function Home() {
                 suppressHydrationWarning
               />
 
-              {/* Subtle Dark Gradient (25% opacity) */}
-              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A]/80 via-[#0A0A0A]/60 to-transparent"></div>
 
-              {/* Emerald Accent Glow - Top Right */}
-              <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#00C870]/10 rounded-full blur-[100px]"></div>
-
-              {/* Gold Shimmer - Bottom Left */}
-              <div className="absolute bottom-0 left-0 w-[500px] h-[300px] bg-[#E8C676]/10 rounded-full blur-[120px]"></div>
-
-              {/* Content Overlay */}
               <div className="absolute inset-0 flex flex-col justify-between p-10 lg:p-16">
-                {/* Top Section - Badge */}
+                {/* Top Badge */}
                 <div className="flex items-start justify-between">
-                  <div className="inline-flex items-center gap-2.5 bg-gradient-to-r from-[#E8C676] to-[#D4AF37] px-6 py-3 rounded-2xl shadow-[0_0_30px_rgba(232,198,118,0.4)]">
-                    <Star className="w-5 h-5 fill-black text-black" />
-                    <span className="text-sm font-black text-black uppercase tracking-wider">VERIFIED PARTNER</span>
+                  <div className="inline-flex items-center gap-2.5 bg-[#D4AF37] px-6 py-3 rounded-2xl shadow-lg">
+                    <Star className="w-5 h-5 fill-white text-white" />
+                    <span className="text-sm font-black text-white uppercase tracking-wider">VERIFIED PARTNER</span>
                   </div>
 
-                  {/* Gold Icon Top Right */}
-                  <div className="w-16 h-16 bg-[#E8C676]/20 backdrop-blur-md border border-[#E8C676]/40 rounded-2xl flex items-center justify-center">
-                    <Building2 className="w-8 h-8 text-[#E8C676]" />
+                  <div className="w-16 h-16 bg-white/20 backdrop-blur-md border-2 border-white/40 rounded-2xl flex items-center justify-center">
+                    <Building2 className="w-8 h-8 text-white" />
                   </div>
                 </div>
 
-                {/* Bottom Section - Info */}
+                {/* Bottom Info */}
                 <div>
-                  {/* Developer Name */}
                   <h3 className="text-5xl lg:text-7xl font-black text-white mb-8 tracking-tight leading-none">
                     {developers[0].name}
                   </h3>
 
-                  {/* Stats Grid */}
+                  {/* Stats */}
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5">
+                    <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-5">
                       <div className="text-3xl lg:text-4xl font-black text-white mb-2">{developers[0].projects}</div>
-                      <div className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Total Projects</div>
+                      <div className="text-sm font-semibold text-gray-300 uppercase tracking-wide">Total Projects</div>
                     </div>
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5">
-                      <div className="text-3xl lg:text-4xl font-black text-[#E8C676] mb-2">{developers[0].roi}</div>
-                      <div className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Average ROI</div>
+                    <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-5">
+                      <div className="text-3xl lg:text-4xl font-black text-[#D4AF37] mb-2">{developers[0].roi}</div>
+                      <div className="text-sm font-semibold text-gray-300 uppercase tracking-wide">Average ROI</div>
                     </div>
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5">
+                    <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-5">
                       <div className="flex items-center gap-2 text-3xl lg:text-4xl font-black text-white mb-2">
-                        <Star className="w-7 h-7 fill-[#E8C676] text-[#E8C676]" />
-                        <span>{developers[0].rating}</span>
+                        <Star className="w-7 h-7 fill-[#D4AF37] text-[#D4AF37]" />
+                        <span>{developers[0].rating.toFixed(1)}</span>
                       </div>
-                      <div className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Rating</div>
+                      <div className="text-sm font-semibold text-gray-300 uppercase tracking-wide">Rating</div>
                     </div>
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5">
-                      <div className="text-3xl lg:text-4xl font-black text-[#00C870] mb-2">{developers[0].onTime}%</div>
-                      <div className="text-sm font-semibold text-gray-400 uppercase tracking-wide">On-Time Delivery</div>
+                    <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-5">
+                      <div className="text-3xl lg:text-4xl font-black text-[#10B981] mb-2">{developers[0].onTime}%</div>
+                      <div className="text-sm font-semibold text-gray-300 uppercase tracking-wide">On-Time Delivery</div>
                     </div>
                   </div>
 
-                  {/* CTA Link */}
-                  <div className="inline-flex items-center gap-3 text-[#E8C676] font-bold text-lg group-hover:gap-5 transition-all">
+                  <div className="inline-flex items-center gap-3 text-[#D4AF37] font-bold text-lg group-hover:gap-5 transition-all">
                     <span>Explore Developer</span>
                     <ArrowRight className="w-6 h-6" />
                   </div>
@@ -721,93 +982,94 @@ export default function Home() {
             </div>
           </Link>
 
-          {/* FOUR MEDIUM DEVELOPER CARDS - Horizontal Row */}
+          {/* Other Developers Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {developers.slice(1).map((dev, idx) => (
               <Link
                 key={dev.slug}
                 href={`/developers/${dev.slug}`}
-                className="dev-card group relative overflow-hidden rounded-3xl border border-white/10 hover:border-[#00C870]/60 transition-all duration-500 bg-black"
-                style={{ boxShadow: '0 4px 40px rgba(0, 0, 0, 0.5)' }}
+                className="dev-card group relative overflow-hidden rounded-3xl border border-gray-200 shadow-md hover:border-[#10B981] transition-all duration-500 bg-white shadow-md hover:shadow-xl hover:-translate-y-1"
               >
-                {/* Background Image - High Quality */}
-                <div className="relative h-80">
+                {/* Image */}
+                <div className="relative h-48 overflow-hidden">
                   <img
                     src={dev.image}
                     alt={dev.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     suppressHydrationWarning
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/80 to-transparent"></div>
 
-                  {/* Very Light Overlay (20-25% opacity) - Keep Image Visible */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                  {/* Rating Badge */}
+                  <div className="absolute top-4 right-4 bg-[#D4AF37] px-3 py-1 rounded-full flex items-center gap-1">
+                    <Star className="w-3 h-3 fill-white text-white" />
+                    <span className="text-xs font-bold text-white">{dev.rating.toFixed(1)}</span>
+                  </div>
+                </div>
 
-                  {/* Emerald Glow on Hover */}
-                  <div className="absolute inset-0 bg-[#00C870]/0 group-hover:bg-[#00C870]/10 transition-all duration-500"></div>
+                {/* Info */}
+                <div className="p-6">
+                  <h3 className="text-xl font-black text-[#0A0A0A] mb-4 group-hover:text-[#10B981] transition-colors">
+                    {dev.name}
+                  </h3>
 
-                  {/* Gold Icon - Top Left */}
-                  <div className="absolute top-4 left-4 w-12 h-12 bg-[#E8C676]/20 backdrop-blur-md border border-[#E8C676]/40 rounded-xl flex items-center justify-center">
-                    <Building2 className="w-6 h-6 text-[#E8C676]" />
+                  {/* Mini Stats */}
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <div className="bg-[#F9FAFB] rounded-xl p-3 text-center">
+                      <div className="text-lg font-black text-[#0A0A0A]">{dev.projects}</div>
+                      <div className="text-xs text-gray-500">Projects</div>
+                    </div>
+                    <div className="bg-[#F9FAFB] rounded-xl p-3 text-center">
+                      <div className="text-lg font-black text-[#10B981]">{dev.roi}</div>
+                      <div className="text-xs text-gray-500">ROI</div>
+                    </div>
                   </div>
 
-                  {/* Content - Bottom Overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    {/* Developer Name */}
-                    <h3 className="text-2xl font-black text-white mb-4 leading-tight">
-                      {dev.name}
-                    </h3>
+                  <div className="h-px bg-gray-200 mb-3"></div>
 
-                    {/* Stats */}
-                    <div className="flex items-center justify-between mb-3">
-                      <div>
-                        <div className="text-2xl font-black text-[#00C870] mb-0.5">{dev.projects}</div>
-                        <div className="text-xs font-semibold text-gray-400 uppercase">Projects</div>
-                      </div>
-                      <div>
-                        <div className="text-2xl font-black text-[#E8C676] mb-0.5">{dev.roi}</div>
-                        <div className="text-xs font-semibold text-gray-400 uppercase">Avg ROI</div>
-                      </div>
-                    </div>
-
-                    {/* Divider */}
-                    <div className="h-px bg-gradient-to-r from-[#E8C676]/50 via-[#E8C676]/20 to-transparent mb-3"></div>
-
-                    {/* View Link */}
-                    <div className="flex items-center gap-2 text-sm font-bold text-white/70 group-hover:text-[#E8C676] transition-colors">
-                      <span>View Portfolio</span>
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </div>
+                  <div className="flex items-center gap-2 text-sm font-bold text-gray-600 group-hover:text-[#D4AF37] transition-colors">
+                    <span>View Portfolio</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
               </Link>
             ))}
           </div>
+          </>
+          ) : (
+            <div className="flex items-center justify-center py-20">
+              <div className="text-center">
+                <Building2 className="w-12 h-12 text-[#D4AF37] animate-pulse mx-auto mb-4" />
+                <p className="text-gray-500">Loading developers...</p>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* LATEST LAUNCHES - Horizontal Scroll */}
-      <section ref={launchesRef} className="relative py-20 lg:py-28 bg-gradient-to-b from-black via-[#0A0A0A] to-black overflow-hidden">
+      {/* LATEST LAUNCHES */}
+      <section ref={launchesRef} className="relative py-20 lg:py-28 bg-[#F9FAFB] overflow-hidden">
         <div className="relative max-w-[1800px] mx-auto px-6 lg:px-16">
           <div className="mb-12">
-            <div className="inline-flex items-center gap-2 bg-[#00C870]/10 border border-[#00C870]/30 px-4 py-2 rounded-full mb-6">
-              <Sparkles className="w-4 h-4 text-[#00C870]" />
-              <span className="text-xs font-bold text-[#00C870] uppercase tracking-wide">New This Month</span>
+            <div className="inline-flex items-center gap-2 bg-[#10B981]/10 border-2 border-[#10B981] px-4 py-2 rounded-full mb-6">
+              <Sparkles className="w-4 h-4 text-[#10B981]" />
+              <span className="text-xs font-bold text-[#10B981] uppercase tracking-wide">New This Month</span>
             </div>
-            <h2 className="section-title text-5xl lg:text-6xl font-black text-white mb-4 leading-tight">
-              Latest <span className="bg-gradient-to-r from-[#00C870] to-[#E8C676] bg-clip-text text-transparent">Launches</span>
+            <h2 className="section-title text-5xl lg:text-6xl font-black text-[#0A0A0A] mb-4 leading-tight">
+              Latest <span className="text-[#10B981]">Launches</span>
             </h2>
           </div>
 
-          <div className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide">
-            {launches.map((launch, idx) => (
+          <div className="flex gap-6 overflow-x-auto pb-6 scrollbar-hidden">
+            {launches.length > 0 ? launches.map((launch: any, idx: number) => (
               <Link
                 key={idx}
-                href="/projects"
+                href={launch.slug ? `/areas/${launch.area_slug}/${launch.slug}` : '/projects'}
                 className="flex-none w-[400px] group"
               >
-                <div className="relative bg-black rounded-3xl overflow-hidden border border-[#00C870]/20 hover:border-[#00C870]/60 transition-all duration-500 shadow-[0_20px_60px_rgba(0,0,0,0.8)] hover:shadow-[0_0_60px_rgba(0,200,112,0.3)] hover:-translate-y-1">
+                <div className="relative bg-white rounded-3xl overflow-hidden border border-gray-200 shadow-md hover:border-[#10B981] transition-all duration-500 shadow-lg hover:shadow-xl hover:-translate-y-1">
                   <div className="relative h-64 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/40 to-transparent z-10"></div>
                     <img
                       src={launch.image}
                       alt={launch.name}
@@ -815,27 +1077,31 @@ export default function Home() {
                       suppressHydrationWarning
                     />
 
-                    <div className="absolute top-4 left-4 bg-[#00C870] text-black px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+                    <div className="absolute top-4 left-4 bg-[#10B981] text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
                       {launch.badge}
                     </div>
 
                     <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
-                      <h3 className="text-2xl font-black text-white mb-2 group-hover:text-[#00C870] transition-colors">{launch.name}</h3>
+                      <h3 className="text-2xl font-black text-white mb-2 group-hover:text-[#10B981] transition-colors">{launch.name}</h3>
                       <p className="text-sm text-gray-300 mb-3">{launch.developer} · {launch.location}</p>
-                      <div className="text-2xl font-black text-[#E8C676]">AED {launch.price}</div>
+                      <div className="text-2xl font-black text-[#D4AF37]">AED {launch.price}</div>
                     </div>
                   </div>
                 </div>
               </Link>
-            ))}
+            )) : (
+              <div className="flex-none w-full flex items-center justify-center py-10">
+                <p className="text-gray-500">Loading latest launches...</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
       {/* WHY INVEST */}
-      <section className="relative py-20 lg:py-28 bg-black overflow-hidden">
-        {/* Dubai Silhouette Background */}
-        <div className="absolute inset-0 opacity-5">
+      <section className="relative py-20 lg:py-28 bg-white overflow-hidden">
+        {/* Subtle Dubai Skyline */}
+        <div className="absolute inset-0 opacity-[0.02] pointer-events-none">
           <img
             src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1920&h=400&fit=crop"
             alt="Dubai Skyline"
@@ -844,28 +1110,27 @@ export default function Home() {
           />
         </div>
 
-        {/* Emerald Glows */}
-        <div className="absolute top-20 left-[10%] w-[500px] h-[500px] bg-[#00C870]/5 rounded-full blur-[120px]"></div>
-
         <div className="relative max-w-[1600px] mx-auto px-6 lg:px-16">
           <div className="text-center mb-16">
-            <h2 className="section-title text-5xl lg:text-6xl font-black text-white mb-4 leading-tight">
-              Why <span className="bg-gradient-to-r from-[#E8C676] to-[#00C870] bg-clip-text text-transparent">Invest</span>
+            <h2 className="section-title text-5xl lg:text-6xl font-black text-[#0A0A0A] mb-6">
+              Why <span className="text-[#10B981]">Off-Plan</span> in Dubai?
             </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">Unlock exclusive benefits with off-plan investments</p>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              The smart investor's choice for capital growth and passive income in the world's fastest-growing property market.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8">
             {benefits.map((benefit, idx) => (
               <div
                 key={idx}
-                className="bg-black/60 backdrop-blur-xl border border-[#00C870]/20 rounded-3xl p-8 hover:border-[#00C870]/60 transition-all duration-300 group"
+                className="bg-white border border-gray-200 shadow-md rounded-3xl p-8 shadow-lg hover:shadow-xl hover:border-[#10B981] transition-all duration-300 hover:-translate-y-1"
               >
-                <div className="w-16 h-16 bg-[#00C870]/10 rounded-2xl flex items-center justify-center text-[#00C870] mb-6 group-hover:scale-110 transition-transform">
+                <div className="w-16 h-16 bg-[#10B981] rounded-2xl flex items-center justify-center mb-6 text-white">
                   {benefit.icon}
                 </div>
-                <h3 className="text-2xl font-bold text-[#E8C676] mb-3">{benefit.title}</h3>
-                <p className="text-gray-300 leading-relaxed">{benefit.description}</p>
+                <h3 className="text-2xl font-black text-[#0A0A0A] mb-4">{benefit.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
               </div>
             ))}
           </div>

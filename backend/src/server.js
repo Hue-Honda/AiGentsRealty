@@ -9,8 +9,10 @@ import { rateLimit } from 'express-rate-limit';
 import chatRoutes from './routes/chat.js';
 import areasRoutes from './routes/areas.js';
 import projectsRoutes from './routes/projects.js';
+import developersRoutes from './routes/developers.js';
 import migrationsRoutes from './routes/migrations.js';
 import leadsRoutes from './routes/leads.js';
+import marketRoutes from './routes/market.js';
 
 // Load environment variables
 dotenv.config();
@@ -136,7 +138,8 @@ app.get('/api', (req, res) => {
       suggestions: '/api/projects/suggestions',
       featured: '/api/projects/featured',
       chat: '/api/chat',
-      leads: '/api/leads'
+      leads: '/api/leads',
+      market: '/api/market'
     }
   });
 });
@@ -199,7 +202,9 @@ app.get('/migrate-leads', async (req, res) => {
 app.use('/api/chat', chatRoutes);
 app.use('/api/areas', areasRoutes);
 app.use('/api/projects', projectsRoutes);
+app.use('/api/developers', developersRoutes);
 app.use('/api/leads', leadsRoutes);
+app.use('/api/market', marketRoutes);
 app.use('/migrations', migrationsRoutes);
 
 // ============================================================================

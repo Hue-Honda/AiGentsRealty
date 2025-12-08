@@ -120,20 +120,11 @@ export default function FlipStrategyPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
-      {/* AI PARTICLE GLOW BACKGROUND */}
+    <div className="min-h-screen bg-white text-[#0A0A0A] relative overflow-hidden">
+      {/* SUBTLE BACKGROUND GRADIENTS */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#00C775]/5 rounded-full blur-[150px] animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#F3C440]/5 rounded-full blur-[120px] animate-pulse" style={{animationDelay: '1s'}}></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#00C775]/3 rounded-full blur-[200px]"></div>
-      </div>
-
-      {/* NEURAL GRID OVERLAY */}
-      <div className="fixed inset-0 pointer-events-none opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `linear-gradient(#00C775 1px, transparent 1px), linear-gradient(90deg, #00C775 1px, transparent 1px)`,
-          backgroundSize: '80px 80px'
-        }}></div>
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#10B981]/5 rounded-full blur-[150px]"></div>
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#D4AF37]/5 rounded-full blur-[120px]"></div>
       </div>
 
       <div className="relative z-10">
@@ -141,42 +132,42 @@ export default function FlipStrategyPage() {
         <section className="relative pt-32 pb-16 px-6 lg:px-16">
           <div className="max-w-[1400px] mx-auto">
             <div className="mb-8">
-              <Link href="/investment" className="inline-flex items-center gap-2 text-gray-400 hover:text-[#00C775] transition-colors group">
+              <Link href="/investment" className="inline-flex items-center gap-2 text-gray-500 hover:text-[#10B981] transition-colors group">
                 <ArrowRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition-transform" />
                 <span>Back to Investment Hub</span>
               </Link>
             </div>
 
-            <div className="inline-flex items-center gap-2 bg-[#00C775]/10 border border-[#00C775]/30 rounded-full px-5 py-1.5 mb-4">
-              <TrendingUp className="w-3.5 h-3.5 text-[#00C775]" />
-              <span className="text-xs font-bold text-[#00C775] tracking-wide">INVESTMENT STRATEGY</span>
+            <div className="inline-flex items-center gap-2 bg-[#10B981]/10 border border-[#10B981]/30 rounded-full px-5 py-1.5 mb-4">
+              <TrendingUp className="w-3.5 h-3.5 text-[#10B981]" />
+              <span className="text-xs font-bold text-[#10B981] tracking-wide">INVESTMENT STRATEGY</span>
             </div>
 
-            <h1 className="text-6xl lg:text-8xl font-black text-white mb-6 leading-[1.05] tracking-tight">
+            <h1 className="text-6xl lg:text-8xl font-black text-[#0A0A0A] mb-6 leading-[1.05] tracking-tight">
               Property Flipping
               <br />
-              <span className="bg-gradient-to-r from-[#F3C440] via-[#FFD700] to-[#F3C440] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#D4AF37] via-[#B8972E] to-[#D4AF37] bg-clip-text text-transparent">
                 Strategy
               </span>
             </h1>
 
-            <p className="text-xl text-gray-400 max-w-3xl">
+            <p className="text-xl text-gray-600 max-w-3xl">
               Profit from pre-construction appreciation by buying off-plan and selling before handover
             </p>
 
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-              <div className="bg-[#0D0D0D]/80 backdrop-blur-xl border border-[#00C775]/20 rounded-2xl p-6">
-                <div className="text-4xl font-black text-[#00C775] mb-2">18-25%</div>
-                <p className="text-gray-400">Average ROI</p>
+              <div className="bg-white border border-gray-200 shadow-md rounded-2xl p-6">
+                <div className="text-4xl font-black text-[#10B981] mb-2">18-25%</div>
+                <p className="text-gray-500">Average ROI</p>
               </div>
-              <div className="bg-[#0D0D0D]/80 backdrop-blur-xl border border-[#F3C440]/20 rounded-2xl p-6">
-                <div className="text-4xl font-black text-[#F3C440] mb-2">1-3 Years</div>
-                <p className="text-gray-400">Typical Timeline</p>
+              <div className="bg-white border border-gray-200 shadow-md rounded-2xl p-6">
+                <div className="text-4xl font-black text-[#D4AF37] mb-2">1-3 Years</div>
+                <p className="text-gray-500">Typical Timeline</p>
               </div>
-              <div className="bg-[#0D0D0D]/80 backdrop-blur-xl border border-[#00C775]/20 rounded-2xl p-6">
-                <div className="text-4xl font-black text-[#00C775] mb-2">10-20%</div>
-                <p className="text-gray-400">Initial Capital</p>
+              <div className="bg-white border border-gray-200 shadow-md rounded-2xl p-6">
+                <div className="text-4xl font-black text-[#10B981] mb-2">10-20%</div>
+                <p className="text-gray-500">Initial Capital</p>
               </div>
             </div>
           </div>
@@ -186,8 +177,8 @@ export default function FlipStrategyPage() {
         <section className="px-6 lg:px-16 pb-12">
           <div className="max-w-[1400px] mx-auto">
             <div className="flex items-center gap-3 mb-8">
-              <Clock className="w-8 h-8 text-[#00C775]" />
-              <h2 className="text-4xl font-black text-white">How Property Flipping Works</h2>
+              <Clock className="w-8 h-8 text-[#10B981]" />
+              <h2 className="text-4xl font-black text-[#0A0A0A]">How Property Flipping Works</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -197,25 +188,25 @@ export default function FlipStrategyPage() {
                 return (
                   <div
                     key={index}
-                    className={`bg-[#0D0D0D]/80 backdrop-blur-xl border ${
-                      isEmerald ? 'border-[#00C775]/40' : 'border-[#F3C440]/40'
-                    } rounded-3xl p-6 hover:-translate-y-2 transition-all duration-300`}
+                    className={`bg-white border ${
+                      isEmerald ? 'border-[#10B981]/40' : 'border-[#D4AF37]/40'
+                    } shadow-md rounded-3xl p-6 hover:-translate-y-2 transition-all duration-300`}
                   >
                     <div className={`w-12 h-12 rounded-full ${
-                      isEmerald ? 'bg-[#00C775]/20' : 'bg-[#F3C440]/20'
+                      isEmerald ? 'bg-[#10B981]/10' : 'bg-[#D4AF37]/10'
                     } flex items-center justify-center mb-4`}>
                       <span className={`text-xl font-black ${
-                        isEmerald ? 'text-[#00C775]' : 'text-[#F3C440]'
+                        isEmerald ? 'text-[#10B981]' : 'text-[#D4AF37]'
                       }`}>
                         {index + 1}
                       </span>
                     </div>
 
-                    <h3 className="text-2xl font-black text-white mb-2">{item.phase}</h3>
-                    <p className="text-sm text-gray-500 mb-4">Month {item.month}</p>
-                    <p className="text-gray-400 mb-4">{item.action}</p>
+                    <h3 className="text-2xl font-black text-[#0A0A0A] mb-2">{item.phase}</h3>
+                    <p className="text-sm text-gray-400 mb-4">Month {item.month}</p>
+                    <p className="text-gray-600 mb-4">{item.action}</p>
                     <div className={`text-sm font-bold ${
-                      isEmerald ? 'text-[#00C775]' : 'text-[#F3C440]'
+                      isEmerald ? 'text-[#10B981]' : 'text-[#D4AF37]'
                     }`}>
                       {item.cost}
                     </div>
@@ -230,8 +221,8 @@ export default function FlipStrategyPage() {
         <section className="px-6 lg:px-16 pb-12">
           <div className="max-w-[1400px] mx-auto">
             <div className="flex items-center gap-3 mb-8">
-              <Sparkles className="w-8 h-8 text-[#00C775]" />
-              <h2 className="text-4xl font-black text-white">Key Advantages</h2>
+              <Sparkles className="w-8 h-8 text-[#10B981]" />
+              <h2 className="text-4xl font-black text-[#0A0A0A]">Key Advantages</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -241,17 +232,17 @@ export default function FlipStrategyPage() {
                 return (
                   <div
                     key={index}
-                    className="bg-[#0D0D0D]/80 backdrop-blur-xl border border-white/10 hover:border-[#00C775]/60 rounded-3xl p-8 transition-all duration-300"
+                    className="bg-white border border-gray-200 hover:border-[#10B981]/60 shadow-md rounded-3xl p-8 transition-all duration-300"
                   >
-                    <div className="w-14 h-14 rounded-2xl bg-[#00C775]/20 flex items-center justify-center mb-6">
-                      <Icon className="w-7 h-7 text-[#00C775]" />
+                    <div className="w-14 h-14 rounded-2xl bg-[#10B981]/10 flex items-center justify-center mb-6">
+                      <Icon className="w-7 h-7 text-[#10B981]" />
                     </div>
 
-                    <h3 className="text-2xl font-black text-white mb-3">
+                    <h3 className="text-2xl font-black text-[#0A0A0A] mb-3">
                       {advantage.title}
                     </h3>
 
-                    <p className="text-gray-400">
+                    <p className="text-gray-600">
                       {advantage.description}
                     </p>
                   </div>
@@ -265,44 +256,44 @@ export default function FlipStrategyPage() {
         <section className="px-6 lg:px-16 pb-12">
           <div className="max-w-[1400px] mx-auto">
             <div className="flex items-center gap-3 mb-8">
-              <Target className="w-8 h-8 text-[#F3C440]" />
-              <h2 className="text-4xl font-black text-white">Real Success Stories</h2>
+              <Target className="w-8 h-8 text-[#D4AF37]" />
+              <h2 className="text-4xl font-black text-[#0A0A0A]">Real Success Stories</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {successStories.map((story, index) => (
                 <div
                   key={index}
-                  className="bg-gradient-to-br from-[#00C775]/10 via-[#0D0D0D]/80 to-[#0D0D0D]/80 backdrop-blur-xl border border-[#00C775]/40 rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300"
+                  className="bg-gradient-to-br from-[#10B981]/5 via-white to-white border border-[#10B981]/30 shadow-md rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300"
                 >
-                  <h3 className="text-xl font-black text-white mb-6">{story.project}</h3>
+                  <h3 className="text-xl font-black text-[#0A0A0A] mb-6">{story.project}</h3>
 
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-400">Purchase Price</span>
-                      <span className="font-bold text-white">AED {story.purchasePrice.toLocaleString()}</span>
+                      <span className="text-sm text-gray-500">Purchase Price</span>
+                      <span className="font-bold text-[#0A0A0A]">AED {story.purchasePrice.toLocaleString()}</span>
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-400">Sale Price</span>
-                      <span className="font-bold text-white">AED {story.salePrice.toLocaleString()}</span>
+                      <span className="text-sm text-gray-500">Sale Price</span>
+                      <span className="font-bold text-[#0A0A0A]">AED {story.salePrice.toLocaleString()}</span>
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-400">Duration</span>
-                      <span className="font-bold text-white">{story.duration}</span>
+                      <span className="text-sm text-gray-500">Duration</span>
+                      <span className="font-bold text-[#0A0A0A]">{story.duration}</span>
                     </div>
 
-                    <div className="border-t border-white/10 pt-4 mt-4">
+                    <div className="border-t border-gray-200 pt-4 mt-4">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-gray-400">Net Profit</span>
-                        <span className="text-2xl font-black text-[#00C775]">
+                        <span className="text-sm text-gray-500">Net Profit</span>
+                        <span className="text-2xl font-black text-[#10B981]">
                           AED {story.profit.toLocaleString()}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-400">ROI</span>
-                        <span className="text-3xl font-black text-[#F3C440]">{story.roi}%</span>
+                        <span className="text-sm text-gray-500">ROI</span>
+                        <span className="text-3xl font-black text-[#D4AF37]">{story.roi}%</span>
                       </div>
                     </div>
                   </div>
@@ -316,31 +307,31 @@ export default function FlipStrategyPage() {
         <section className="px-6 lg:px-16 pb-12">
           <div className="max-w-[1400px] mx-auto">
             <div className="flex items-center gap-3 mb-8">
-              <AlertTriangle className="w-8 h-8 text-[#F3C440]" />
-              <h2 className="text-4xl font-black text-white">Risks & Mitigation</h2>
+              <AlertTriangle className="w-8 h-8 text-[#D4AF37]" />
+              <h2 className="text-4xl font-black text-[#0A0A0A]">Risks & Mitigation</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {risks.map((risk, index) => (
                 <div
                   key={index}
-                  className="bg-[#0D0D0D]/80 backdrop-blur-xl border border-[#F3C440]/20 rounded-3xl p-8"
+                  className="bg-white border border-[#D4AF37]/30 shadow-md rounded-3xl p-8"
                 >
-                  <h3 className="text-xl font-black text-white mb-3 flex items-center gap-2">
-                    <AlertTriangle className="w-5 h-5 text-[#F3C440]" />
+                  <h3 className="text-xl font-black text-[#0A0A0A] mb-3 flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5 text-[#D4AF37]" />
                     {risk.title}
                   </h3>
 
-                  <p className="text-gray-400 mb-4">
+                  <p className="text-gray-600 mb-4">
                     {risk.description}
                   </p>
 
-                  <div className="bg-[#00C775]/10 border border-[#00C775]/30 rounded-xl p-4">
+                  <div className="bg-[#10B981]/5 border border-[#10B981]/30 rounded-xl p-4">
                     <div className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-[#00C775] flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="w-4 h-4 text-[#10B981] flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-xs font-bold text-[#00C775] mb-1">Mitigation</p>
-                        <p className="text-sm text-gray-300">{risk.mitigation}</p>
+                        <p className="text-xs font-bold text-[#10B981] mb-1">Mitigation</p>
+                        <p className="text-sm text-gray-600">{risk.mitigation}</p>
                       </div>
                     </div>
                   </div>
@@ -353,17 +344,17 @@ export default function FlipStrategyPage() {
         {/* PRO TIPS SECTION */}
         <section className="px-6 lg:px-16 pb-12">
           <div className="max-w-[1400px] mx-auto">
-            <div className="bg-gradient-to-br from-[#0D0D0D] via-[#0D0D0D] to-[#00C775]/5 backdrop-blur-xl border border-[#00C775]/20 rounded-3xl p-12">
+            <div className="bg-gradient-to-br from-white via-white to-[#10B981]/5 border border-[#10B981]/20 shadow-md rounded-3xl p-12">
               <div className="flex items-center gap-3 mb-8">
-                <Zap className="w-8 h-8 text-[#00C775]" />
-                <h2 className="text-4xl font-black text-white">Pro Tips for Success</h2>
+                <Zap className="w-8 h-8 text-[#10B981]" />
+                <h2 className="text-4xl font-black text-[#0A0A0A]">Pro Tips for Success</h2>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {tips.map((tip, index) => (
                   <div key={index} className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-[#00C775] flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-300">{tip}</span>
+                    <CheckCircle className="w-5 h-5 text-[#10B981] flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-600">{tip}</span>
                   </div>
                 ))}
               </div>
@@ -374,21 +365,21 @@ export default function FlipStrategyPage() {
         {/* CTA SECTION */}
         <section className="px-6 lg:px-16 pb-20">
           <div className="max-w-[1400px] mx-auto">
-            <div className="bg-gradient-to-br from-[#0D0D0D] via-[#0D0D0D] to-[#00C775]/5 backdrop-blur-xl border border-[#00C775]/20 rounded-3xl p-12 text-center">
-              <h2 className="text-4xl lg:text-5xl font-black text-white mb-4">
+            <div className="bg-gradient-to-br from-[#F9FAFB] via-white to-[#10B981]/5 border border-gray-200 shadow-lg rounded-3xl p-12 text-center">
+              <h2 className="text-4xl lg:text-5xl font-black text-[#0A0A0A] mb-4">
                 Ready to Start Flipping?
               </h2>
-              <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
+              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
                 Browse launch-phase properties with high appreciation potential
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <Link href="/projects" className="bg-gradient-to-r from-[#00C775] to-[#00A85D] px-8 py-4 rounded-full font-bold text-white shadow-[0_0_30px_rgba(0,199,117,0.4)] hover:shadow-[0_0_50px_rgba(0,199,117,0.6)] transition-all hover:-translate-y-1">
+                <Link href="/projects" className="bg-gradient-to-r from-[#10B981] to-[#059669] px-8 py-4 rounded-full font-bold text-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
                   Browse Properties
                 </Link>
-                <Link href="/investment/roi-calculator" className="bg-gradient-to-r from-[#F3C440] to-[#D4A936] px-8 py-4 rounded-full font-bold text-black shadow-[0_0_30px_rgba(243,196,64,0.4)] hover:shadow-[0_0_50px_rgba(243,196,64,0.6)] transition-all hover:-translate-y-1">
+                <Link href="/investment/roi-calculator" className="bg-gradient-to-r from-[#D4AF37] to-[#B8972E] px-8 py-4 rounded-full font-bold text-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
                   Calculate ROI
                 </Link>
-                <Link href="/investment/rental-strategy" className="bg-[#0D0D0D] border-2 border-[#00C775] px-8 py-4 rounded-full font-bold text-white hover:bg-[#00C775]/10 transition-all hover:-translate-y-1">
+                <Link href="/investment/rental-strategy" className="bg-white border-2 border-[#10B981] px-8 py-4 rounded-full font-bold text-[#10B981] hover:bg-[#10B981]/5 transition-all hover:-translate-y-1">
                   Rental Strategy
                 </Link>
               </div>

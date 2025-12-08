@@ -74,14 +74,9 @@ const paymentPlans = [
 
 export default function BrowseByPaymentPlan() {
   return (
-    <main className="min-h-screen bg-[#0A0A0A]">
+    <main className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-[#1A1A1A] to-[#0A0A0A] py-20">
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-[20%] w-[400px] h-[400px] bg-[#10B981]/10 rounded-full blur-[120px]"></div>
-          <div className="absolute bottom-10 right-[15%] w-[500px] h-[500px] bg-[#D4AF37]/10 rounded-full blur-[140px]"></div>
-        </div>
-
+      <section className="relative bg-gradient-to-b from-gray-50 to-white py-20">
         <div className="relative max-w-[1600px] mx-auto px-6 lg:px-16">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#10B981]/10 border border-[#10B981]/30 rounded-full mb-6">
@@ -89,7 +84,7 @@ export default function BrowseByPaymentPlan() {
               <span className="text-sm font-semibold text-[#10B981]">Dubai's Unique Advantage</span>
             </div>
 
-            <h1 className="text-5xl lg:text-7xl font-black text-white mb-6 leading-tight">
+            <h1 className="text-5xl lg:text-7xl font-black text-[#0A0A0A] mb-6 leading-tight">
               Browse by
               <br />
               <span className="bg-gradient-to-r from-[#D4AF37] to-[#B8941E] bg-clip-text text-transparent">
@@ -97,7 +92,7 @@ export default function BrowseByPaymentPlan() {
               </span>
             </h1>
 
-            <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Find off-plan projects with payment structures that match your investment strategy. From 80/20 plans to post-handover options.
             </p>
           </div>
@@ -112,7 +107,7 @@ export default function BrowseByPaymentPlan() {
               <Link
                 key={plan.slug}
                 href={`/projects?paymentPlan=${plan.slug}`}
-                className="group relative bg-[#1A1A1A] rounded-2xl overflow-hidden border border-white/5 hover:border-[#10B981]/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_60px_rgba(16,185,129,0.2)]"
+                className="group relative bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-md hover:shadow-lg hover:border-[#10B981]/50 transition-all duration-500 hover:-translate-y-2"
               >
                 {/* Gradient Background */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${plan.gradient} opacity-50 group-hover:opacity-100 transition-opacity duration-500`}></div>
@@ -123,11 +118,11 @@ export default function BrowseByPaymentPlan() {
                     <span className={`${plan.badgeColor} px-3 py-1.5 rounded-full text-xs font-bold text-white`}>
                       {plan.badge}
                     </span>
-                    <span className="text-xs font-semibold text-gray-400">{plan.count}</span>
+                    <span className="text-xs font-semibold text-gray-600">{plan.count}</span>
                   </div>
 
                   {/* Title */}
-                  <h2 className="text-2xl font-black text-white mb-3 group-hover:text-[#10B981] transition-colors">
+                  <h2 className="text-2xl font-black text-[#0A0A0A] mb-3 group-hover:text-[#10B981] transition-colors">
                     {plan.title}
                   </h2>
 
@@ -138,7 +133,7 @@ export default function BrowseByPaymentPlan() {
                   </div>
 
                   {/* Description */}
-                  <p className="text-gray-400 text-sm mb-4 leading-relaxed">
+                  <p className="text-gray-600 text-sm mb-4 leading-relaxed">
                     {plan.description}
                   </p>
 
@@ -147,7 +142,7 @@ export default function BrowseByPaymentPlan() {
                     {plan.benefits.map((benefit, idx) => (
                       <div key={idx} className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-[#10B981]"></div>
-                        <span className="text-xs text-gray-500">{benefit}</span>
+                        <span className="text-xs text-gray-600">{benefit}</span>
                       </div>
                     ))}
                   </div>
@@ -170,9 +165,9 @@ export default function BrowseByPaymentPlan() {
       </section>
 
       {/* Info Section */}
-      <section className="py-16 px-6 lg:px-16 bg-[#1A1A1A]/50">
+      <section className="py-16 px-6 lg:px-16 bg-gray-50">
         <div className="max-w-[1200px] mx-auto">
-          <h2 className="text-3xl font-black text-white mb-6 text-center">
+          <h2 className="text-3xl font-black text-[#0A0A0A] mb-6 text-center">
             Why Payment Plans Matter in Dubai
           </h2>
           <div className="grid md:grid-cols-3 gap-6 text-center">
@@ -180,43 +175,43 @@ export default function BrowseByPaymentPlan() {
               <div className="w-12 h-12 bg-[#10B981]/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <TrendingUp className="w-6 h-6 text-[#10B981]" />
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">Low Capital Entry</h3>
-              <p className="text-sm text-gray-400">Start investing with minimal upfront capital using flexible payment structures</p>
+              <h3 className="text-lg font-bold text-[#0A0A0A] mb-2">Low Capital Entry</h3>
+              <p className="text-sm text-gray-600">Start investing with minimal upfront capital using flexible payment structures</p>
             </div>
             <div className="p-6">
               <div className="w-12 h-12 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Sparkles className="w-6 h-6 text-[#D4AF37]" />
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">Better ROI Potential</h3>
-              <p className="text-sm text-gray-400">Extended payment periods allow you to leverage market appreciation</p>
+              <h3 className="text-lg font-bold text-[#0A0A0A] mb-2">Better ROI Potential</h3>
+              <p className="text-sm text-gray-600">Extended payment periods allow you to leverage market appreciation</p>
             </div>
             <div className="p-6">
               <div className="w-12 h-12 bg-[#10B981]/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CreditCard className="w-6 h-6 text-[#10B981]" />
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">Cash Flow Management</h3>
-              <p className="text-sm text-gray-400">Spread payments over construction period for easier budgeting</p>
+              <h3 className="text-lg font-bold text-[#0A0A0A] mb-2">Cash Flow Management</h3>
+              <p className="text-sm text-gray-600">Spread payments over construction period for easier budgeting</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-6 lg:px-16">
+      <section className="py-20 px-6 lg:px-16 bg-gradient-to-br from-emerald-50 via-white to-amber-50">
         <div className="max-w-[1600px] mx-auto text-center">
-          <h2 className="text-4xl font-black text-white mb-4">
+          <h2 className="text-4xl font-black text-[#0A0A0A] mb-4">
             Not Sure Which Plan Suits You?
           </h2>
-          <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Talk to our investment advisors to find the perfect payment plan for your goals
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <button className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8941E] text-black rounded-xl font-bold hover:shadow-[0_0_40px_rgba(212,175,55,0.6)] transition-all duration-300">
+            <button className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8941E] text-black rounded-xl font-bold hover:shadow-xl transition-all duration-300">
               Talk to Advisor
             </button>
             <Link
               href="/projects"
-              className="px-8 py-4 bg-[#0A0A0A]/80 backdrop-blur-xl border-2 border-[#10B981]/40 text-white rounded-xl font-bold hover:bg-[#10B981]/10 hover:border-[#10B981]/60 transition-all duration-300"
+              className="px-8 py-4 bg-white border-2 border-[#10B981]/40 text-[#0A0A0A] rounded-xl font-bold hover:bg-[#10B981]/10 hover:border-[#10B981]/60 transition-all duration-300 shadow-md"
             >
               Browse All Projects
             </Link>

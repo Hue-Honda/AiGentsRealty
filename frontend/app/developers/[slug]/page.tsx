@@ -242,11 +242,11 @@ export default async function DeveloperPage({ params }: { params: Promise<{ slug
 
   if (!developer) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center pt-20">
+      <div className="min-h-screen bg-white text-[#0A0A0A] flex items-center justify-center pt-20">
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">Developer Not Found</h1>
-          <p className="text-gray-400 mb-8">The developer "{slug}" doesn't exist in our database.</p>
-          <Link href="/explore" className="inline-flex items-center gap-2 bg-gradient-to-r from-[#E8C676] to-[#D4AF37] text-black px-6 py-3 rounded-xl font-bold">
+          <p className="text-gray-600 mb-8">The developer "{slug}" doesn't exist in our database.</p>
+          <Link href="/explore" className="inline-flex items-center gap-2 bg-gradient-to-r from-[#D4AF37] via-[#E8C547] to-[#D4AF37] text-black px-6 py-3 rounded-xl font-bold">
             Explore Projects
             <ChevronRight className="w-5 h-5" />
           </Link>
